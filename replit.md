@@ -9,324 +9,59 @@ Proyek ini adalah aplikasi simulasi sepak bola berbasis web yang memungkinkan pe
 - Melihat statistik dan log pertandingan real-time
 - Mengatur tingkat kesulitan tim dan durasi pertandingan
 
-## Fitur Utama
-
-### 1. Mode AI vs AI
-- Setup 2 tim dengan nama custom
-- Atur tingkat kesulitan (1-7) untuk setiap tim
-- Simulasi pertandingan lengkap dengan:
-  - Log pertandingan real-time
-  - Statistik lengkap (possession, shots, passes, fouls, cards)
-  - Animasi dan highlight event penting
-
-### 2. Mode Tournament
-**Fitur Terbaru - Flexible Tournament dengan Penalty Akurat!**
-
-- **Jumlah Tim Fleksibel**: Pilih jumlah tim tournament
-  - **4 Tim**: Semi Finals → Final → Champion
-  - **8 Tim**: Quarter Finals → Semi Finals → Final → Champion
-  - **16 Tim**: Round of 16 → Quarter Finals → Semi Finals → Final → Champion
-
-- **Setup Mode**: Pilih antara Manual atau Auto
-  - **Manual**: Input tim sesuai jumlah dengan nama dan tingkat kesulitan custom (1-7)
-  - **Auto**: Generate otomatis dari database 32 tim terkenal dunia
-  
-- **Database Tim Lengkap** (32 tim):
-  - Premier League: Manchester United, Liverpool, Chelsea, Arsenal, Man City, Tottenham, Newcastle, West Ham, Leicester
-  - La Liga: Real Madrid, Barcelona, Atletico Madrid, Sevilla, Valencia
-  - Serie A: Juventus, AC Milan, Inter Milan, Napoli, AS Roma
-  - Bundesliga: Bayern Munich, Borussia Dortmund, RB Leipzig, Bayer Leverkusen
-  - Ligue 1: PSG, Olympique Lyon, Marseille, Monaco
-  - Lainnya: Ajax Amsterdam, Benfica, FC Porto, Sporting CP, Shakhtar Donetsk
-  
-- **Auto Play**: Pertandingan berjalan otomatis tanpa perlu klik tombol
-  - Setiap pertandingan selesai langsung lanjut ke pertandingan berikutnya
-  - Kecepatan simulasi 400ms per menit (lebih lambat untuk viewing yang nyaman)
-  - Transisi otomatis antar babak dengan delay
-  - Tidak ada bentrok - satu pertandingan selesai baru mulai berikutnya
-  
-- **Penalty Shootout Akurat**:
-  - Sistem adu penalti detail saat pertandingan seri
-  - 5 ronde penalti alternating (Tim A → Tim B)
-  - Success rate berdasarkan tingkat kesulitan tim (60% + difficulty*5%)
-  - Sudden Death mode jika masih seri setelah 5 ronde
-  - Log detail setiap penalti (GOOL/GAGAL)
-  - Update skor real-time dengan format: 2 (4) - 2 (3)
-  
-- **Live Display Real-time**:
-  - Scoreboard live dengan animasi
-  - Timer pertandingan yang berjalan
-  - Event log lengkap (gol, kartu, save, corner, half-time, penalti)
-  - Update skor real-time termasuk skor penalti
-  
-- **Statistik Pertandingan Lengkap**:
-  - Tampil setelah setiap pertandingan selesai
-  - Penguasaan bola dengan bar visual
-  - Tembakan dan tembakan on target
-  - Operan, tendangan pojok, pelanggaran
-  - Kartu kuning
-  - Auto-hide setelah 4.5 detik
-  
-- **Tournament Bracket**:
-  - Visualisasi bracket lengkap dari awal sampai Champion
-  - Status pertandingan (Menunggu/Berlangsung/Selesai)
-  - Highlight tim pemenang
-  - Skor final setiap pertandingan
-  
-- **Log Battle Lengkap**:
-  - Log setiap pertandingan dengan timestamp
-  - Highlight perubahan babak
-  - Detail penalty shootout lengkap
-  - Hasil pertandingan dan pemenang
-  - Scroll otomatis ke event terbaru
-
-### 3. Pengaturan
-- Durasi pertandingan (5/45/90 menit)
-- Kecepatan simulasi (Lambat/Normal/Cepat/Sangat Cepat)
-- Mode tampilan (Terang/Gelap)
-- Pengaturan tersimpan di localStorage
-
-## Teknologi
-- **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
-- **Styling**: CSS Variables untuk theming, CSS Grid & Flexbox
-- **Storage**: localStorage untuk pengaturan pengguna
-- **Animasi**: CSS animations dan transitions
-- **Server**: Python HTTP Server (port 5000)
-
-## Struktur Project
-```
-.
-├── index.html          # Struktur HTML utama
-├── style.css           # Styling lengkap dengan animasi
-├── script.js           # Logika simulasi dan tournament
-├── README.md           # Dokumentasi project
-└── replit.md          # Dokumentasi teknis (file ini)
-```
-
-## Recent Changes (October 18, 2025)
-
-### Tournament Mode Enhancement - ULTIMATE UPDATE! 🔥⚽
-
-#### 1. **Realistic Penalty Shootout System** 🎯
-   - **4 jenis outcome berbeda** yang sangat realistis:
-     - ⚽ **GOOL** - Masuk dengan sempurna! (50% + difficulty×4%)
-     - 🧤 **SAVE** - Ditangkap kiper! (berbasis skill kiper)
-     - ❌ **MISS** - Meleset ke luar gawang!
-     - 💥 **BLUNDER** - Tendangan lemah dan gagal total!
-   - Probabilitas berdasarkan tingkat kesulitan tim (1-7)
-   - Setiap outcome punya icon, message, dan type berbeda
-   - Log detail dengan warna berbeda untuk setiap hasil
-   - Jauh lebih menarik dan tidak monoton!
-
-#### 2. **Injury Time System** ⏱️
-   - **Waktu tambahan babak pertama** (1-4 menit random)
-   - **Waktu tambahan babak kedua** (2-6 menit random)
-   - Display format realistis: "45+3'" dan "90+4'"
-   - Injury time BENAR-BENAR dimainkan dengan simulasi events
-   - Log announcement saat injury time diumumkan
-   - Timeline konsisten dengan sepak bola asli
-
-#### 3. **Tactical Formations Display** 📋
-   - **6 formasi berbeda**: 4-4-2, 4-3-3, 3-5-2, 4-2-3-1, 3-4-3, 5-3-2
-   - Random assignment untuk setiap pertandingan
-   - Display di tournament log saat match dimulai
-   - Menambah variasi dan realisme pertandingan
-
-#### 4. **Man of the Match System** ⭐
-   - **Sistem rating komprehensif** berdasarkan performa:
-     - Goals: +10 points each
-     - Assists: +7 points each
-     - Shots on target: +3 points each
-     - Possession: +0.5 per %
-     - Fouls: -2 points each
-     - Yellow cards: -3 points
-     - Red cards: -10 points
-   - Display dengan **golden gradient** yang menarik
-   - Menampilkan nama tim dan rating score
-   - Auto-display setelah setiap pertandingan
-
-#### 5. **Interactive Commentary System** 🎙️
-   - Sistem komentator interaktif seperti komentator sepak bola sungguhan!
-   - 13+ dialog berbeda untuk berbagai situasi:
-     - Match start commentary (4 variasi)
-     - Goal commentary (4 variasi)
-     - Save commentary (4 variasi)
-     - Miss commentary (4 variasi)
-     - Halftime commentary (3 variasi)
-   - Komentator memberikan reaksi real-time untuk event penting
-   - Ditampilkan dengan styling khusus (pink, italic, border tebal)
-
-#### 6. **Enhanced Event Logging System** 📋
-   - **13+ jenis log entry** dengan warna dan animasi berbeda:
-     - ⚽ **GOAL** - Hijau, bold, animasi pulse
-     - 🧤 **SAVE** - Cyan, highlight penyelamatan kiper
-     - ⚠️ **CHANCE** - Orange, peluang yang terlewat
-     - 🔄 **PASS** - Purple, operan beruntun
-     - 🟨 **YELLOW CARD** - Kuning, bold, pelanggaran keras
-     - 🟥 **RED CARD** - Merah, bold, border extra tebal!
-     - ⚽ **FOUL** - Orange, pelanggaran biasa
-     - ⛳ **CORNER** - Teal, tendangan pojok
-     - 🚩 **OFFSIDE** - Purple, caught offside
-     - 🔄 **SUBSTITUTION** - Blue, pergantian pemain
-     - ⏸️ **HALFTIME** - Orange, centered, turun minum
-     - 🎙️ **COMMENTARY** - Pink, italic, border tebal
-     - Plus: match-start, match-end, round-change
-   - Setiap event punya warna, style, dan animasi unik
-   - Log lebih hidup dan menarik untuk diikuti!
-
-#### 3. **Expanded Match Statistics** 📊
-   - Statistik baru yang ditambahkan:
-     - 🅰️ **Assists** - Tracking assist untuk setiap gol
-     - 🚩 **Offsides** - Menghitung offside yang terjadi
-     - 🟥 **Red Cards** - Kartu merah dan pengusiran
-   - Total statistik lengkap sekarang:
-     - Penguasaan Bola (dengan bar visual)
-     - Tembakan & Tembakan On Target
-     - Assists (NEW!)
-     - Operan Sukses
-     - Tendangan Pojok
-     - Offsides (NEW!)
-     - Pelanggaran
-     - Kartu Kuning
-     - Kartu Merah (NEW!)
-   - Ditampilkan untuk regular match dan tournament match
-   - Auto-display 5.5 detik setelah pertandingan
-
-#### 4. **Mobile Responsive Optimization** 📱
-   - **Desain mobile yang sangat optimal:**
-     - Base font size: 14px (lebih kecil untuk mobile)
-     - Spacing lebih efisien (padding & margin dikurangi)
-     - Tournament bracket: Stack vertical di mobile
-     - Log entries: Font 0.9rem, padding lebih kecil
-     - Live match display: Compact layout untuk mobile
-     - Stats display: Grid 1 column di mobile
-     - Action buttons: Stack vertical, full width
-     - Footer: Font 0.8rem
-   - **Responsive breakpoints:**
-     - Desktop: Layout normal dengan multi-column
-     - Mobile (<768px): Single column, compact spacing
-   - Semua element ter-optimize untuk viewing di HP
-
-#### 5. **Enhanced Event Simulation**
-   - Goal dengan assist (70% chance ada assister)
-   - Offside detection (random occurrences)
-   - Red card ejections (2% chance dari foul)
-   - Player substitutions (setelah menit 60)
-   - Lebih realistic dan immersive!
-
-### Previous Tournament Updates
-
-1. **Flexible Team Count**
-   - Dropdown selector untuk jumlah tim (4, 8, atau 16 tim)
-   - Dynamic team input generation sesuai jumlah yang dipilih
-   - Bracket otomatis adjust sesuai jumlah tim
-
-2. **Extended Team Database**
-   - Expanded dari 16 tim menjadi 32 tim terkenal dunia
-   - Coverage liga top Eropa (EPL, La Liga, Serie A, Bundesliga, Ligue 1)
-   - Auto-generate support sampai 16 tim tournament
-
-3. **Slowed Match Simulation**
-   - Tournament match speed dari 100ms menjadi 400ms per menit
-   - Lebih nyaman untuk viewing dan follow the action
-   - Log events lebih mudah dibaca
-
-4. **Accurate Penalty Shootout System**
-   - Detail simulation setiap tendangan penalti
-   - Success rate based on team difficulty (60% + difficulty*5%)
-   - 5 rounds alternating (Team A → Team B)
-   - True sudden death mode jika masih seri
-   - Sudden death continues alternating sampai ada pemenang
-   - Live score update dengan format: 2 (4) - 2 (3)
-   - Log lengkap setiap penalti dengan status GOOL/GAGAL
-
-### Previous Enhancements
-1. **Auto/Manual Setup Mode**
-   - Manual: User input tim custom dengan difficulty 1-7
-   - Auto: Random generate dari database tim terkenal
-
-2. **Auto Play System**
-   - Pertandingan otomatis tanpa perlu klik tombol
-   - Auto lanjut ke pertandingan berikutnya setelah selesai
-   - Sistem queue untuk mencegah bentrokan pertandingan
-
-3. **Live Match Display**
-   - Real-time scoreboard dengan animasi pulse
-   - Live timer dan event log
-   - Event highlighting untuk gol, kartu, save, corner
-
-4. **Tournament Bracket**
-   - Visual feedback untuk pertandingan aktif
-   - Status indicator (Menunggu/Berlangsung/Selesai)
-   - Winner highlighting dengan warna hijau
-
-5. **Tournament Log System**
-   - Comprehensive battle log dengan timestamp
-   - Color-coded entries (match start/end, round changes)
-   - Auto-scroll ke entry terbaru
+**Business Vision & Market Potential:**
+This application aims to provide an engaging and realistic soccer simulation experience, leveraging AI for dynamic match outcomes. Its interactive tournament mode and detailed statistics cater to sports enthusiasts and casual gamers alike, offering a comprehensive and entertaining platform for virtual soccer management and viewing. The project's ambition is to create a highly customizable and immersive football simulation accessible directly from a web browser.
 
 ## User Preferences
 - Preferensi durasi: 90 menit (dapat diubah)
 - Kecepatan simulasi: Normal (dapat diubah)
 - Mode tampilan: Dark mode (default)
 
-## Cara Menggunakan Tournament
+## System Architecture
 
-1. Klik **Tournament** dari menu utama
-2. Pilih **jumlah tim** yang diinginkan (4, 8, atau 16 tim)
-3. Pilih mode setup:
-   - **Manual Setup**: Input nama dan tingkat kesulitan tim (1-7, max bisa sama semua)
-   - **Auto Setup**: Klik untuk generate otomatis dari database
-4. Klik **Mulai Tournament**
-5. Duduk santai dan tonton pertandingan berjalan otomatis!
-6. Jika ada pertandingan seri, tonton adu penalti detail dengan sudden death
-7. Lihat statistik lengkap setelah setiap pertandingan
-8. Tournament berlangsung otomatis sampai keluar juara!
-9. Lihat hasil di bracket dan log pertandingan
+**UI/UX Decisions:**
+- **Theming:** Utilizes CSS Variables for easy light/dark mode switching.
+- **Layout:** Employs CSS Grid and Flexbox for responsive and adaptive designs, especially for tournament brackets and mobile views.
+- **Visual Feedback:** Animated scoreboards, event highlighting (goals, cards), and dynamic bracket updates enhance user engagement.
+- **Commentary System:** Interactive commentary with distinct styling (pink background, italic text, thick borders) provides real-time match narration.
 
-## Architecture Notes
+**Technical Implementations & Feature Specifications:**
 
-### Tournament Flow
-```
-initializeTournament()
-  → setupQuarterFinals()
-  → playNextMatch() [auto loop]
-    → playTournamentMatch()
-    → simulateTournamentMatch()
-    → finishTournamentMatch()
-    → playNextMatch() [next match]
-  → setupSemiFinals()
-  → playNextMatch() [auto loop]
-  → setupFinal()
-  → playNextMatch()
-  → displayChampion()
-```
+1.  **AI vs AI Mode:**
+    *   Setup custom teams with adjustable difficulty (1-7).
+    *   Real-time match logs, comprehensive statistics (possession, shots, passes, fouls, cards), and animated event highlights.
+    *   Interactive commentary system with 13+ Indonesian commentary lines for various match events.
 
-### Key Features
-- **Non-blocking**: Menggunakan recursive setTimeout untuk penalty shootout
-- **Event-driven**: Callbacks dan setTimeout untuk transisi antar babak
-- **Real-time updates**: DOM manipulation untuk live display
-- **State management**: tournamentData object menyimpan semua state tournament
-- **Penalty Logic**: Recursive takePenalty() function dengan sudden death support
+2.  **Tournament Mode:**
+    *   **Flexible Team Count:** Supports 4, 8, or 16 teams with dynamic bracket generation.
+    *   **Setup Modes:** Manual (custom team input) and Auto (generates from a database of 32 famous teams).
+    *   **Auto Play:** Matches proceed automatically, queuing up sequentially, with a slowed simulation speed (400ms per minute) for better viewing.
+    *   **Realistic Penalty Shootout:** Detailed system with 4 outcomes (GOAL, SAVE, MISS, BLUNDER), success rates based on difficulty, 5 alternating rounds, and sudden death.
+    *   **Live Display:** Real-time animated scoreboard, timer, and event log, including penalty scores.
+    *   **Comprehensive Match Statistics:** Displays possession, shots, assists, passes, corners, offsides, fouls, and cards post-match. Auto-hides after 4.5 seconds.
+    *   **Tournament Bracket:** Visual representation of the tournament progression from start to champion, with status indicators and winner highlighting.
+    *   **Detailed Tournament Log:** Timestamped entries for every event, round changes, penalty shootouts, and match results, with auto-scrolling.
+    *   **Injury Time:** Randomly generated injury time for both halves (1-4 mins for first, 2-6 mins for second) where events can still occur.
+    *   **Tactical Formations:** Randomly assigned and displayed formations (e.g., 4-4-2, 4-3-3).
+    *   **Man of the Match:** A comprehensive rating system based on player performance (goals, assists, shots, possession, fouls, cards) displayed with a golden gradient.
+    *   **Enhanced Event Logging:** 13+ types of log entries with unique colors, styles, and animations for goals, saves, chances, fouls, cards, etc.
+    *   **Expanded Match Statistics:** Includes Assists, Offsides, and Red Cards.
+    *   **Enhanced Event Simulation:** More realistic goal events with assist tracking, offside detection, red card chances, and player substitutions.
 
-### Penalty Shootout Architecture
-```
-simulatePenaltyShootout()
-  → takePenalty() [recursive]
-    → Team A shoots (success based on difficulty)
-    → Team B shoots (success based on difficulty)
-    → Update scores and live display
-    → Check winner:
-      - If round >= 5 and scoreA > scoreB → Team A wins
-      - If round >= 5 and scoreB > scoreA → Team B wins
-      - If round === 5 and tied → Enter sudden death mode
-      - If sudden death and tied → Continue next round
-    → setTimeout(takePenalty, 3000) [next round]
-```
+3.  **Settings:** Adjustable match duration (5/45/90 minutes), simulation speed, and display mode (light/dark) saved to `localStorage`.
 
-## Performance Optimization
-- Tournament match speed: 400ms per minute (optimal viewing speed)
-- Penalty timing: 3000ms per round, 1500ms between Team A and Team B
-- Auto cleanup: Live events limited to 5 terbaru
-- Efficient rendering: Update only changed elements
-- Stats display: Auto-hide after 4500ms
+**System Design Choices:**
+-   **Frontend:** Pure HTML5, CSS3, and Vanilla JavaScript for a lightweight and performant web application.
+-   **State Management:** The `tournamentData` object centrally manages all tournament-related states.
+-   **Asynchronous Operations:** Utilizes `setTimeout` for non-blocking match simulations, penalty shootouts, and smooth transitions between rounds.
+-   **DOM Manipulation:** Direct and efficient DOM updates for real-time display.
+-   **Responsive Design:** Optimized for mobile viewing with adjusted font sizes, spacing, and stacked layouts for smaller screens.
+
+**Architecture Notes:**
+-   **Tournament Flow:** Managed by a sequential and recursive flow of functions (`initializeTournament`, `playNextMatch`, `playTournamentMatch`, `simulateTournamentMatch`, `finishTournamentMatch`, `setupSemiFinals`, `setupFinal`, `displayChampion`).
+-   **Penalty Shootout:** Implemented with a recursive `takePenalty()` function that handles alternating kicks, score updates, winner checks, and sudden death logic.
+-   **Performance:** Optimized with controlled simulation speeds, specific penalty timings, and efficient rendering by updating only changed DOM elements. Auto-cleanup limits live events to the 5 most recent.
+
+## External Dependencies
+-   **Storage:** `localStorage` for persisting user preferences and settings.
+-   **Server:** A simple Python HTTP Server (port 5000) is used to serve the static files locally.
