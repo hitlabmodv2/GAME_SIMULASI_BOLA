@@ -20,28 +20,55 @@ Proyek ini adalah aplikasi simulasi sepak bola berbasis web yang memungkinkan pe
   - Animasi dan highlight event penting
 
 ### 2. Mode Tournament
-**Fitur Terbaru - Auto Play Tournament!**
+**Fitur Terbaru - Flexible Tournament dengan Penalty Akurat!**
+
+- **Jumlah Tim Fleksibel**: Pilih jumlah tim tournament
+  - **4 Tim**: Semi Finals → Final → Champion
+  - **8 Tim**: Quarter Finals → Semi Finals → Final → Champion
+  - **16 Tim**: Round of 16 → Quarter Finals → Semi Finals → Final → Champion
+
 - **Setup Mode**: Pilih antara Manual atau Auto
-  - **Manual**: Input 8 tim dengan nama dan tingkat kesulitan custom
-  - **Auto**: Generate otomatis 8 tim dari database tim terkenal
+  - **Manual**: Input tim sesuai jumlah dengan nama dan tingkat kesulitan custom (1-7)
+  - **Auto**: Generate otomatis dari database 32 tim terkenal dunia
   
-- **Sistem Babak**:
-  - **Babak 1**: Quarter Finals (4 pertandingan) → Semi Finals (2 pertandingan)
-  - **Babak 2**: Final (1 pertandingan) → Champion
+- **Database Tim Lengkap** (32 tim):
+  - Premier League: Manchester United, Liverpool, Chelsea, Arsenal, Man City, Tottenham, Newcastle, West Ham, Leicester
+  - La Liga: Real Madrid, Barcelona, Atletico Madrid, Sevilla, Valencia
+  - Serie A: Juventus, AC Milan, Inter Milan, Napoli, AS Roma
+  - Bundesliga: Bayern Munich, Borussia Dortmund, RB Leipzig, Bayer Leverkusen
+  - Ligue 1: PSG, Olympique Lyon, Marseille, Monaco
+  - Lainnya: Ajax Amsterdam, Benfica, FC Porto, Sporting CP, Shakhtar Donetsk
   
 - **Auto Play**: Pertandingan berjalan otomatis tanpa perlu klik tombol
   - Setiap pertandingan selesai langsung lanjut ke pertandingan berikutnya
+  - Kecepatan simulasi 400ms per menit (lebih lambat untuk viewing yang nyaman)
   - Transisi otomatis antar babak dengan delay
   - Tidak ada bentrok - satu pertandingan selesai baru mulai berikutnya
+  
+- **Penalty Shootout Akurat**:
+  - Sistem adu penalti detail saat pertandingan seri
+  - 5 ronde penalti alternating (Tim A → Tim B)
+  - Success rate berdasarkan tingkat kesulitan tim (60% + difficulty*5%)
+  - Sudden Death mode jika masih seri setelah 5 ronde
+  - Log detail setiap penalti (GOOL/GAGAL)
+  - Update skor real-time dengan format: 2 (4) - 2 (3)
   
 - **Live Display Real-time**:
   - Scoreboard live dengan animasi
   - Timer pertandingan yang berjalan
-  - Event log untuk gol dan kartu kuning
-  - Update skor real-time saat pertandingan berlangsung
+  - Event log lengkap (gol, kartu, save, corner, half-time, penalti)
+  - Update skor real-time termasuk skor penalti
+  
+- **Statistik Pertandingan Lengkap**:
+  - Tampil setelah setiap pertandingan selesai
+  - Penguasaan bola dengan bar visual
+  - Tembakan dan tembakan on target
+  - Operan, tendangan pojok, pelanggaran
+  - Kartu kuning
+  - Auto-hide setelah 4.5 detik
   
 - **Tournament Bracket**:
-  - Visualisasi bracket lengkap dari Quarter Finals sampai Champion
+  - Visualisasi bracket lengkap dari awal sampai Champion
   - Status pertandingan (Menunggu/Berlangsung/Selesai)
   - Highlight tim pemenang
   - Skor final setiap pertandingan
@@ -49,6 +76,7 @@ Proyek ini adalah aplikasi simulasi sepak bola berbasis web yang memungkinkan pe
 - **Log Battle Lengkap**:
   - Log setiap pertandingan dengan timestamp
   - Highlight perubahan babak
+  - Detail penalty shootout lengkap
   - Hasil pertandingan dan pemenang
   - Scroll otomatis ke event terbaru
 
@@ -77,25 +105,57 @@ Proyek ini adalah aplikasi simulasi sepak bola berbasis web yang memungkinkan pe
 
 ## Recent Changes (October 18, 2025)
 
-### Tournament Mode Enhancement
-1. **Added Auto/Manual Setup Mode**
-   - Manual: User input 8 tim custom
-   - Auto: Random generate dari 16 tim terkenal
+### Tournament Mode Enhancement - Latest Update
 
-2. **Implemented Auto Play System**
+1. **Flexible Team Count**
+   - Dropdown selector untuk jumlah tim (4, 8, atau 16 tim)
+   - Dynamic team input generation sesuai jumlah yang dipilih
+   - Bracket otomatis adjust sesuai jumlah tim
+
+2. **Extended Team Database**
+   - Expanded dari 16 tim menjadi 32 tim terkenal dunia
+   - Coverage liga top Eropa (EPL, La Liga, Serie A, Bundesliga, Ligue 1)
+   - Auto-generate support sampai 16 tim tournament
+
+3. **Slowed Match Simulation**
+   - Tournament match speed dari 100ms menjadi 400ms per menit
+   - Lebih nyaman untuk viewing dan follow the action
+   - Log events lebih mudah dibaca
+
+4. **Match Statistics Display**
+   - Statistik lengkap setelah setiap pertandingan
+   - Visual bar untuk possession percentage
+   - Detailed stats: shots, passes, corners, fouls, cards
+   - Auto-display 4.5 detik lalu auto-hide
+
+5. **Accurate Penalty Shootout System**
+   - Detail simulation setiap tendangan penalti
+   - Success rate based on team difficulty (60% + difficulty*5%)
+   - 5 rounds alternating (Team A → Team B)
+   - True sudden death mode jika masih seri
+   - Sudden death continues alternating sampai ada pemenang
+   - Live score update dengan format: 2 (4) - 2 (3)
+   - Log lengkap setiap penalti dengan status GOOL/GAGAL
+
+### Previous Enhancements
+1. **Auto/Manual Setup Mode**
+   - Manual: User input tim custom dengan difficulty 1-7
+   - Auto: Random generate dari database tim terkenal
+
+2. **Auto Play System**
    - Pertandingan otomatis tanpa perlu klik tombol
    - Auto lanjut ke pertandingan berikutnya setelah selesai
    - Sistem queue untuk mencegah bentrokan pertandingan
 
-3. **Added Live Match Display**
+3. **Live Match Display**
    - Real-time scoreboard dengan animasi pulse
    - Live timer dan event log
-   - Event highlighting untuk gol dan kartu
+   - Event highlighting untuk gol, kartu, save, corner
 
-4. **Enhanced Tournament Bracket**
+4. **Tournament Bracket**
    - Visual feedback untuk pertandingan aktif
    - Status indicator (Menunggu/Berlangsung/Selesai)
-   - Winner highlighting
+   - Winner highlighting dengan warna hijau
 
 5. **Tournament Log System**
    - Comprehensive battle log dengan timestamp
@@ -110,13 +170,16 @@ Proyek ini adalah aplikasi simulasi sepak bola berbasis web yang memungkinkan pe
 ## Cara Menggunakan Tournament
 
 1. Klik **Tournament** dari menu utama
-2. Pilih mode setup:
-   - **Manual Setup**: Input nama dan tingkat kesulitan 8 tim
-   - **Auto Setup**: Klik untuk generate otomatis
-3. Klik **Mulai Tournament**
-4. Duduk santai dan tonton pertandingan berjalan otomatis!
-5. Tournament akan berlangsung dari Quarter Finals → Semi Finals → Final → Champion
-6. Lihat hasil di bracket dan log pertandingan
+2. Pilih **jumlah tim** yang diinginkan (4, 8, atau 16 tim)
+3. Pilih mode setup:
+   - **Manual Setup**: Input nama dan tingkat kesulitan tim (1-7, max bisa sama semua)
+   - **Auto Setup**: Klik untuk generate otomatis dari database
+4. Klik **Mulai Tournament**
+5. Duduk santai dan tonton pertandingan berjalan otomatis!
+6. Jika ada pertandingan seri, tonton adu penalti detail dengan sudden death
+7. Lihat statistik lengkap setelah setiap pertandingan
+8. Tournament berlangsung otomatis sampai keluar juara!
+9. Lihat hasil di bracket dan log pertandingan
 
 ## Architecture Notes
 
@@ -137,12 +200,30 @@ initializeTournament()
 ```
 
 ### Key Features
-- **Non-blocking**: Menggunakan setInterval dengan speed 100ms untuk simulasi cepat
+- **Non-blocking**: Menggunakan recursive setTimeout untuk penalty shootout
 - **Event-driven**: Callbacks dan setTimeout untuk transisi antar babak
 - **Real-time updates**: DOM manipulation untuk live display
 - **State management**: tournamentData object menyimpan semua state tournament
+- **Penalty Logic**: Recursive takePenalty() function dengan sudden death support
+
+### Penalty Shootout Architecture
+```
+simulatePenaltyShootout()
+  → takePenalty() [recursive]
+    → Team A shoots (success based on difficulty)
+    → Team B shoots (success based on difficulty)
+    → Update scores and live display
+    → Check winner:
+      - If round >= 5 and scoreA > scoreB → Team A wins
+      - If round >= 5 and scoreB > scoreA → Team B wins
+      - If round === 5 and tied → Enter sudden death mode
+      - If sudden death and tied → Continue next round
+    → setTimeout(takePenalty, 3000) [next round]
+```
 
 ## Performance Optimization
-- Tournament match speed: 100ms per minute (lebih cepat dari regular match)
+- Tournament match speed: 400ms per minute (optimal viewing speed)
+- Penalty timing: 3000ms per round, 1500ms between Team A and Team B
 - Auto cleanup: Live events limited to 5 terbaru
 - Efficient rendering: Update only changed elements
+- Stats display: Auto-hide after 4500ms

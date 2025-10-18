@@ -332,60 +332,65 @@ function simulatePenaltyShootout(match) {
     let penaltyScoreA = 0;
     let penaltyScoreB = 0;
     let round = 1;
+    let suddenDeathMode = false;
     
-    const penaltyInterval = setInterval(() => {
-        if (round <= 5) {
-            // Team A penalty
-            const successChanceA = 60 + (match.teamA.difficulty * 5);
-            const penaltyA = Math.random() * 100 < successChanceA;
-            if (penaltyA) {
-                penaltyScoreA++;
-                addTournamentLog(`⚽ ${match.teamA.name} - GOOL! Penalti ${round} masuk! (${penaltyScoreA}-${penaltyScoreB})`, 'goal');
-                addLiveEvent(`⚽ ${match.teamA.name} skor!`, 'goal');
+    function takePenalty() {
+        const roundLabel = suddenDeathMode ? `SD${round - 5}` : `${round}`;
+        
+        // Team A penalty
+        const successChanceA = 60 + (match.teamA.difficulty * 5);
+        const penaltyA = Math.random() * 100 < successChanceA;
+        if (penaltyA) {
+            penaltyScoreA++;
+            addTournamentLog(`⚽ ${match.teamA.name} - GOOL! Penalti ${roundLabel} masuk! (${penaltyScoreA}-${penaltyScoreB})`, 'goal');
+            addLiveEvent(`⚽ ${match.teamA.name} skor!`, 'goal');
+        } else {
+            addTournamentLog(`❌ ${match.teamA.name} - GAGAL! Penalti ${roundLabel} meleset!`, 'warning');
+            addLiveEvent(`❌ ${match.teamA.name} gagal!`, 'warning');
+        }
+        
+        setTimeout(() => {
+            // Team B penalty
+            const successChanceB = 60 + (match.teamB.difficulty * 5);
+            const penaltyB = Math.random() * 100 < successChanceB;
+            if (penaltyB) {
+                penaltyScoreB++;
+                addTournamentLog(`⚽ ${match.teamB.name} - GOOL! Penalti ${roundLabel} masuk! (${penaltyScoreA}-${penaltyScoreB})`, 'goal');
+                addLiveEvent(`⚽ ${match.teamB.name} skor!`, 'goal');
             } else {
-                addTournamentLog(`❌ ${match.teamA.name} - GAGAL! Penalti ${round} meleset!`, 'warning');
-                addLiveEvent(`❌ ${match.teamA.name} gagal!`, 'warning');
+                addTournamentLog(`❌ ${match.teamB.name} - GAGAL! Penalti ${roundLabel} meleset!`, 'warning');
+                addLiveEvent(`❌ ${match.teamB.name} gagal!`, 'warning');
             }
             
-            setTimeout(() => {
-                // Team B penalty
-                const successChanceB = 60 + (match.teamB.difficulty * 5);
-                const penaltyB = Math.random() * 100 < successChanceB;
-                if (penaltyB) {
-                    penaltyScoreB++;
-                    addTournamentLog(`⚽ ${match.teamB.name} - GOOL! Penalti ${round} masuk! (${penaltyScoreA}-${penaltyScoreB})`, 'goal');
-                    addLiveEvent(`⚽ ${match.teamB.name} skor!`, 'goal');
-                } else {
-                    addTournamentLog(`❌ ${match.teamB.name} - GAGAL! Penalti ${round} meleset!`, 'warning');
-                    addLiveEvent(`❌ ${match.teamB.name} gagal!`, 'warning');
-                }
-                
-                document.getElementById('liveScoreA').textContent = `${match.scoreA} (${penaltyScoreA})`;
-                document.getElementById('liveScoreB').textContent = `${match.scoreB} (${penaltyScoreB})`;
-                
-                round++;
-                
-                if (round > 5) {
-                    clearInterval(penaltyInterval);
-                    
-                    if (penaltyScoreA > penaltyScoreB) {
-                        match.winner = match.teamA;
-                        addTournamentLog(`🏆 ${match.teamA.name} menang adu penalti ${penaltyScoreA}-${penaltyScoreB}!`, 'match-end');
-                    } else if (penaltyScoreB > penaltyScoreA) {
-                        match.winner = match.teamB;
-                        addTournamentLog(`🏆 ${match.teamB.name} menang adu penalti ${penaltyScoreB}-${penaltyScoreA}!`, 'match-end');
-                    } else {
-                        // Sudden death
-                        const suddenDeath = Math.random() > 0.5 ? match.teamA : match.teamB;
-                        match.winner = suddenDeath;
-                        addTournamentLog(`⚡ Sudden death! ${suddenDeath.name} menang!`, 'match-end');
-                    }
-                    
+            document.getElementById('liveScoreA').textContent = `${match.scoreA} (${penaltyScoreA})`;
+            document.getElementById('liveScoreB').textContent = `${match.scoreB} (${penaltyScoreB})`;
+            
+            // Check winner after this round
+            if (round >= 5) {
+                if (penaltyScoreA > penaltyScoreB) {
+                    match.winner = match.teamA;
+                    addTournamentLog(`🏆 ${match.teamA.name} menang adu penalti ${penaltyScoreA}-${penaltyScoreB}!`, 'match-end');
                     proceedAfterMatch(match);
+                    return;
+                } else if (penaltyScoreB > penaltyScoreA) {
+                    match.winner = match.teamB;
+                    addTournamentLog(`🏆 ${match.teamB.name} menang adu penalti ${penaltyScoreB}-${penaltyScoreA}!`, 'match-end');
+                    proceedAfterMatch(match);
+                    return;
+                } else if (round === 5) {
+                    // Enter sudden death mode
+                    suddenDeathMode = true;
+                    addTournamentLog('⚡ Masih seri! Sudden Death dimulai!', 'important');
+                    addLiveEvent('⚡ Sudden Death!', 'goal');
                 }
-            }, 1500);
-        }
-    }, 3000);
+            }
+            
+            round++;
+            setTimeout(takePenalty, 3000);
+        }, 1500);
+    }
+    
+    takePenalty();
 }
 
 function proceedAfterMatch(match) {
