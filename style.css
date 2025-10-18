@@ -727,6 +727,85 @@ body {
     font-weight: bold;
 }
 
+.tournament-log-entry.goal {
+    border-left-color: #10b981;
+    background: rgba(16, 185, 129, 0.15);
+    font-weight: bold;
+    font-size: 1.05rem;
+    animation: goalPulse 0.5s ease;
+}
+
+@keyframes goalPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+.tournament-log-entry.save {
+    border-left-color: #06b6d4;
+    background: rgba(6, 182, 212, 0.1);
+}
+
+.tournament-log-entry.chance {
+    border-left-color: #f59e0b;
+    background: rgba(245, 158, 11, 0.08);
+}
+
+.tournament-log-entry.pass {
+    border-left-color: #8b5cf6;
+    background: rgba(139, 92, 246, 0.08);
+}
+
+.tournament-log-entry.yellow-card {
+    border-left-color: #eab308;
+    background: rgba(234, 179, 8, 0.15);
+    font-weight: 600;
+}
+
+.tournament-log-entry.red-card {
+    border-left-color: #ef4444;
+    background: rgba(239, 68, 68, 0.2);
+    font-weight: bold;
+    border-left-width: 5px;
+}
+
+.tournament-log-entry.foul {
+    border-left-color: #f97316;
+    background: rgba(249, 115, 22, 0.1);
+}
+
+.tournament-log-entry.corner {
+    border-left-color: #14b8a6;
+    background: rgba(20, 184, 166, 0.1);
+}
+
+.tournament-log-entry.offside {
+    border-left-color: #a855f7;
+    background: rgba(168, 85, 247, 0.1);
+}
+
+.tournament-log-entry.substitution {
+    border-left-color: #3b82f6;
+    background: rgba(59, 130, 246, 0.12);
+}
+
+.tournament-log-entry.halftime {
+    border-left-color: #f59e0b;
+    background: rgba(245, 158, 11, 0.15);
+    font-weight: bold;
+    text-align: center;
+}
+
+.tournament-log-entry.commentary {
+    border-left-color: #ec4899;
+    background: rgba(236, 72, 153, 0.1);
+    font-style: italic;
+    border-left-width: 5px;
+}
+
+.tournament-log-entry.commentary em {
+    color: #f9a8d4;
+}
+
 .live-match-display {
     background: var(--surface-color);
     border-radius: 15px;
@@ -850,6 +929,12 @@ body {
     font-size: 1.3rem;
 }
 
+.stats-subtitle {
+    margin: 5px 0 0 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
 .stats-grid {
     display: grid;
     gap: 12px;
@@ -947,8 +1032,16 @@ footer {
     background: var(--primary-color);
 }
 
-/* Responsive */
+/* Responsive Mobile */
 @media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+    
+    .container {
+        padding: 10px;
+    }
+    
     .team-setup {
         grid-template-columns: 1fr;
     }
@@ -960,23 +1053,219 @@ footer {
     
     .scoreboard {
         grid-template-columns: 1fr;
-        gap: 15px;
+        gap: 10px;
     }
     
     .team-score {
         justify-content: space-between;
+        font-size: 1rem;
     }
     
     .team-score:last-child {
         flex-direction: row;
     }
     
-    .header h1 {
+    .score {
         font-size: 2rem;
     }
     
+    .header h1 {
+        font-size: 1.6rem;
+    }
+    
+    .header h2 {
+        font-size: 1.4rem;
+    }
+    
+    .subtitle {
+        font-size: 0.9rem;
+    }
+    
     .main-btn {
+        font-size: 1rem;
+        padding: 18px 20px;
+    }
+    
+    .main-btn .icon {
+        font-size: 1.5rem;
+    }
+    
+    /* Tournament Bracket Mobile */
+    .tournament-bracket {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .bracket-column h3 {
+        font-size: 1rem;
+    }
+    
+    .match-card {
+        padding: 12px;
+    }
+    
+    .match-team-name {
+        font-size: 0.9rem;
+    }
+    
+    .match-team-score {
+        font-size: 1rem;
+    }
+    
+    .match-status {
+        font-size: 0.75rem;
+    }
+    
+    /* Tournament Log Mobile */
+    .tournament-log {
+        height: 250px;
+        padding: 15px;
+    }
+    
+    .tournament-log-entry {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+        margin-bottom: 6px;
+    }
+    
+    .tournament-log-entry.goal {
+        font-size: 0.95rem;
+    }
+    
+    .tournament-log-section h3 {
+        padding: 15px;
+        font-size: 1rem;
+    }
+    
+    /* Live Match Display Mobile */
+    .live-match-display {
+        padding: 15px;
+        margin: 15px 0;
+    }
+    
+    .live-match-display h3 {
+        font-size: 1rem;
+        margin-bottom: 15px;
+    }
+    
+    .live-match-info {
+        padding: 15px;
+        gap: 10px;
+    }
+    
+    .live-team {
+        font-size: 0.95rem;
+        gap: 8px;
+    }
+    
+    .live-score {
+        font-size: 1.5rem;
+        min-width: 40px;
+    }
+    
+    .live-time {
+        padding: 8px 15px;
         font-size: 1.1rem;
-        padding: 20px 25px;
+    }
+    
+    .live-events {
+        max-height: 120px;
+        padding: 12px;
+    }
+    
+    .live-event {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+    }
+    
+    /* Stats Mobile */
+    .tournament-stats-section h3 {
+        padding: 15px;
+        font-size: 1rem;
+    }
+    
+    .match-stats-header h4 {
+        font-size: 1.1rem;
+    }
+    
+    .stats-subtitle {
+        font-size: 0.8rem;
+    }
+    
+    .stats-grid {
+        gap: 10px;
+    }
+    
+    .stat-item {
+        padding: 10px 12px;
+    }
+    
+    .stat-label {
+        font-size: 0.85rem;
+    }
+    
+    .stat-values {
+        font-size: 0.95rem;
+        gap: 10px;
+    }
+    
+    /* Tournament Status Mobile */
+    .tournament-status {
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+    
+    /* Champion Display Mobile */
+    .champion-trophy {
+        font-size: 3rem;
+    }
+    
+    .champion-name {
+        font-size: 1.2rem;
+    }
+    
+    .champion-label {
+        font-size: 0.9rem;
+    }
+    
+    /* Tournament Setup Mobile */
+    .teams-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .tournament-team-input {
+        padding: 15px;
+    }
+    
+    .tournament-team-input h3 {
+        font-size: 1rem;
+    }
+    
+    .tournament-team-input input {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+    
+    /* Action Buttons Mobile */
+    .action-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn {
+        padding: 12px 25px;
+        font-size: 1rem;
+        width: 100%;
+    }
+    
+    /* Footer Mobile */
+    footer {
+        padding: 10px 15px;
+    }
+    
+    .footer-content {
+        font-size: 0.8rem;
     }
 }

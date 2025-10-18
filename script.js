@@ -8,8 +8,8 @@ let matchData = {
     speed: 200,
     logs: [],
     stats: {
-        teamA: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0 },
-        teamB: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0 }
+        teamA: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0 },
+        teamB: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0 }
     },
     isRunning: false,
     interval: null
@@ -245,6 +245,7 @@ function playTournamentMatch(match) {
                       tournamentData.currentRound === 'semi' ? 'Semi Final' : 'Final';
     
     addTournamentLog(`⚽ ${roundName}: ${match.teamA.name} vs ${match.teamB.name} - Pertandingan dimulai!`, 'match-start');
+    addCommentary(getRandomComment('matchStart'));
     updateTournamentStatus(`Sedang berlangsung: ${match.teamA.name} vs ${match.teamB.name}`);
     
     document.getElementById('liveMatchDisplay').style.display = 'block';
@@ -262,8 +263,8 @@ function playTournamentMatch(match) {
     matchData.currentMinute = 0;
     matchData.logs = [];
     matchData.stats = {
-        teamA: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0 },
-        teamB: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0 }
+        teamA: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0 },
+        teamB: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0 }
     };
     
     simulateTournamentMatch(match);
@@ -277,16 +278,154 @@ function simulateTournamentMatch(match) {
         matchData.currentMinute++;
         document.getElementById('liveMinute').textContent = matchData.currentMinute + "'";
         
-        simulateMinute();
+        simulateTournamentMinute();
         
         document.getElementById('liveScoreA').textContent = matchData.teamA.score;
         document.getElementById('liveScoreB').textContent = matchData.teamB.score;
+        
+        // Halftime commentary
+        if (matchData.currentMinute === Math.floor(duration / 2)) {
+            addTournamentLog('⏸️ Turun minum! Babak pertama selesai.', 'halftime');
+            addCommentary(getRandomComment('halftime'));
+        } else if (matchData.currentMinute === Math.floor(duration / 2) + 1) {
+            addTournamentLog('▶️ Babak kedua dimulai!', 'halftime');
+        }
         
         if (matchData.currentMinute >= duration) {
             clearInterval(interval);
             finishTournamentMatch(match);
         }
     }, simulationSpeed);
+}
+
+function simulateTournamentMinute() {
+    updatePossession();
+    
+    const eventChance = Math.random() * 100;
+    
+    if (eventChance < 12) {
+        simulateTournamentAttack();
+    } else if (eventChance < 18) {
+        simulateTournamentPassSequence();
+    } else if (eventChance < 21) {
+        simulateTournamentFoul();
+    } else if (eventChance < 23) {
+        simulateTournamentCorner();
+    } else if (eventChance < 24) {
+        simulateTournamentOffside();
+    } else if (eventChance < 24.5 && matchData.currentMinute > 60) {
+        simulateTournamentSubstitution();
+    }
+}
+
+function simulateTournamentAttack() {
+    const attackingTeam = Math.random() > 0.5 ? 'teamA' : 'teamB';
+    const defendingTeam = attackingTeam === 'teamA' ? 'teamB' : 'teamA';
+    const attackTeamName = matchData[attackingTeam].name;
+    const defendTeamName = matchData[defendingTeam].name;
+    const difficulty = matchData[attackingTeam].difficulty;
+    
+    const shotAccuracy = 20 + (difficulty * 8);
+    const shootChance = Math.random() * 100;
+    
+    matchData.stats[attackingTeam].shots++;
+    
+    if (shootChance < shotAccuracy) {
+        matchData.stats[attackingTeam].shotsOnTarget++;
+        
+        const goalChance = 15 + (difficulty * 5);
+        const goalRoll = Math.random() * 100;
+        
+        if (goalRoll < goalChance) {
+            // GOAL!
+            matchData[attackingTeam].score++;
+            const scorer = generatePlayerName();
+            const assister = Math.random() < 0.7 ? generatePlayerName() : null;
+            
+            if (assister) {
+                matchData.stats[attackingTeam].assists++;
+                addTournamentLog(`⚽ GOOOL! ${scorer} mencetak gol untuk ${attackTeamName}! Assist dari ${assister}! Skor: ${matchData.teamA.score}-${matchData.teamB.score}`, 'goal');
+                addCommentary(getRandomComment('goal'));
+                addLiveEvent(`⚽ ${scorer} - Assist: ${assister}`, 'goal');
+            } else {
+                addTournamentLog(`⚽ GOOOL! ${scorer} mencetak gol untuk ${attackTeamName}! Skor: ${matchData.teamA.score}-${matchData.teamB.score}`, 'goal');
+                addCommentary(getRandomComment('goal'));
+                addLiveEvent(`⚽ ${scorer} (${attackTeamName})`, 'goal');
+            }
+        } else {
+            const saveType = ['refleks cemerlang', 'menangkap dengan aman', 'memukul ke pojok', 'menepis sempurna'];
+            const saveMessage = saveType[Math.floor(Math.random() * saveType.length)];
+            addTournamentLog(`🧤 Tembakan ke gawang ${defendTeamName}! Kiper ${saveMessage}!`, 'save');
+            addCommentary(getRandomComment('save'));
+            addLiveEvent(`🧤 Kiper ${defendTeamName} ${saveMessage}`);
+        }
+    } else {
+        const missType = ['melebar', 'melambung tinggi', 'mengenai tiang', 'diblok'];
+        const miss = missType[Math.floor(Math.random() * missType.length)];
+        addTournamentLog(`⚠️ Peluang ${attackTeamName}! Tembakan ${miss}!`, 'chance');
+        if (miss === 'mengenai tiang') {
+            addCommentary(getRandomComment('miss'));
+            addLiveEvent(`⚠️ ${attackTeamName} mengenai tiang!`, 'warning');
+        }
+    }
+}
+
+function simulateTournamentPassSequence() {
+    const team = Math.random() > 0.5 ? 'teamA' : 'teamB';
+    const teamName = matchData[team].name;
+    const passCount = Math.floor(Math.random() * 10) + 5;
+    
+    matchData.stats[team].passes += passCount;
+    addTournamentLog(`🔄 ${teamName} membangun serangan dengan ${passCount} operan beruntun.`, 'pass');
+}
+
+function simulateTournamentFoul() {
+    const team = Math.random() > 0.5 ? 'teamA' : 'teamB';
+    const teamName = matchData[team].name;
+    const playerName = generatePlayerName();
+    
+    matchData.stats[team].fouls++;
+    
+    const cardChance = Math.random() * 100;
+    if (cardChance < 15) {
+        matchData.stats[team].yellowCards++;
+        addTournamentLog(`🟨 Kartu kuning untuk ${playerName} (${teamName})! Pelanggaran keras!`, 'yellow-card');
+        addLiveEvent(`🟨 ${playerName} (${teamName})`, 'warning');
+    } else if (cardChance < 17) {
+        matchData.stats[team].redCards++;
+        addTournamentLog(`🟥 KARTU MERAH! ${playerName} (${teamName}) diusir! ${teamName} main dengan 10 pemain!`, 'red-card');
+        addLiveEvent(`🟥 ${playerName} diusir!`, 'red-card');
+    } else {
+        addTournamentLog(`⚽ Pelanggaran oleh ${playerName} (${teamName}). Tendangan bebas!`, 'foul');
+    }
+}
+
+function simulateTournamentCorner() {
+    const team = Math.random() > 0.5 ? 'teamA' : 'teamB';
+    const teamName = matchData[team].name;
+    
+    matchData.stats[team].corners++;
+    addTournamentLog(`⛳ Tendangan pojok untuk ${teamName}!`, 'corner');
+    addLiveEvent(`⛳ Corner ${teamName}`);
+}
+
+function simulateTournamentOffside() {
+    const team = Math.random() > 0.5 ? 'teamA' : 'teamB';
+    const teamName = matchData[team].name;
+    const playerName = generatePlayerName();
+    
+    matchData.stats[team].offsides++;
+    addTournamentLog(`🚩 Offside! ${playerName} (${teamName}) tertangkap offside!`, 'offside');
+}
+
+function simulateTournamentSubstitution() {
+    const team = Math.random() > 0.5 ? 'teamA' : 'teamB';
+    const teamName = matchData[team].name;
+    const playerOut = generatePlayerName();
+    const playerIn = generatePlayerName();
+    
+    addTournamentLog(`🔄 Substitusi ${teamName}: ${playerOut} keluar, ${playerIn} masuk!`, 'substitution');
+    addLiveEvent(`🔄 ${teamName}: ${playerIn} masuk`);
 }
 
 function addLiveEvent(message, type = 'normal') {
@@ -417,10 +556,11 @@ function displayMatchStats(match) {
     statsDiv.innerHTML = `
         <div class="match-stats-header">
             <h4>${match.teamA.name} ${match.scoreA} - ${match.scoreB} ${match.teamB.name}</h4>
+            <p class="stats-subtitle">📊 Statistik Pertandingan Lengkap</p>
         </div>
         <div class="stats-grid">
             <div class="stat-item">
-                <span class="stat-label">Penguasaan Bola</span>
+                <span class="stat-label">⚽ Penguasaan Bola</span>
                 <div class="stat-values">
                     <span>${stats.teamA.possession}%</span>
                     <div class="stat-bar-mini">
@@ -430,7 +570,7 @@ function displayMatchStats(match) {
                 </div>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Tembakan</span>
+                <span class="stat-label">🎯 Tembakan</span>
                 <div class="stat-values">
                     <span>${stats.teamA.shots}</span>
                     <span>-</span>
@@ -438,7 +578,7 @@ function displayMatchStats(match) {
                 </div>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Tembakan On Target</span>
+                <span class="stat-label">🎯 On Target</span>
                 <div class="stat-values">
                     <span>${stats.teamA.shotsOnTarget}</span>
                     <span>-</span>
@@ -446,7 +586,15 @@ function displayMatchStats(match) {
                 </div>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Operan</span>
+                <span class="stat-label">🅰️ Assist</span>
+                <div class="stat-values">
+                    <span>${stats.teamA.assists}</span>
+                    <span>-</span>
+                    <span>${stats.teamB.assists}</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">📝 Operan</span>
                 <div class="stat-values">
                     <span>${stats.teamA.passes}</span>
                     <span>-</span>
@@ -454,7 +602,7 @@ function displayMatchStats(match) {
                 </div>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Tendangan Pojok</span>
+                <span class="stat-label">⛳ Tendangan Pojok</span>
                 <div class="stat-values">
                     <span>${stats.teamA.corners}</span>
                     <span>-</span>
@@ -462,7 +610,15 @@ function displayMatchStats(match) {
                 </div>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Pelanggaran</span>
+                <span class="stat-label">🚩 Offside</span>
+                <div class="stat-values">
+                    <span>${stats.teamA.offsides}</span>
+                    <span>-</span>
+                    <span>${stats.teamB.offsides}</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">⚠️ Pelanggaran</span>
                 <div class="stat-values">
                     <span>${stats.teamA.fouls}</span>
                     <span>-</span>
@@ -470,11 +626,19 @@ function displayMatchStats(match) {
                 </div>
             </div>
             <div class="stat-item">
-                <span class="stat-label">Kartu Kuning</span>
+                <span class="stat-label">🟨 Kartu Kuning</span>
                 <div class="stat-values">
                     <span>${stats.teamA.yellowCards}</span>
                     <span>-</span>
                     <span>${stats.teamB.yellowCards}</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">🟥 Kartu Merah</span>
+                <div class="stat-values">
+                    <span>${stats.teamA.redCards}</span>
+                    <span>-</span>
+                    <span>${stats.teamB.redCards}</span>
                 </div>
             </div>
         </div>
@@ -482,7 +646,7 @@ function displayMatchStats(match) {
     
     setTimeout(() => {
         statsSection.style.display = 'none';
-    }, 4500);
+    }, 5500);
 }
 
 function setupSemiFinals() {
@@ -577,6 +741,44 @@ function displayChampion() {
     updateTournamentStatus(`🎉 ${champion.name} adalah Juara Tournament! Selamat!`);
 }
 
+// Komentator Commentary System
+const commentatorLines = {
+    matchStart: [
+        "Selamat datang di pertandingan yang sangat dinanti! Kedua tim sudah siap di lapangan!",
+        "Pertandingan dimulai! Atmosfer di stadion luar biasa hari ini!",
+        "Wasit meniup peluit! Pertandingan resmi dimulai!",
+        "Ini dia! Pertandingan besar hari ini dimulai! Kedua tim siap berperang!"
+    ],
+    goal: [
+        "GOOOOLLLL! Sungguh spektakuler! Stadion meledak!",
+        "MASUK! Gol yang luar biasa indah!",
+        "GOOOOOLLL! Tidak bisa ditahan! Eksekusi sempurna!",
+        "WOOW! Gol fantastis! Kiper tidak bisa berbuat apa-apa!"
+    ],
+    save: [
+        "Penyelamatan gemilang dari kiper! Refleks luar biasa!",
+        "Kiper tampil heroik! Bola berhasil ditepis!",
+        "Wow! Kiper menunjukkan kualitasnya! Penyelamatan kelas dunia!",
+        "Fantastis! Kiper membaca arah bola dengan sempurna!"
+    ],
+    miss: [
+        "Ohhh! Peluang emas terbuang sia-sia!",
+        "Tidak bisa dipercaya! Peluang bagus meleset!",
+        "Sayang sekali! Seharusnya bisa masuk!",
+        "Hampir! Sedikit lagi menjadi gol indah!"
+    ],
+    halftime: [
+        "Turun minum! Mari kita lihat strategi babak kedua!",
+        "Babak pertama selesai! Pertandingan sangat sengit!",
+        "Half-time! Kedua tim akan melakukan evaluasi di ruang ganti!"
+    ]
+};
+
+function getRandomComment(type) {
+    const comments = commentatorLines[type];
+    return comments[Math.floor(Math.random() * comments.length)];
+}
+
 function addTournamentLog(message, type = 'normal') {
     const logContainer = document.getElementById('tournamentLog');
     const logEntry = document.createElement('div');
@@ -589,6 +791,18 @@ function addTournamentLog(message, type = 'normal') {
     logContainer.scrollTop = logContainer.scrollHeight;
     
     tournamentData.matchLogs.push({ timestamp, message, type });
+}
+
+function addCommentary(message) {
+    const logContainer = document.getElementById('tournamentLog');
+    const commentEntry = document.createElement('div');
+    commentEntry.className = 'tournament-log-entry commentary';
+    
+    const timestamp = new Date().toLocaleTimeString('id-ID');
+    commentEntry.innerHTML = `<strong>[${timestamp}]</strong> 🎙️ <em>"${message}"</em>`;
+    
+    logContainer.appendChild(commentEntry);
+    logContainer.scrollTop = logContainer.scrollHeight;
 }
 
 function updateTournamentStatus(message) {
@@ -662,8 +876,8 @@ function startMatch() {
     matchData.currentMinute = 0;
     matchData.logs = [];
     matchData.stats = {
-        teamA: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0 },
-        teamB: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0 }
+        teamA: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0 },
+        teamB: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0 }
     };
     
     // Update UI
@@ -1003,6 +1217,57 @@ function updateStats() {
                 <div class="stat-value">${stats.teamA.yellowCards} - ${stats.teamB.yellowCards}</div>
                 <div class="stat-bar">
                     <div class="stat-bar-fill" style="width: ${getStatPercentage(stats.teamA.yellowCards, stats.teamB.yellowCards, 'B')}%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stat-row">
+            <div class="stat-label">
+                <span>${matchData.teamA.name}</span>
+                <span>Kartu Merah</span>
+                <span>${matchData.teamB.name}</span>
+            </div>
+            <div class="stat-bar-container">
+                <div class="stat-bar reverse">
+                    <div class="stat-bar-fill" style="width: ${getStatPercentage(stats.teamA.redCards, stats.teamB.redCards, 'A')}%"></div>
+                </div>
+                <div class="stat-value">${stats.teamA.redCards} - ${stats.teamB.redCards}</div>
+                <div class="stat-bar">
+                    <div class="stat-bar-fill" style="width: ${getStatPercentage(stats.teamA.redCards, stats.teamB.redCards, 'B')}%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stat-row">
+            <div class="stat-label">
+                <span>${matchData.teamA.name}</span>
+                <span>Offside</span>
+                <span>${matchData.teamB.name}</span>
+            </div>
+            <div class="stat-bar-container">
+                <div class="stat-bar reverse">
+                    <div class="stat-bar-fill" style="width: ${getStatPercentage(stats.teamA.offsides, stats.teamB.offsides, 'A')}%"></div>
+                </div>
+                <div class="stat-value">${stats.teamA.offsides} - ${stats.teamB.offsides}</div>
+                <div class="stat-bar">
+                    <div class="stat-bar-fill" style="width: ${getStatPercentage(stats.teamA.offsides, stats.teamB.offsides, 'B')}%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stat-row">
+            <div class="stat-label">
+                <span>${matchData.teamA.name}</span>
+                <span>Assist</span>
+                <span>${matchData.teamB.name}</span>
+            </div>
+            <div class="stat-bar-container">
+                <div class="stat-bar reverse">
+                    <div class="stat-bar-fill" style="width: ${getStatPercentage(stats.teamA.assists, stats.teamB.assists, 'A')}%"></div>
+                </div>
+                <div class="stat-value">${stats.teamA.assists} - ${stats.teamB.assists}</div>
+                <div class="stat-bar">
+                    <div class="stat-bar-fill" style="width: ${getStatPercentage(stats.teamA.assists, stats.teamB.assists, 'B')}%"></div>
                 </div>
             </div>
         </div>
