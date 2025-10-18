@@ -375,6 +375,17 @@ body {
     background: rgba(37, 99, 235, 0.1);
 }
 
+.log-entry.commentary {
+    border-left-color: #ec4899;
+    background: rgba(236, 72, 153, 0.1);
+    font-style: italic;
+    border-left-width: 5px;
+}
+
+.log-entry.commentary em {
+    color: #f9a8d4;
+}
+
 .log-time {
     color: var(--text-secondary);
     font-weight: bold;
@@ -550,7 +561,7 @@ body {
 /* Tournament */
 .tournament-bracket {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 20px;
     margin-bottom: 30px;
     padding: 20px;
