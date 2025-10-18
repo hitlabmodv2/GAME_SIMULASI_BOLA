@@ -15,6 +15,16 @@ let matchData = {
     interval: null
 };
 
+let tournamentData = {
+    teams: [],
+    quarterFinals: [],
+    semiFinals: [],
+    final: null,
+    champion: null,
+    isRunning: false,
+    currentRound: 'quarter'
+};
+
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     updateDateTime();

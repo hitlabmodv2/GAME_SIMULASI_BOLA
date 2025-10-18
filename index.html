@@ -159,18 +159,38 @@
             </div>
         </div>
 
-        <!-- Tournament (Coming Soon) -->
+        <!-- Tournament -->
         <div id="tournament" class="screen">
             <div class="header">
                 <h2>🏆 Mode Tournament</h2>
-                <p class="subtitle">Fitur ini akan segera hadir!</p>
+                <p class="subtitle">8 tim bersaing untuk menjadi juara</p>
             </div>
-            <div class="coming-soon">
-                <div class="trophy-icon">🏆</div>
-                <p>Mode tournament dengan 8 tim akan tersedia dalam versi berikutnya</p>
+            
+            <div class="tournament-bracket">
+                <div class="bracket-column">
+                    <h3>Quarter Finals</h3>
+                    <div id="quarterFinals" class="matches"></div>
+                </div>
+                <div class="bracket-column">
+                    <h3>Semi Finals</h3>
+                    <div id="semiFinals" class="matches"></div>
+                </div>
+                <div class="bracket-column">
+                    <h3>Final</h3>
+                    <div id="final" class="matches"></div>
+                </div>
+                <div class="bracket-column">
+                    <h3>🏆 Champion</h3>
+                    <div id="champion" class="champion-display"></div>
+                </div>
             </div>
-            <div class="action-buttons">
-                <button class="btn btn-primary" onclick="showScreen('mainMenu')">Kembali ke Menu</button>
+
+            <div class="tournament-controls">
+                <div id="tournamentStatus" class="tournament-status">Klik tombol untuk memulai tournament</div>
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" onclick="showScreen('mainMenu')">Kembali ke Menu</button>
+                    <button id="startTournamentBtn" class="btn btn-primary" onclick="startTournament()">Mulai Tournament</button>
+                </div>
             </div>
         </div>
     </div>
