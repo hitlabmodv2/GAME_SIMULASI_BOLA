@@ -244,13 +244,15 @@ function simulateTournamentMatch(match) {
 
 function addLiveEvent(message, type = 'normal') {
     const liveEvents = document.getElementById('liveEvents');
+    if (!liveEvents || liveEvents.parentElement.style.display === 'none') return;
+    
     const eventDiv = document.createElement('div');
     eventDiv.className = 'live-event' + (type !== 'normal' ? ' ' + type : '');
     eventDiv.textContent = `${matchData.currentMinute}' - ${message}`;
     
     liveEvents.insertBefore(eventDiv, liveEvents.firstChild);
     
-    if (liveEvents.children.length > 5) {
+    while (liveEvents.children.length > 5) {
         liveEvents.removeChild(liveEvents.lastChild);
     }
 }
@@ -522,8 +524,10 @@ function simulateMinute() {
     // Key moments
     if (minute === Math.floor(matchData.duration / 2)) {
         addLog(minute, 'Turun minum! Babak pertama selesai.', 'important');
+        addLiveEvent('⏸️ Half Time');
     } else if (minute === Math.floor(matchData.duration / 2) + 1) {
         addLog(minute, 'Babak kedua dimulai!', 'important');
+        addLiveEvent('▶️ Babak 2 dimulai');
     }
 }
 
@@ -554,18 +558,21 @@ function simulateAttack() {
             const scorer = generatePlayerName();
             addLog(matchData.currentMinute, `⚽ GOOOL! ${attackTeamName} mencetak gol! Dicetak oleh ${scorer}! ${matchData.teamA.name} ${matchData.teamA.score} - ${matchData.teamB.score} ${matchData.teamB.name}`, 'goal');
             updateScore();
-            
-            if (tournamentData.isRunning && document.getElementById('liveMatchDisplay').style.display === 'block') {
-                addLiveEvent(`⚽ GOOL! ${scorer} (${attackTeamName})`, 'goal');
-            }
+            addLiveEvent(`⚽ GOOL! ${scorer} (${attackTeamName})`, 'goal');
         } else {
             const saveType = ['refleks cemerlang', 'menangkap bola dengan aman', 'memukul bola ke pojok', 'menepis dengan sempurna'];
-            addLog(matchData.currentMinute, `Tembakan keras ke arah gawang ${defendTeamName}! Kiper melakukan ${saveType[Math.floor(Math.random() * saveType.length)]}.`);
+            const saveMessage = saveType[Math.floor(Math.random() * saveType.length)];
+            addLog(matchData.currentMinute, `Tembakan keras ke arah gawang ${defendTeamName}! Kiper melakukan ${saveMessage}.`);
+            addLiveEvent(`Kiper ${defendTeamName} ${saveMessage}`);
         }
     } else {
         // Shot off target
         const missType = ['melebar', 'melambung tinggi', 'mengenai tiang gawang', 'di-blok pemain bertahan'];
-        addLog(matchData.currentMinute, `Peluang ${attackTeamName}! Tembakan ${missType[Math.floor(Math.random() * missType.length)]}.`);
+        const miss = missType[Math.floor(Math.random() * missType.length)];
+        addLog(matchData.currentMinute, `Peluang ${attackTeamName}! Tembakan ${miss}.`);
+        if (miss === 'mengenai tiang gawang') {
+            addLiveEvent(`⚠️ ${attackTeamName} mengenai tiang!`);
+        }
     }
 }
 
@@ -589,10 +596,7 @@ function simulateFoul() {
     if (cardChance < 20) {
         matchData.stats[team].yellowCards++;
         addLog(matchData.currentMinute, `🟨 Kartu kuning untuk ${playerName} (${teamName}) karena pelanggaran keras!`, 'warning');
-        
-        if (tournamentData.isRunning && document.getElementById('liveMatchDisplay').style.display === 'block') {
-            addLiveEvent(`🟨 Kartu kuning: ${playerName}`, 'warning');
-        }
+        addLiveEvent(`🟨 Kartu kuning: ${playerName} (${teamName})`, 'warning');
     } else {
         addLog(matchData.currentMinute, `Pelanggaran oleh ${playerName} (${teamName}). Tendangan bebas diberikan.`);
     }
@@ -604,6 +608,7 @@ function simulateCorner() {
     
     matchData.stats[team].corners++;
     addLog(matchData.currentMinute, `Tendangan pojok untuk ${teamName}.`);
+    addLiveEvent(`⚽ Tendangan pojok ${teamName}`);
     
     // Corner can lead to goal
     if (Math.random() < 0.15) {
