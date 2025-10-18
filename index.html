@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Sepak Bola AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Menu Utama -->
+        <div id="mainMenu" class="screen active">
+            <div class="header">
+                <h1>⚽ Simulasi Sepak Bola AI</h1>
+                <p class="subtitle">Tonton pertandingan AI melawan AI</p>
+            </div>
+            <div class="menu-buttons">
+                <button class="main-btn" onclick="showScreen('matchSetup')">
+                    <span class="icon">🤖</span>
+                    <span class="text">AI vs AI</span>
+                </button>
+                <button class="main-btn" onclick="showTournament()">
+                    <span class="icon">🏆</span>
+                    <span class="text">Tournament</span>
+                </button>
+                <button class="main-btn" onclick="showScreen('settings')">
+                    <span class="icon">⚙️</span>
+                    <span class="text">Pengaturan</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Setup Pertandingan -->
+        <div id="matchSetup" class="screen">
+            <div class="header">
+                <h2>Setup Pertandingan</h2>
+            </div>
+            <div class="team-setup">
+                <div class="team-config">
+                    <h3>Tim A</h3>
+                    <div class="input-group">
+                        <label>Nama Tim:</label>
+                        <input type="text" id="teamAName" value="Barcelona FC" maxlength="20">
+                    </div>
+                    <div class="input-group">
+                        <label>Tingkat Kesulitan:</label>
+                        <div class="difficulty-selector">
+                            <button onclick="changeDifficulty('A', -1)">−</button>
+                            <span id="difficultyA">5</span>
+                            <button onclick="changeDifficulty('A', 1)">+</button>
+                        </div>
+                        <div class="difficulty-bar">
+                            <div id="difficultyBarA" class="difficulty-fill" style="width: 71.4%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="vs-divider">VS</div>
+                <div class="team-config">
+                    <h3>Tim B</h3>
+                    <div class="input-group">
+                        <label>Nama Tim:</label>
+                        <input type="text" id="teamBName" value="Real Madrid" maxlength="20">
+                    </div>
+                    <div class="input-group">
+                        <label>Tingkat Kesulitan:</label>
+                        <div class="difficulty-selector">
+                            <button onclick="changeDifficulty('B', -1)">−</button>
+                            <span id="difficultyB">5</span>
+                            <button onclick="changeDifficulty('B', 1)">+</button>
+                        </div>
+                        <div class="difficulty-bar">
+                            <div id="difficultyBarB" class="difficulty-fill" style="width: 71.4%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="showScreen('mainMenu')">Kembali</button>
+                <button class="btn btn-primary" onclick="startMatch()">Mulai Pertandingan</button>
+            </div>
+        </div>
+
+        <!-- Pertandingan -->
+        <div id="matchScreen" class="screen">
+            <div class="match-header">
+                <h2 id="matchTitle">Barcelona FC vs Real Madrid</h2>
+                <div class="scoreboard">
+                    <div class="team-score">
+                        <span id="teamANameDisplay">Barcelona FC</span>
+                        <span id="scoreA" class="score">0</span>
+                    </div>
+                    <div class="time">
+                        <span id="matchTime">0'</span>
+                    </div>
+                    <div class="team-score">
+                        <span id="scoreB" class="score">0</span>
+                        <span id="teamBNameDisplay">Real Madrid</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="match-content">
+                <div class="match-log-container">
+                    <div class="log-header">
+                        <h3>Log Pertandingan</h3>
+                        <button class="btn-small" onclick="toggleStats()">📊 Statistik</button>
+                    </div>
+                    <div id="matchLog" class="match-log"></div>
+                </div>
+
+                <div id="statsPanel" class="stats-panel">
+                    <div class="stats-header">
+                        <h3>Statistik Pertandingan</h3>
+                        <button class="btn-small" onclick="toggleStats()">✕</button>
+                    </div>
+                    <div id="statsContent" class="stats-content"></div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="backToMenu()">Kembali ke Menu</button>
+            </div>
+        </div>
+
+        <!-- Pengaturan -->
+        <div id="settings" class="screen">
+            <div class="header">
+                <h2>Pengaturan</h2>
+            </div>
+            <div class="settings-content">
+                <div class="setting-item">
+                    <label>Durasi Pertandingan (menit):</label>
+                    <select id="matchDuration">
+                        <option value="45">45 Menit</option>
+                        <option value="90" selected>90 Menit (Full Match)</option>
+                        <option value="5">5 Menit (Demo)</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label>Kecepatan Simulasi:</label>
+                    <select id="simulationSpeed">
+                        <option value="500">Lambat</option>
+                        <option value="200" selected>Normal</option>
+                        <option value="100">Cepat</option>
+                        <option value="50">Sangat Cepat</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label>Mode Tampilan:</label>
+                    <select id="displayMode">
+                        <option value="light">Terang</option>
+                        <option value="dark" selected>Gelap</option>
+                    </select>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="showScreen('mainMenu')">Kembali</button>
+                <button class="btn btn-primary" onclick="saveSettings()">Simpan Pengaturan</button>
+            </div>
+        </div>
+
+        <!-- Tournament (Coming Soon) -->
+        <div id="tournament" class="screen">
+            <div class="header">
+                <h2>🏆 Mode Tournament</h2>
+                <p class="subtitle">Fitur ini akan segera hadir!</p>
+            </div>
+            <div class="coming-soon">
+                <div class="trophy-icon">🏆</div>
+                <p>Mode tournament dengan 8 tim akan tersedia dalam versi berikutnya</p>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="showScreen('mainMenu')">Kembali ke Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="footer-content">
+            <span id="currentDateTime"></span>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
