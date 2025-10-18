@@ -46,7 +46,23 @@ const predefinedTeams = [
     { name: 'Borussia Dortmund', difficulty: 5 },
     { name: 'Atletico Madrid', difficulty: 5 },
     { name: 'Tottenham', difficulty: 4 },
-    { name: 'Ajax Amsterdam', difficulty: 4 }
+    { name: 'Ajax Amsterdam', difficulty: 4 },
+    { name: 'Napoli', difficulty: 5 },
+    { name: 'AS Roma', difficulty: 4 },
+    { name: 'Sevilla FC', difficulty: 4 },
+    { name: 'Valencia CF', difficulty: 4 },
+    { name: 'Benfica', difficulty: 5 },
+    { name: 'FC Porto', difficulty: 5 },
+    { name: 'Sporting CP', difficulty: 4 },
+    { name: 'RB Leipzig', difficulty: 5 },
+    { name: 'Bayer Leverkusen', difficulty: 5 },
+    { name: 'Newcastle United', difficulty: 4 },
+    { name: 'West Ham United', difficulty: 4 },
+    { name: 'Leicester City', difficulty: 4 },
+    { name: 'Olympique Lyon', difficulty: 4 },
+    { name: 'Marseille', difficulty: 4 },
+    { name: 'Monaco', difficulty: 4 },
+    { name: 'Shakhtar Donetsk', difficulty: 4 }
 ];
 
 // Initialize
@@ -83,6 +99,34 @@ function showScreen(screenName) {
     currentScreen = screenName;
 }
 
+function updateTeamInputs() {
+    const teamCount = parseInt(document.getElementById('teamCount').value);
+    const teamsGrid = document.getElementById('teamsGrid');
+    teamsGrid.innerHTML = '';
+    
+    for (let i = 1; i <= teamCount; i++) {
+        const teamDiv = document.createElement('div');
+        teamDiv.className = 'tournament-team-input';
+        teamDiv.innerHTML = `
+            <h3>Tim ${i}</h3>
+            <input type="text" id="tournamentTeam${i}" placeholder="Nama Tim ${i}" maxlength="20" value="">
+            <div class="difficulty-selector">
+                <button onclick="changeTournamentDifficulty(${i}, -1)">−</button>
+                <span id="tournamentDiff${i}">5</span>
+                <button onclick="changeTournamentDifficulty(${i}, 1)">+</button>
+            </div>
+            <div class="difficulty-bar">
+                <div id="tournamentDiffBar${i}" class="difficulty-fill" style="width: 71.4%"></div>
+            </div>
+        `;
+        teamsGrid.appendChild(teamDiv);
+    }
+    
+    if (tournamentData.setupMode === 'auto') {
+        autoGenerateTeams();
+    }
+}
+
 function setSetupMode(mode) {
     tournamentData.setupMode = mode;
     
@@ -100,8 +144,10 @@ function setSetupMode(mode) {
 }
 
 function autoGenerateTeams() {
+    const teamCount = parseInt(document.getElementById('teamCount').value);
     const shuffled = [...predefinedTeams].sort(() => Math.random() - 0.5);
-    for (let i = 1; i <= 8; i++) {
+    
+    for (let i = 1; i <= teamCount; i++) {
         const team = shuffled[i - 1];
         document.getElementById('tournamentTeam' + i).value = team.name;
         document.getElementById('tournamentDiff' + i).textContent = team.difficulty;
@@ -125,9 +171,10 @@ function changeTournamentDifficulty(teamNum, delta) {
 }
 
 function initializeTournament() {
+    const teamCount = parseInt(document.getElementById('teamCount').value);
     tournamentData.teams = [];
     
-    for (let i = 1; i <= 8; i++) {
+    for (let i = 1; i <= teamCount; i++) {
         const teamName = document.getElementById('tournamentTeam' + i).value || 'Tim ' + i;
         const difficulty = parseInt(document.getElementById('tournamentDiff' + i).textContent);
         tournamentData.teams.push({ name: teamName, difficulty: difficulty });
@@ -224,7 +271,7 @@ function playTournamentMatch(match) {
 
 function simulateTournamentMatch(match) {
     const duration = matchData.duration;
-    const simulationSpeed = 100;
+    const simulationSpeed = 400;
     
     const interval = setInterval(() => {
         matchData.currentMinute++;
@@ -260,29 +307,177 @@ function addLiveEvent(message, type = 'normal') {
 function finishTournamentMatch(match) {
     match.scoreA = matchData.teamA.score;
     match.scoreB = matchData.teamB.score;
+    match.stats = JSON.parse(JSON.stringify(matchData.stats));
     
     if (match.scoreA > match.scoreB) {
         match.winner = match.teamA;
         addTournamentLog(`🎉 ${match.teamA.name} menang ${match.scoreA}-${match.scoreB} melawan ${match.teamB.name}!`, 'match-end');
+        proceedAfterMatch(match);
     } else if (match.scoreB > match.scoreA) {
         match.winner = match.teamB;
         addTournamentLog(`🎉 ${match.teamB.name} menang ${match.scoreB}-${match.scoreA} melawan ${match.teamA.name}!`, 'match-end');
+        proceedAfterMatch(match);
     } else {
-        const penaltyWinner = Math.random() > 0.5 ? match.teamA : match.teamB;
-        match.winner = penaltyWinner;
-        addTournamentLog(`⚽ Imbang ${match.scoreA}-${match.scoreB}! ${penaltyWinner.name} menang adu penalti!`, 'match-end');
+        addTournamentLog(`⚖️ Pertandingan berakhir imbang ${match.scoreA}-${match.scoreB}! Adu penalti dimulai!`, 'match-end');
+        addLiveEvent('⚽ Adu Penalti!', 'goal');
+        setTimeout(() => {
+            simulatePenaltyShootout(match);
+        }, 2000);
     }
+}
+
+function simulatePenaltyShootout(match) {
+    addTournamentLog('🎯 Adu Penalti dimulai!', 'important');
     
+    let penaltyScoreA = 0;
+    let penaltyScoreB = 0;
+    let round = 1;
+    
+    const penaltyInterval = setInterval(() => {
+        if (round <= 5) {
+            // Team A penalty
+            const successChanceA = 60 + (match.teamA.difficulty * 5);
+            const penaltyA = Math.random() * 100 < successChanceA;
+            if (penaltyA) {
+                penaltyScoreA++;
+                addTournamentLog(`⚽ ${match.teamA.name} - GOOL! Penalti ${round} masuk! (${penaltyScoreA}-${penaltyScoreB})`, 'goal');
+                addLiveEvent(`⚽ ${match.teamA.name} skor!`, 'goal');
+            } else {
+                addTournamentLog(`❌ ${match.teamA.name} - GAGAL! Penalti ${round} meleset!`, 'warning');
+                addLiveEvent(`❌ ${match.teamA.name} gagal!`, 'warning');
+            }
+            
+            setTimeout(() => {
+                // Team B penalty
+                const successChanceB = 60 + (match.teamB.difficulty * 5);
+                const penaltyB = Math.random() * 100 < successChanceB;
+                if (penaltyB) {
+                    penaltyScoreB++;
+                    addTournamentLog(`⚽ ${match.teamB.name} - GOOL! Penalti ${round} masuk! (${penaltyScoreA}-${penaltyScoreB})`, 'goal');
+                    addLiveEvent(`⚽ ${match.teamB.name} skor!`, 'goal');
+                } else {
+                    addTournamentLog(`❌ ${match.teamB.name} - GAGAL! Penalti ${round} meleset!`, 'warning');
+                    addLiveEvent(`❌ ${match.teamB.name} gagal!`, 'warning');
+                }
+                
+                document.getElementById('liveScoreA').textContent = `${match.scoreA} (${penaltyScoreA})`;
+                document.getElementById('liveScoreB').textContent = `${match.scoreB} (${penaltyScoreB})`;
+                
+                round++;
+                
+                if (round > 5) {
+                    clearInterval(penaltyInterval);
+                    
+                    if (penaltyScoreA > penaltyScoreB) {
+                        match.winner = match.teamA;
+                        addTournamentLog(`🏆 ${match.teamA.name} menang adu penalti ${penaltyScoreA}-${penaltyScoreB}!`, 'match-end');
+                    } else if (penaltyScoreB > penaltyScoreA) {
+                        match.winner = match.teamB;
+                        addTournamentLog(`🏆 ${match.teamB.name} menang adu penalti ${penaltyScoreB}-${penaltyScoreA}!`, 'match-end');
+                    } else {
+                        // Sudden death
+                        const suddenDeath = Math.random() > 0.5 ? match.teamA : match.teamB;
+                        match.winner = suddenDeath;
+                        addTournamentLog(`⚡ Sudden death! ${suddenDeath.name} menang!`, 'match-end');
+                    }
+                    
+                    proceedAfterMatch(match);
+                }
+            }, 1500);
+        }
+    }, 3000);
+}
+
+function proceedAfterMatch(match) {
     match.status = 'completed';
     tournamentData.currentMatchIndex++;
     
     document.getElementById('liveMatchDisplay').style.display = 'none';
+    displayMatchStats(match);
     renderBracket();
     updateTournamentStatus(`Pertandingan selesai! ${match.winner.name} lolos ke babak berikutnya.`);
     
     setTimeout(() => {
         playNextMatch();
-    }, 3000);
+    }, 5000);
+}
+
+function displayMatchStats(match) {
+    const statsSection = document.getElementById('tournamentStatsSection');
+    const statsDiv = document.getElementById('tournamentStats');
+    
+    statsSection.style.display = 'block';
+    
+    const stats = match.stats;
+    statsDiv.innerHTML = `
+        <div class="match-stats-header">
+            <h4>${match.teamA.name} ${match.scoreA} - ${match.scoreB} ${match.teamB.name}</h4>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-label">Penguasaan Bola</span>
+                <div class="stat-values">
+                    <span>${stats.teamA.possession}%</span>
+                    <div class="stat-bar-mini">
+                        <div class="stat-bar-fill-mini" style="width: ${stats.teamA.possession}%"></div>
+                    </div>
+                    <span>${stats.teamB.possession}%</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Tembakan</span>
+                <div class="stat-values">
+                    <span>${stats.teamA.shots}</span>
+                    <span>-</span>
+                    <span>${stats.teamB.shots}</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Tembakan On Target</span>
+                <div class="stat-values">
+                    <span>${stats.teamA.shotsOnTarget}</span>
+                    <span>-</span>
+                    <span>${stats.teamB.shotsOnTarget}</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Operan</span>
+                <div class="stat-values">
+                    <span>${stats.teamA.passes}</span>
+                    <span>-</span>
+                    <span>${stats.teamB.passes}</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Tendangan Pojok</span>
+                <div class="stat-values">
+                    <span>${stats.teamA.corners}</span>
+                    <span>-</span>
+                    <span>${stats.teamB.corners}</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Pelanggaran</span>
+                <div class="stat-values">
+                    <span>${stats.teamA.fouls}</span>
+                    <span>-</span>
+                    <span>${stats.teamB.fouls}</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Kartu Kuning</span>
+                <div class="stat-values">
+                    <span>${stats.teamA.yellowCards}</span>
+                    <span>-</span>
+                    <span>${stats.teamB.yellowCards}</span>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    setTimeout(() => {
+        statsSection.style.display = 'none';
+    }, 4500);
 }
 
 function setupSemiFinals() {
