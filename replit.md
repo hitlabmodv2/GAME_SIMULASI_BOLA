@@ -105,7 +105,78 @@ Proyek ini adalah aplikasi simulasi sepak bola berbasis web yang memungkinkan pe
 
 ## Recent Changes (October 18, 2025)
 
-### Tournament Mode Enhancement - Latest Update
+### Tournament Mode Enhancement - MASSIVE UPDATE! 🎉
+
+#### 1. **Interactive Commentary System** 🎙️
+   - Sistem komentator interaktif seperti komentator sepak bola sungguhan!
+   - 13+ dialog berbeda untuk berbagai situasi:
+     - Match start commentary (4 variasi)
+     - Goal commentary (4 variasi)
+     - Save commentary (4 variasi)
+     - Miss commentary (4 variasi)
+     - Halftime commentary (3 variasi)
+   - Komentator memberikan reaksi real-time untuk event penting
+   - Ditampilkan dengan styling khusus (pink, italic, border tebal)
+
+#### 2. **Enhanced Event Logging System** 📋
+   - **13+ jenis log entry** dengan warna dan animasi berbeda:
+     - ⚽ **GOAL** - Hijau, bold, animasi pulse
+     - 🧤 **SAVE** - Cyan, highlight penyelamatan kiper
+     - ⚠️ **CHANCE** - Orange, peluang yang terlewat
+     - 🔄 **PASS** - Purple, operan beruntun
+     - 🟨 **YELLOW CARD** - Kuning, bold, pelanggaran keras
+     - 🟥 **RED CARD** - Merah, bold, border extra tebal!
+     - ⚽ **FOUL** - Orange, pelanggaran biasa
+     - ⛳ **CORNER** - Teal, tendangan pojok
+     - 🚩 **OFFSIDE** - Purple, caught offside
+     - 🔄 **SUBSTITUTION** - Blue, pergantian pemain
+     - ⏸️ **HALFTIME** - Orange, centered, turun minum
+     - 🎙️ **COMMENTARY** - Pink, italic, border tebal
+     - Plus: match-start, match-end, round-change
+   - Setiap event punya warna, style, dan animasi unik
+   - Log lebih hidup dan menarik untuk diikuti!
+
+#### 3. **Expanded Match Statistics** 📊
+   - Statistik baru yang ditambahkan:
+     - 🅰️ **Assists** - Tracking assist untuk setiap gol
+     - 🚩 **Offsides** - Menghitung offside yang terjadi
+     - 🟥 **Red Cards** - Kartu merah dan pengusiran
+   - Total statistik lengkap sekarang:
+     - Penguasaan Bola (dengan bar visual)
+     - Tembakan & Tembakan On Target
+     - Assists (NEW!)
+     - Operan Sukses
+     - Tendangan Pojok
+     - Offsides (NEW!)
+     - Pelanggaran
+     - Kartu Kuning
+     - Kartu Merah (NEW!)
+   - Ditampilkan untuk regular match dan tournament match
+   - Auto-display 5.5 detik setelah pertandingan
+
+#### 4. **Mobile Responsive Optimization** 📱
+   - **Desain mobile yang sangat optimal:**
+     - Base font size: 14px (lebih kecil untuk mobile)
+     - Spacing lebih efisien (padding & margin dikurangi)
+     - Tournament bracket: Stack vertical di mobile
+     - Log entries: Font 0.9rem, padding lebih kecil
+     - Live match display: Compact layout untuk mobile
+     - Stats display: Grid 1 column di mobile
+     - Action buttons: Stack vertical, full width
+     - Footer: Font 0.8rem
+   - **Responsive breakpoints:**
+     - Desktop: Layout normal dengan multi-column
+     - Mobile (<768px): Single column, compact spacing
+   - Semua element ter-optimize untuk viewing di HP
+
+#### 5. **Enhanced Event Simulation**
+   - Goal dengan assist (70% chance ada assister)
+   - Offside detection (random occurrences)
+   - Red card ejections (2% chance dari foul)
+   - Player substitutions (setelah menit 60)
+   - Lebih realistic dan immersive!
+
+### Previous Tournament Updates
 
 1. **Flexible Team Count**
    - Dropdown selector untuk jumlah tim (4, 8, atau 16 tim)
@@ -122,13 +193,7 @@ Proyek ini adalah aplikasi simulasi sepak bola berbasis web yang memungkinkan pe
    - Lebih nyaman untuk viewing dan follow the action
    - Log events lebih mudah dibaca
 
-4. **Match Statistics Display**
-   - Statistik lengkap setelah setiap pertandingan
-   - Visual bar untuk possession percentage
-   - Detailed stats: shots, passes, corners, fouls, cards
-   - Auto-display 4.5 detik lalu auto-hide
-
-5. **Accurate Penalty Shootout System**
+4. **Accurate Penalty Shootout System**
    - Detail simulation setiap tendangan penalti
    - Success rate based on team difficulty (60% + difficulty*5%)
    - 5 rounds alternating (Team A → Team B)
