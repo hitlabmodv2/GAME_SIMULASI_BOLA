@@ -105,9 +105,47 @@ Proyek ini adalah aplikasi simulasi sepak bola berbasis web yang memungkinkan pe
 
 ## Recent Changes (October 18, 2025)
 
-### Tournament Mode Enhancement - MASSIVE UPDATE! 🎉
+### Tournament Mode Enhancement - ULTIMATE UPDATE! 🔥⚽
 
-#### 1. **Interactive Commentary System** 🎙️
+#### 1. **Realistic Penalty Shootout System** 🎯
+   - **4 jenis outcome berbeda** yang sangat realistis:
+     - ⚽ **GOOL** - Masuk dengan sempurna! (50% + difficulty×4%)
+     - 🧤 **SAVE** - Ditangkap kiper! (berbasis skill kiper)
+     - ❌ **MISS** - Meleset ke luar gawang!
+     - 💥 **BLUNDER** - Tendangan lemah dan gagal total!
+   - Probabilitas berdasarkan tingkat kesulitan tim (1-7)
+   - Setiap outcome punya icon, message, dan type berbeda
+   - Log detail dengan warna berbeda untuk setiap hasil
+   - Jauh lebih menarik dan tidak monoton!
+
+#### 2. **Injury Time System** ⏱️
+   - **Waktu tambahan babak pertama** (1-4 menit random)
+   - **Waktu tambahan babak kedua** (2-6 menit random)
+   - Display format realistis: "45+3'" dan "90+4'"
+   - Injury time BENAR-BENAR dimainkan dengan simulasi events
+   - Log announcement saat injury time diumumkan
+   - Timeline konsisten dengan sepak bola asli
+
+#### 3. **Tactical Formations Display** 📋
+   - **6 formasi berbeda**: 4-4-2, 4-3-3, 3-5-2, 4-2-3-1, 3-4-3, 5-3-2
+   - Random assignment untuk setiap pertandingan
+   - Display di tournament log saat match dimulai
+   - Menambah variasi dan realisme pertandingan
+
+#### 4. **Man of the Match System** ⭐
+   - **Sistem rating komprehensif** berdasarkan performa:
+     - Goals: +10 points each
+     - Assists: +7 points each
+     - Shots on target: +3 points each
+     - Possession: +0.5 per %
+     - Fouls: -2 points each
+     - Yellow cards: -3 points
+     - Red cards: -10 points
+   - Display dengan **golden gradient** yang menarik
+   - Menampilkan nama tim dan rating score
+   - Auto-display setelah setiap pertandingan
+
+#### 5. **Interactive Commentary System** 🎙️
    - Sistem komentator interaktif seperti komentator sepak bola sungguhan!
    - 13+ dialog berbeda untuk berbagai situasi:
      - Match start commentary (4 variasi)
@@ -118,7 +156,7 @@ Proyek ini adalah aplikasi simulasi sepak bola berbasis web yang memungkinkan pe
    - Komentator memberikan reaksi real-time untuk event penting
    - Ditampilkan dengan styling khusus (pink, italic, border tebal)
 
-#### 2. **Enhanced Event Logging System** 📋
+#### 6. **Enhanced Event Logging System** 📋
    - **13+ jenis log entry** dengan warna dan animasi berbeda:
      - ⚽ **GOAL** - Hijau, bold, animasi pulse
      - 🧤 **SAVE** - Cyan, highlight penyelamatan kiper

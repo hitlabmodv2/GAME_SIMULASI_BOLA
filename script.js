@@ -1,8 +1,8 @@
 // Global Variables
 let currentScreen = 'mainMenu';
 let matchData = {
-    teamA: { name: 'Barcelona FC', difficulty: 5, score: 0 },
-    teamB: { name: 'Real Madrid', difficulty: 5, score: 0 },
+    teamA: { name: 'Barcelona FC', difficulty: 5, score: 0, formation: '4-4-2' },
+    teamB: { name: 'Real Madrid', difficulty: 5, score: 0, formation: '4-3-3' },
     currentMinute: 0,
     duration: 90,
     speed: 200,
@@ -11,6 +11,7 @@ let matchData = {
         teamA: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0 },
         teamB: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0 }
     },
+    injuryTime: { firstHalf: 0, secondHalf: 0, currentHalf: 1 },
     isRunning: false,
     interval: null
 };
@@ -190,6 +191,8 @@ function initializeTournament() {
     tournamentData.matchLogs = [];
     tournamentData.isRunning = true;
     
+    document.getElementById('tournamentLog').innerHTML = '';
+    
     setupQuarterFinals();
     showScreen('tournament');
     document.getElementById('tournamentRoundTitle').textContent = 'Babak 1: Quarter Finals & Semi Finals';
@@ -244,7 +247,12 @@ function playTournamentMatch(match) {
     const roundName = tournamentData.currentRound === 'quarter' ? 'Quarter Final' : 
                       tournamentData.currentRound === 'semi' ? 'Semi Final' : 'Final';
     
+    const formations = ['4-4-2', '4-3-3', '3-5-2', '4-2-3-1', '3-4-3', '5-3-2'];
+    const formationA = formations[Math.floor(Math.random() * formations.length)];
+    const formationB = formations[Math.floor(Math.random() * formations.length)];
+    
     addTournamentLog(`⚽ ${roundName}: ${match.teamA.name} vs ${match.teamB.name} - Pertandingan dimulai!`, 'match-start');
+    addTournamentLog(`📋 Formasi: ${match.teamA.name} (${formationA}) vs ${match.teamB.name} (${formationB})`, 'important');
     addCommentary(getRandomComment('matchStart'));
     updateTournamentStatus(`Sedang berlangsung: ${match.teamA.name} vs ${match.teamB.name}`);
     
@@ -258,14 +266,15 @@ function playTournamentMatch(match) {
     
     renderBracket();
     
-    matchData.teamA = { name: match.teamA.name, difficulty: match.teamA.difficulty, score: 0 };
-    matchData.teamB = { name: match.teamB.name, difficulty: match.teamB.difficulty, score: 0 };
+    matchData.teamA = { name: match.teamA.name, difficulty: match.teamA.difficulty, score: 0, formation: formationA };
+    matchData.teamB = { name: match.teamB.name, difficulty: match.teamB.difficulty, score: 0, formation: formationB };
     matchData.currentMinute = 0;
     matchData.logs = [];
     matchData.stats = {
         teamA: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0 },
         teamB: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0 }
     };
+    matchData.injuryTime = { firstHalf: 0, secondHalf: 0, currentHalf: 1 };
     
     simulateTournamentMatch(match);
 }
@@ -273,25 +282,42 @@ function playTournamentMatch(match) {
 function simulateTournamentMatch(match) {
     const duration = matchData.duration;
     const simulationSpeed = 400;
+    const halfTime = Math.floor(duration / 2);
     
     const interval = setInterval(() => {
         matchData.currentMinute++;
-        document.getElementById('liveMinute').textContent = matchData.currentMinute + "'";
+        let displayText = matchData.currentMinute + "'";
+        
+        if (matchData.currentMinute > halfTime && matchData.currentMinute <= halfTime + matchData.injuryTime.firstHalf) {
+            const addedMin = matchData.currentMinute - halfTime;
+            displayText = `${halfTime}+${addedMin}'`;
+        } else if (matchData.currentMinute > duration && matchData.currentMinute <= duration + matchData.injuryTime.firstHalf + matchData.injuryTime.secondHalf) {
+            const addedMin = matchData.currentMinute - duration - matchData.injuryTime.firstHalf;
+            displayText = `${duration}+${addedMin}'`;
+        }
+        
+        document.getElementById('liveMinute').textContent = displayText;
         
         simulateTournamentMinute();
         
         document.getElementById('liveScoreA').textContent = matchData.teamA.score;
         document.getElementById('liveScoreB').textContent = matchData.teamB.score;
         
-        // Halftime commentary
-        if (matchData.currentMinute === Math.floor(duration / 2)) {
-            addTournamentLog('⏸️ Turun minum! Babak pertama selesai.', 'halftime');
+        if (matchData.currentMinute === halfTime) {
+            const injuryMins = Math.floor(Math.random() * 4) + 1;
+            matchData.injuryTime.firstHalf = injuryMins;
+            addTournamentLog(`⏸️ Turun minum! Babak pertama selesai. Waktu tambahan: ${injuryMins} menit.`, 'halftime');
             addCommentary(getRandomComment('halftime'));
-        } else if (matchData.currentMinute === Math.floor(duration / 2) + 1) {
+            matchData.injuryTime.currentHalf = 2;
+        } else if (matchData.currentMinute === halfTime + matchData.injuryTime.firstHalf + 1) {
             addTournamentLog('▶️ Babak kedua dimulai!', 'halftime');
+        } else if (matchData.currentMinute === duration) {
+            const injuryMins = Math.floor(Math.random() * 5) + 2;
+            matchData.injuryTime.secondHalf = injuryMins;
+            addTournamentLog(`⏱️ Waktu tambahan babak kedua: ${injuryMins} menit`, 'important');
         }
         
-        if (matchData.currentMinute >= duration) {
+        if (matchData.currentMinute >= duration + matchData.injuryTime.firstHalf + matchData.injuryTime.secondHalf) {
             clearInterval(interval);
             finishTournamentMatch(match);
         }
@@ -473,38 +499,52 @@ function simulatePenaltyShootout(match) {
     let round = 1;
     let suddenDeathMode = false;
     
+    function executePenalty(team, opponentDifficulty) {
+        const rand = Math.random() * 100;
+        const diff = team.difficulty;
+        
+        const goalChance = 50 + (diff * 4);
+        const saveChance = goalChance + (20 - diff * 1);
+        const missChance = saveChance + (15 - diff * 1);
+        
+        if (rand < goalChance) {
+            return { result: 'GOOL', scored: true, icon: '⚽', message: 'masuk dengan sempurna!', type: 'goal' };
+        } else if (rand < saveChance) {
+            return { result: 'SAVE', scored: false, icon: '🧤', message: 'ditangkap kiper!', type: 'save' };
+        } else if (rand < missChance) {
+            return { result: 'MISS', scored: false, icon: '❌', message: 'meleset ke luar gawang!', type: 'chance' };
+        } else {
+            return { result: 'BLUNDER', scored: false, icon: '💥', message: 'tendangan lemah dan gagal total!', type: 'foul' };
+        }
+    }
+    
     function takePenalty() {
         const roundLabel = suddenDeathMode ? `SD${round - 5}` : `${round}`;
         
-        // Team A penalty
-        const successChanceA = 60 + (match.teamA.difficulty * 5);
-        const penaltyA = Math.random() * 100 < successChanceA;
-        if (penaltyA) {
+        const penaltyA = executePenalty(match.teamA, match.teamB.difficulty);
+        if (penaltyA.scored) {
             penaltyScoreA++;
-            addTournamentLog(`⚽ ${match.teamA.name} - GOOL! Penalti ${roundLabel} masuk! (${penaltyScoreA}-${penaltyScoreB})`, 'goal');
+            addTournamentLog(`${penaltyA.icon} ${match.teamA.name} - ${penaltyA.result}! Penalti ${roundLabel} ${penaltyA.message} (${penaltyScoreA}-${penaltyScoreB})`, penaltyA.type);
             addLiveEvent(`⚽ ${match.teamA.name} skor!`, 'goal');
         } else {
-            addTournamentLog(`❌ ${match.teamA.name} - GAGAL! Penalti ${roundLabel} meleset!`, 'warning');
-            addLiveEvent(`❌ ${match.teamA.name} gagal!`, 'warning');
+            addTournamentLog(`${penaltyA.icon} ${match.teamA.name} - ${penaltyA.result}! Penalti ${roundLabel} ${penaltyA.message}`, penaltyA.type);
+            addLiveEvent(`${penaltyA.icon} ${match.teamA.name} gagal!`, penaltyA.type);
         }
         
         setTimeout(() => {
-            // Team B penalty
-            const successChanceB = 60 + (match.teamB.difficulty * 5);
-            const penaltyB = Math.random() * 100 < successChanceB;
-            if (penaltyB) {
+            const penaltyB = executePenalty(match.teamB, match.teamA.difficulty);
+            if (penaltyB.scored) {
                 penaltyScoreB++;
-                addTournamentLog(`⚽ ${match.teamB.name} - GOOL! Penalti ${roundLabel} masuk! (${penaltyScoreA}-${penaltyScoreB})`, 'goal');
+                addTournamentLog(`${penaltyB.icon} ${match.teamB.name} - ${penaltyB.result}! Penalti ${roundLabel} ${penaltyB.message} (${penaltyScoreA}-${penaltyScoreB})`, penaltyB.type);
                 addLiveEvent(`⚽ ${match.teamB.name} skor!`, 'goal');
             } else {
-                addTournamentLog(`❌ ${match.teamB.name} - GAGAL! Penalti ${roundLabel} meleset!`, 'warning');
-                addLiveEvent(`❌ ${match.teamB.name} gagal!`, 'warning');
+                addTournamentLog(`${penaltyB.icon} ${match.teamB.name} - ${penaltyB.result}! Penalti ${roundLabel} ${penaltyB.message}`, penaltyB.type);
+                addLiveEvent(`${penaltyB.icon} ${match.teamB.name} gagal!`, penaltyB.type);
             }
             
             document.getElementById('liveScoreA').textContent = `${match.scoreA} (${penaltyScoreA})`;
             document.getElementById('liveScoreB').textContent = `${match.scoreB} (${penaltyScoreB})`;
             
-            // Check winner after this round
             if (round >= 5) {
                 if (penaltyScoreA > penaltyScoreB) {
                     match.winner = match.teamA;
@@ -517,7 +557,6 @@ function simulatePenaltyShootout(match) {
                     proceedAfterMatch(match);
                     return;
                 } else if (round === 5) {
-                    // Enter sudden death mode
                     suddenDeathMode = true;
                     addTournamentLog('⚡ Masih seri! Sudden Death dimulai!', 'important');
                     addLiveEvent('⚡ Sudden Death!', 'goal');
@@ -553,10 +592,25 @@ function displayMatchStats(match) {
     statsSection.style.display = 'block';
     
     const stats = match.stats;
+    
+    const ratingA = (match.scoreA * 10) + (stats.teamA.assists * 7) + (stats.teamA.shotsOnTarget * 3) + 
+                    (stats.teamA.possession * 0.5) - (stats.teamA.fouls * 2) - (stats.teamA.yellowCards * 3) - (stats.teamA.redCards * 10);
+    const ratingB = (match.scoreB * 10) + (stats.teamB.assists * 7) + (stats.teamB.shotsOnTarget * 3) + 
+                    (stats.teamB.possession * 0.5) - (stats.teamB.fouls * 2) - (stats.teamB.yellowCards * 3) - (stats.teamB.redCards * 10);
+    
+    const manOfMatch = ratingA > ratingB ? match.teamA.name : match.teamB.name;
+    const motmRating = Math.max(ratingA, ratingB).toFixed(1);
+    
     statsDiv.innerHTML = `
         <div class="match-stats-header">
             <h4>${match.teamA.name} ${match.scoreA} - ${match.scoreB} ${match.teamB.name}</h4>
             <p class="stats-subtitle">📊 Statistik Pertandingan Lengkap</p>
+        </div>
+        <div class="man-of-match">
+            <span class="motm-icon">⭐</span>
+            <span class="motm-label">Man of the Match:</span>
+            <span class="motm-name">${manOfMatch}</span>
+            <span class="motm-rating">(Rating: ${motmRating})</span>
         </div>
         <div class="stats-grid">
             <div class="stat-item">
