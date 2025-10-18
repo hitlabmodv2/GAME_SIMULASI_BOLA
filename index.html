@@ -19,7 +19,7 @@
                     <span class="icon">🤖</span>
                     <span class="text">AI vs AI</span>
                 </button>
-                <button class="main-btn" onclick="showTournament()">
+                <button class="main-btn" onclick="showScreen('tournamentSetup')">
                     <span class="icon">🏆</span>
                     <span class="text">Tournament</span>
                 </button>
@@ -159,11 +159,141 @@
             </div>
         </div>
 
-        <!-- Tournament -->
+        <!-- Tournament Setup -->
+        <div id="tournamentSetup" class="screen">
+            <div class="header">
+                <h2>🏆 Setup Tournament</h2>
+                <p class="subtitle">Daftarkan 8 tim untuk berkompetisi</p>
+            </div>
+            
+            <div class="setup-mode-selector">
+                <button class="mode-btn active" id="manualModeBtn" onclick="setSetupMode('manual')">
+                    ⚙️ Manual Setup
+                </button>
+                <button class="mode-btn" id="autoModeBtn" onclick="setSetupMode('auto')">
+                    🤖 Auto Setup
+                </button>
+            </div>
+            
+            <div class="tournament-teams-setup">
+                <div class="teams-grid">
+                    <div class="tournament-team-input">
+                        <h3>Tim 1</h3>
+                        <input type="text" id="tournamentTeam1" placeholder="Nama Tim 1" maxlength="20" value="Manchester United">
+                        <div class="difficulty-selector">
+                            <button onclick="changeTournamentDifficulty(1, -1)">−</button>
+                            <span id="tournamentDiff1">5</span>
+                            <button onclick="changeTournamentDifficulty(1, 1)">+</button>
+                        </div>
+                        <div class="difficulty-bar">
+                            <div id="tournamentDiffBar1" class="difficulty-fill" style="width: 71.4%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="tournament-team-input">
+                        <h3>Tim 2</h3>
+                        <input type="text" id="tournamentTeam2" placeholder="Nama Tim 2" maxlength="20" value="Liverpool FC">
+                        <div class="difficulty-selector">
+                            <button onclick="changeTournamentDifficulty(2, -1)">−</button>
+                            <span id="tournamentDiff2">5</span>
+                            <button onclick="changeTournamentDifficulty(2, 1)">+</button>
+                        </div>
+                        <div class="difficulty-bar">
+                            <div id="tournamentDiffBar2" class="difficulty-fill" style="width: 71.4%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="tournament-team-input">
+                        <h3>Tim 3</h3>
+                        <input type="text" id="tournamentTeam3" placeholder="Nama Tim 3" maxlength="20" value="Chelsea FC">
+                        <div class="difficulty-selector">
+                            <button onclick="changeTournamentDifficulty(3, -1)">−</button>
+                            <span id="tournamentDiff3">4</span>
+                            <button onclick="changeTournamentDifficulty(3, 1)">+</button>
+                        </div>
+                        <div class="difficulty-bar">
+                            <div id="tournamentDiffBar3" class="difficulty-fill" style="width: 57.1%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="tournament-team-input">
+                        <h3>Tim 4</h3>
+                        <input type="text" id="tournamentTeam4" placeholder="Nama Tim 4" maxlength="20" value="Arsenal FC">
+                        <div class="difficulty-selector">
+                            <button onclick="changeTournamentDifficulty(4, -1)">−</button>
+                            <span id="tournamentDiff4">4</span>
+                            <button onclick="changeTournamentDifficulty(4, 1)">+</button>
+                        </div>
+                        <div class="difficulty-bar">
+                            <div id="tournamentDiffBar4" class="difficulty-fill" style="width: 57.1%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="tournament-team-input">
+                        <h3>Tim 5</h3>
+                        <input type="text" id="tournamentTeam5" placeholder="Nama Tim 5" maxlength="20" value="Bayern Munich">
+                        <div class="difficulty-selector">
+                            <button onclick="changeTournamentDifficulty(5, -1)">−</button>
+                            <span id="tournamentDiff5">6</span>
+                            <button onclick="changeTournamentDifficulty(5, 1)">+</button>
+                        </div>
+                        <div class="difficulty-bar">
+                            <div id="tournamentDiffBar5" class="difficulty-fill" style="width: 85.7%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="tournament-team-input">
+                        <h3>Tim 6</h3>
+                        <input type="text" id="tournamentTeam6" placeholder="Nama Tim 6" maxlength="20" value="Real Madrid">
+                        <div class="difficulty-selector">
+                            <button onclick="changeTournamentDifficulty(6, -1)">−</button>
+                            <span id="tournamentDiff6">6</span>
+                            <button onclick="changeTournamentDifficulty(6, 1)">+</button>
+                        </div>
+                        <div class="difficulty-bar">
+                            <div id="tournamentDiffBar6" class="difficulty-fill" style="width: 85.7%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="tournament-team-input">
+                        <h3>Tim 7</h3>
+                        <input type="text" id="tournamentTeam7" placeholder="Nama Tim 7" maxlength="20" value="Barcelona FC">
+                        <div class="difficulty-selector">
+                            <button onclick="changeTournamentDifficulty(7, -1)">−</button>
+                            <span id="tournamentDiff7">5</span>
+                            <button onclick="changeTournamentDifficulty(7, 1)">+</button>
+                        </div>
+                        <div class="difficulty-bar">
+                            <div id="tournamentDiffBar7" class="difficulty-fill" style="width: 71.4%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="tournament-team-input">
+                        <h3>Tim 8</h3>
+                        <input type="text" id="tournamentTeam8" placeholder="Nama Tim 8" maxlength="20" value="PSG">
+                        <div class="difficulty-selector">
+                            <button onclick="changeTournamentDifficulty(8, -1)">−</button>
+                            <span id="tournamentDiff8">5</span>
+                            <button onclick="changeTournamentDifficulty(8, 1)">+</button>
+                        </div>
+                        <div class="difficulty-bar">
+                            <div id="tournamentDiffBar8" class="difficulty-fill" style="width: 71.4%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="showScreen('mainMenu')">Kembali</button>
+                <button class="btn btn-primary" onclick="initializeTournament()">Mulai Tournament</button>
+            </div>
+        </div>
+
+        <!-- Tournament Bracket -->
         <div id="tournament" class="screen">
             <div class="header">
                 <h2>🏆 Mode Tournament</h2>
-                <p class="subtitle">8 tim bersaing untuk menjadi juara</p>
+                <p class="subtitle" id="tournamentRoundTitle">Babak 1: Quarter Finals & Semi Finals</p>
             </div>
             
             <div class="tournament-bracket">
@@ -186,10 +316,32 @@
             </div>
 
             <div class="tournament-controls">
-                <div id="tournamentStatus" class="tournament-status">Klik tombol untuk memulai tournament</div>
+                <div id="tournamentStatus" class="tournament-status">Menunggu pertandingan dimulai...</div>
+                
+                <div class="live-match-display" id="liveMatchDisplay" style="display: none;">
+                    <h3>⚽ Pertandingan Sedang Berlangsung</h3>
+                    <div class="live-match-info">
+                        <div class="live-team">
+                            <span id="liveTeamA">-</span>
+                            <span id="liveScoreA" class="live-score">0</span>
+                        </div>
+                        <div class="live-time">
+                            <span id="liveMinute">0'</span>
+                        </div>
+                        <div class="live-team">
+                            <span id="liveScoreB" class="live-score">0</span>
+                            <span id="liveTeamB">-</span>
+                        </div>
+                    </div>
+                    <div class="live-events" id="liveEvents"></div>
+                </div>
+                
+                <div class="tournament-log-section">
+                    <h3>📋 Log Pertandingan Tournament</h3>
+                    <div id="tournamentLog" class="tournament-log"></div>
+                </div>
                 <div class="action-buttons">
-                    <button class="btn btn-secondary" onclick="showScreen('mainMenu')">Kembali ke Menu</button>
-                    <button id="startTournamentBtn" class="btn btn-primary" onclick="startTournament()">Mulai Tournament</button>
+                    <button class="btn btn-secondary" onclick="backToMenuFromTournament()">Kembali ke Menu</button>
                 </div>
             </div>
         </div>

@@ -481,6 +481,72 @@ body {
     cursor: pointer;
 }
 
+/* Tournament Setup */
+.setup-mode-selector {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.mode-btn {
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    border: 2px solid var(--border-color);
+    background: var(--surface-color);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.mode-btn:hover {
+    background: var(--border-color);
+}
+
+.mode-btn.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.tournament-teams-setup {
+    max-width: 1000px;
+    margin: 0 auto 30px;
+}
+
+.teams-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.tournament-team-input {
+    background: var(--surface-color);
+    padding: 20px;
+    border-radius: 12px;
+    border: 2px solid var(--border-color);
+}
+
+.tournament-team-input h3 {
+    color: var(--primary-color);
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+.tournament-team-input input {
+    width: 100%;
+    padding: 12px;
+    background: var(--bg-color);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-color);
+    font-size: 1rem;
+    margin-bottom: 12px;
+}
+
 /* Tournament */
 .tournament-bracket {
     display: grid;
@@ -612,6 +678,142 @@ body {
     margin-bottom: 20px;
     color: var(--text-color);
     font-size: 1.1rem;
+}
+
+.tournament-log-section {
+    margin: 20px 0;
+    background: var(--surface-color);
+    border-radius: 15px;
+    border: 2px solid var(--border-color);
+    overflow: hidden;
+}
+
+.tournament-log-section h3 {
+    padding: 20px;
+    margin: 0;
+    border-bottom: 2px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.tournament-log {
+    height: 300px;
+    overflow-y: auto;
+    padding: 20px;
+    background: var(--bg-color);
+}
+
+.tournament-log-entry {
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    background: var(--surface-color);
+    border-left: 4px solid var(--border-color);
+    animation: slideIn 0.3s ease;
+}
+
+.tournament-log-entry.match-start {
+    border-left-color: var(--primary-color);
+    background: rgba(37, 99, 235, 0.1);
+}
+
+.tournament-log-entry.match-end {
+    border-left-color: var(--success-color);
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.tournament-log-entry.round-change {
+    border-left-color: var(--warning-color);
+    background: rgba(245, 158, 11, 0.1);
+    font-weight: bold;
+}
+
+.live-match-display {
+    background: var(--surface-color);
+    border-radius: 15px;
+    border: 2px solid var(--primary-color);
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
+}
+
+.live-match-display h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+}
+
+.live-match-info {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 20px;
+    background: var(--bg-color);
+    border-radius: 10px;
+}
+
+.live-team {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.live-team:last-child {
+    flex-direction: row-reverse;
+}
+
+.live-score {
+    font-size: 2rem;
+    color: var(--success-color);
+    min-width: 50px;
+    text-align: center;
+}
+
+.live-time {
+    background: var(--danger-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    text-align: center;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.live-events {
+    max-height: 150px;
+    overflow-y: auto;
+    padding: 15px;
+    background: var(--bg-color);
+    border-radius: 10px;
+}
+
+.live-event {
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+    background: var(--surface-color);
+    border-left: 3px solid var(--border-color);
+    font-size: 0.95rem;
+}
+
+.live-event.goal {
+    border-left-color: var(--success-color);
+    background: rgba(16, 185, 129, 0.1);
+    font-weight: bold;
+}
+
+.live-event.warning {
+    border-left-color: var(--warning-color);
+    background: rgba(245, 158, 11, 0.1);
 }
 
 /* Footer */

@@ -22,8 +22,32 @@ let tournamentData = {
     final: null,
     champion: null,
     isRunning: false,
-    currentRound: 'quarter'
+    currentRound: 'quarter',
+    matchQueue: [],
+    currentMatchIndex: 0,
+    matchLogs: [],
+    setupMode: 'manual',
+    autoPlayEnabled: true
 };
+
+const predefinedTeams = [
+    { name: 'Manchester United', difficulty: 6 },
+    { name: 'Liverpool FC', difficulty: 6 },
+    { name: 'Chelsea FC', difficulty: 5 },
+    { name: 'Arsenal FC', difficulty: 5 },
+    { name: 'Bayern Munich', difficulty: 7 },
+    { name: 'Real Madrid', difficulty: 7 },
+    { name: 'Barcelona FC', difficulty: 6 },
+    { name: 'PSG', difficulty: 6 },
+    { name: 'Manchester City', difficulty: 7 },
+    { name: 'Juventus', difficulty: 5 },
+    { name: 'AC Milan', difficulty: 5 },
+    { name: 'Inter Milan', difficulty: 5 },
+    { name: 'Borussia Dortmund', difficulty: 5 },
+    { name: 'Atletico Madrid', difficulty: 5 },
+    { name: 'Tottenham', difficulty: 4 },
+    { name: 'Ajax Amsterdam', difficulty: 4 }
+];
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
@@ -59,8 +83,325 @@ function showScreen(screenName) {
     currentScreen = screenName;
 }
 
-function showTournament() {
+function setSetupMode(mode) {
+    tournamentData.setupMode = mode;
+    
+    document.getElementById('manualModeBtn').classList.remove('active');
+    document.getElementById('autoModeBtn').classList.remove('active');
+    
+    if (mode === 'manual') {
+        document.getElementById('manualModeBtn').classList.add('active');
+        document.querySelector('.tournament-teams-setup').style.display = 'block';
+    } else {
+        document.getElementById('autoModeBtn').classList.add('active');
+        document.querySelector('.tournament-teams-setup').style.display = 'none';
+        autoGenerateTeams();
+    }
+}
+
+function autoGenerateTeams() {
+    const shuffled = [...predefinedTeams].sort(() => Math.random() - 0.5);
+    for (let i = 1; i <= 8; i++) {
+        const team = shuffled[i - 1];
+        document.getElementById('tournamentTeam' + i).value = team.name;
+        document.getElementById('tournamentDiff' + i).textContent = team.difficulty;
+        const percentage = (team.difficulty / 7) * 100;
+        document.getElementById('tournamentDiffBar' + i).style.width = percentage + '%';
+    }
+}
+
+function changeTournamentDifficulty(teamNum, delta) {
+    const difficultyElement = document.getElementById('tournamentDiff' + teamNum);
+    const barElement = document.getElementById('tournamentDiffBar' + teamNum);
+    let currentDifficulty = parseInt(difficultyElement.textContent);
+    
+    currentDifficulty += delta;
+    if (currentDifficulty < 1) currentDifficulty = 1;
+    if (currentDifficulty > 7) currentDifficulty = 7;
+    
+    difficultyElement.textContent = currentDifficulty;
+    const percentage = (currentDifficulty / 7) * 100;
+    barElement.style.width = percentage + '%';
+}
+
+function initializeTournament() {
+    tournamentData.teams = [];
+    
+    for (let i = 1; i <= 8; i++) {
+        const teamName = document.getElementById('tournamentTeam' + i).value || 'Tim ' + i;
+        const difficulty = parseInt(document.getElementById('tournamentDiff' + i).textContent);
+        tournamentData.teams.push({ name: teamName, difficulty: difficulty });
+    }
+    
+    tournamentData.quarterFinals = [];
+    tournamentData.semiFinals = [];
+    tournamentData.final = null;
+    tournamentData.champion = null;
+    tournamentData.currentRound = 'quarter';
+    tournamentData.matchQueue = [];
+    tournamentData.currentMatchIndex = 0;
+    tournamentData.matchLogs = [];
+    tournamentData.isRunning = true;
+    
+    setupQuarterFinals();
     showScreen('tournament');
+    document.getElementById('tournamentRoundTitle').textContent = 'Babak 1: Quarter Finals & Semi Finals';
+    addTournamentLog('🏆 Tournament dimulai! 8 tim siap berkompetisi untuk menjadi juara!', 'round-change');
+    
+    setTimeout(() => {
+        playNextMatch();
+    }, 2000);
+}
+
+function setupQuarterFinals() {
+    tournamentData.quarterFinals = [
+        { teamA: tournamentData.teams[0], teamB: tournamentData.teams[1], scoreA: null, scoreB: null, winner: null, status: 'pending' },
+        { teamA: tournamentData.teams[2], teamB: tournamentData.teams[3], scoreA: null, scoreB: null, winner: null, status: 'pending' },
+        { teamA: tournamentData.teams[4], teamB: tournamentData.teams[5], scoreA: null, scoreB: null, winner: null, status: 'pending' },
+        { teamA: tournamentData.teams[6], teamB: tournamentData.teams[7], scoreA: null, scoreB: null, winner: null, status: 'pending' }
+    ];
+    
+    tournamentData.matchQueue = [...tournamentData.quarterFinals];
+    renderBracket();
+}
+
+function playNextMatch() {
+    if (tournamentData.currentMatchIndex < tournamentData.matchQueue.length) {
+        const match = tournamentData.matchQueue[tournamentData.currentMatchIndex];
+        playTournamentMatch(match);
+    } else {
+        if (tournamentData.currentRound === 'quarter') {
+            addTournamentLog('✅ Quarter Finals selesai! Mempersiapkan Semi Finals...', 'round-change');
+            setTimeout(() => {
+                setupSemiFinals();
+                setTimeout(() => playNextMatch(), 2000);
+            }, 2000);
+        } else if (tournamentData.currentRound === 'semi') {
+            addTournamentLog('🎯 Babak 1 selesai! Memulai Babak 2: Final!', 'round-change');
+            document.getElementById('tournamentRoundTitle').textContent = 'Babak 2: Final';
+            setTimeout(() => {
+                setupFinal();
+                setTimeout(() => playNextMatch(), 2000);
+            }, 2000);
+        } else if (tournamentData.currentRound === 'final') {
+            addTournamentLog('🏆 Tournament selesai! Juara telah ditentukan!', 'round-change');
+            displayChampion();
+            tournamentData.isRunning = false;
+        }
+    }
+}
+
+function playTournamentMatch(match) {
+    match.status = 'playing';
+    
+    const roundName = tournamentData.currentRound === 'quarter' ? 'Quarter Final' : 
+                      tournamentData.currentRound === 'semi' ? 'Semi Final' : 'Final';
+    
+    addTournamentLog(`⚽ ${roundName}: ${match.teamA.name} vs ${match.teamB.name} - Pertandingan dimulai!`, 'match-start');
+    updateTournamentStatus(`Sedang berlangsung: ${match.teamA.name} vs ${match.teamB.name}`);
+    
+    document.getElementById('liveMatchDisplay').style.display = 'block';
+    document.getElementById('liveTeamA').textContent = match.teamA.name;
+    document.getElementById('liveTeamB').textContent = match.teamB.name;
+    document.getElementById('liveScoreA').textContent = '0';
+    document.getElementById('liveScoreB').textContent = '0';
+    document.getElementById('liveMinute').textContent = "0'";
+    document.getElementById('liveEvents').innerHTML = '';
+    
+    renderBracket();
+    
+    matchData.teamA = { name: match.teamA.name, difficulty: match.teamA.difficulty, score: 0 };
+    matchData.teamB = { name: match.teamB.name, difficulty: match.teamB.difficulty, score: 0 };
+    matchData.currentMinute = 0;
+    matchData.logs = [];
+    matchData.stats = {
+        teamA: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0 },
+        teamB: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0 }
+    };
+    
+    simulateTournamentMatch(match);
+}
+
+function simulateTournamentMatch(match) {
+    const duration = matchData.duration;
+    const simulationSpeed = 100;
+    
+    const interval = setInterval(() => {
+        matchData.currentMinute++;
+        document.getElementById('liveMinute').textContent = matchData.currentMinute + "'";
+        
+        simulateMinute();
+        
+        document.getElementById('liveScoreA').textContent = matchData.teamA.score;
+        document.getElementById('liveScoreB').textContent = matchData.teamB.score;
+        
+        if (matchData.currentMinute >= duration) {
+            clearInterval(interval);
+            finishTournamentMatch(match);
+        }
+    }, simulationSpeed);
+}
+
+function addLiveEvent(message, type = 'normal') {
+    const liveEvents = document.getElementById('liveEvents');
+    const eventDiv = document.createElement('div');
+    eventDiv.className = 'live-event' + (type !== 'normal' ? ' ' + type : '');
+    eventDiv.textContent = `${matchData.currentMinute}' - ${message}`;
+    
+    liveEvents.insertBefore(eventDiv, liveEvents.firstChild);
+    
+    if (liveEvents.children.length > 5) {
+        liveEvents.removeChild(liveEvents.lastChild);
+    }
+}
+
+function finishTournamentMatch(match) {
+    match.scoreA = matchData.teamA.score;
+    match.scoreB = matchData.teamB.score;
+    
+    if (match.scoreA > match.scoreB) {
+        match.winner = match.teamA;
+        addTournamentLog(`🎉 ${match.teamA.name} menang ${match.scoreA}-${match.scoreB} melawan ${match.teamB.name}!`, 'match-end');
+    } else if (match.scoreB > match.scoreA) {
+        match.winner = match.teamB;
+        addTournamentLog(`🎉 ${match.teamB.name} menang ${match.scoreB}-${match.scoreA} melawan ${match.teamA.name}!`, 'match-end');
+    } else {
+        const penaltyWinner = Math.random() > 0.5 ? match.teamA : match.teamB;
+        match.winner = penaltyWinner;
+        addTournamentLog(`⚽ Imbang ${match.scoreA}-${match.scoreB}! ${penaltyWinner.name} menang adu penalti!`, 'match-end');
+    }
+    
+    match.status = 'completed';
+    tournamentData.currentMatchIndex++;
+    
+    document.getElementById('liveMatchDisplay').style.display = 'none';
+    renderBracket();
+    updateTournamentStatus(`Pertandingan selesai! ${match.winner.name} lolos ke babak berikutnya.`);
+    
+    setTimeout(() => {
+        playNextMatch();
+    }, 3000);
+}
+
+function setupSemiFinals() {
+    tournamentData.semiFinals = [
+        { teamA: tournamentData.quarterFinals[0].winner, teamB: tournamentData.quarterFinals[1].winner, scoreA: null, scoreB: null, winner: null, status: 'pending' },
+        { teamA: tournamentData.quarterFinals[2].winner, teamB: tournamentData.quarterFinals[3].winner, scoreA: null, scoreB: null, winner: null, status: 'pending' }
+    ];
+    
+    tournamentData.currentRound = 'semi';
+    tournamentData.matchQueue = [...tournamentData.semiFinals];
+    tournamentData.currentMatchIndex = 0;
+    
+    addTournamentLog('🔥 Semi Finals dimulai! 4 tim tersisa berjuang untuk masuk Final!', 'round-change');
+    renderBracket();
+}
+
+function setupFinal() {
+    tournamentData.final = {
+        teamA: tournamentData.semiFinals[0].winner,
+        teamB: tournamentData.semiFinals[1].winner,
+        scoreA: null,
+        scoreB: null,
+        winner: null,
+        status: 'pending'
+    };
+    
+    tournamentData.currentRound = 'final';
+    tournamentData.matchQueue = [tournamentData.final];
+    tournamentData.currentMatchIndex = 0;
+    
+    addTournamentLog(`🏆 Final: ${tournamentData.final.teamA.name} vs ${tournamentData.final.teamB.name}!`, 'round-change');
+    renderBracket();
+}
+
+function renderBracket() {
+    const quarterFinalsDiv = document.getElementById('quarterFinals');
+    const semiFinalsDiv = document.getElementById('semiFinals');
+    const finalDiv = document.getElementById('final');
+    
+    quarterFinalsDiv.innerHTML = '';
+    tournamentData.quarterFinals.forEach((match, index) => {
+        quarterFinalsDiv.innerHTML += createMatchCard(match, `QF${index + 1}`);
+    });
+    
+    semiFinalsDiv.innerHTML = '';
+    tournamentData.semiFinals.forEach((match, index) => {
+        semiFinalsDiv.innerHTML += createMatchCard(match, `SF${index + 1}`);
+    });
+    
+    finalDiv.innerHTML = '';
+    if (tournamentData.final) {
+        finalDiv.innerHTML = createMatchCard(tournamentData.final, 'Final');
+    }
+}
+
+function createMatchCard(match, matchId) {
+    if (!match.teamA || !match.teamB) return '';
+    
+    const statusClass = match.status === 'playing' ? 'active' : match.status === 'completed' ? 'completed' : '';
+    const teamAClass = match.winner && match.winner.name === match.teamA.name ? 'winner' : '';
+    const teamBClass = match.winner && match.winner.name === match.teamB.name ? 'winner' : '';
+    
+    return `
+        <div class="match-card ${statusClass}" id="${matchId}">
+            <div class="match-team ${teamAClass}">
+                <span class="match-team-name">${match.teamA.name}</span>
+                <span class="match-team-score">${match.scoreA !== null ? match.scoreA : '-'}</span>
+            </div>
+            <div class="match-team ${teamBClass}">
+                <span class="match-team-name">${match.teamB.name}</span>
+                <span class="match-team-score">${match.scoreB !== null ? match.scoreB : '-'}</span>
+            </div>
+            <div class="match-status">
+                ${match.status === 'playing' ? '⚽ Berlangsung' : match.status === 'completed' ? '✓ Selesai' : 'Menunggu'}
+            </div>
+        </div>
+    `;
+}
+
+function displayChampion() {
+    const championDiv = document.getElementById('champion');
+    const champion = tournamentData.final.winner;
+    
+    championDiv.innerHTML = `
+        <div class="champion-display has-winner">
+            <div class="champion-trophy">🏆</div>
+            <div class="champion-name">${champion.name}</div>
+            <div class="champion-label">JUARA TOURNAMENT!</div>
+        </div>
+    `;
+    
+    updateTournamentStatus(`🎉 ${champion.name} adalah Juara Tournament! Selamat!`);
+}
+
+function addTournamentLog(message, type = 'normal') {
+    const logContainer = document.getElementById('tournamentLog');
+    const logEntry = document.createElement('div');
+    logEntry.className = 'tournament-log-entry' + (type !== 'normal' ? ' ' + type : '');
+    
+    const timestamp = new Date().toLocaleTimeString('id-ID');
+    logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+    
+    logContainer.appendChild(logEntry);
+    logContainer.scrollTop = logContainer.scrollHeight;
+    
+    tournamentData.matchLogs.push({ timestamp, message, type });
+}
+
+function updateTournamentStatus(message) {
+    document.getElementById('tournamentStatus').textContent = message;
+}
+
+function backToMenuFromTournament() {
+    if (tournamentData.isRunning) {
+        if (confirm('Tournament masih berlangsung. Yakin ingin kembali ke menu?')) {
+            tournamentData.isRunning = false;
+            showScreen('mainMenu');
+        }
+    } else {
+        showScreen('mainMenu');
+    }
 }
 
 // Difficulty Controls
@@ -213,6 +554,10 @@ function simulateAttack() {
             const scorer = generatePlayerName();
             addLog(matchData.currentMinute, `⚽ GOOOL! ${attackTeamName} mencetak gol! Dicetak oleh ${scorer}! ${matchData.teamA.name} ${matchData.teamA.score} - ${matchData.teamB.score} ${matchData.teamB.name}`, 'goal');
             updateScore();
+            
+            if (tournamentData.isRunning && document.getElementById('liveMatchDisplay').style.display === 'block') {
+                addLiveEvent(`⚽ GOOL! ${scorer} (${attackTeamName})`, 'goal');
+            }
         } else {
             const saveType = ['refleks cemerlang', 'menangkap bola dengan aman', 'memukul bola ke pojok', 'menepis dengan sempurna'];
             addLog(matchData.currentMinute, `Tembakan keras ke arah gawang ${defendTeamName}! Kiper melakukan ${saveType[Math.floor(Math.random() * saveType.length)]}.`);
@@ -244,6 +589,10 @@ function simulateFoul() {
     if (cardChance < 20) {
         matchData.stats[team].yellowCards++;
         addLog(matchData.currentMinute, `🟨 Kartu kuning untuk ${playerName} (${teamName}) karena pelanggaran keras!`, 'warning');
+        
+        if (tournamentData.isRunning && document.getElementById('liveMatchDisplay').style.display === 'block') {
+            addLiveEvent(`🟨 Kartu kuning: ${playerName}`, 'warning');
+        }
     } else {
         addLog(matchData.currentMinute, `Pelanggaran oleh ${playerName} (${teamName}). Tendangan bebas diberikan.`);
     }
