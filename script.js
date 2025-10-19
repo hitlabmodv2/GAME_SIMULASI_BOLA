@@ -76,7 +76,24 @@ document.addEventListener('DOMContentLoaded', function() {
     updateDateTime();
     setInterval(updateDateTime, 1000);
     loadSettings();
+    populateTeamDropdowns();
 });
+
+function populateTeamDropdowns() {
+    // Populate all dropdowns with team options
+    for (let i = 1; i <= 8; i++) {
+        const selectElement = document.getElementById('tournamentTeamSelect' + i);
+        if (selectElement && selectElement.options.length === 1) {
+            predefinedTeams.forEach(team => {
+                const option = document.createElement('option');
+                option.value = team.name;
+                option.dataset.difficulty = team.difficulty;
+                option.textContent = `${team.name} (${getDifficultyLabel(team.difficulty)})`;
+                selectElement.appendChild(option);
+            });
+        }
+    }
+}
 
 // Update Date Time
 function updateDateTime() {
@@ -105,23 +122,46 @@ function showScreen(screenName) {
     currentScreen = screenName;
 }
 
+function getDifficultyLabel(level) {
+    const labels = {
+        1: 'Sangat Lemah',
+        2: 'Lemah',
+        3: 'Cukup Lemah',
+        4: 'Sedang',
+        5: 'Cukup Kuat',
+        6: 'Kuat',
+        7: 'Sangat Kuat'
+    };
+    return labels[level] || 'Sedang';
+}
+
 function updateTeamInputs() {
     const teamCount = parseInt(document.getElementById('teamCount').value);
     const teamsGrid = document.getElementById('teamsGrid');
     teamsGrid.innerHTML = '';
+    
+    // Generate team options for dropdown
+    let teamOptions = '<option value="">-- Pilih Tim atau Ketik Manual --</option>';
+    predefinedTeams.forEach(team => {
+        teamOptions += `<option value="${team.name}" data-difficulty="${team.difficulty}">${team.name} (${getDifficultyLabel(team.difficulty)})</option>`;
+    });
     
     for (let i = 1; i <= teamCount; i++) {
         const teamDiv = document.createElement('div');
         teamDiv.className = 'tournament-team-input';
         teamDiv.innerHTML = `
             <h3>Tim ${i}</h3>
-            <input type="text" id="tournamentTeam${i}" placeholder="Nama Tim ${i}" maxlength="20" value="">
+            <select id="tournamentTeamSelect${i}" class="team-select" onchange="selectPredefinedTeam(${i})">
+                ${teamOptions}
+            </select>
+            <input type="text" id="tournamentTeam${i}" placeholder="Atau ketik nama tim manual" maxlength="20" value="">
             <div class="difficulty-selector">
                 <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
                 <div class="difficulty-slider-container">
                     <input type="range" id="tournamentSlider${i}" class="difficulty-slider" min="1" max="7" value="5" oninput="updateTournamentSlider(${i})">
                     <div class="difficulty-value" id="tournamentDiff${i}">5</div>
                 </div>
+                <div class="difficulty-label" id="tournamentDiffLabel${i}">Cukup Kuat</div>
             </div>
             <div class="difficulty-bar">
                 <div id="tournamentDiffBar${i}" class="difficulty-fill" style="width: 71.4%"></div>
@@ -135,13 +175,37 @@ function updateTeamInputs() {
     }
 }
 
+function selectPredefinedTeam(teamNum) {
+    const selectElement = document.getElementById('tournamentTeamSelect' + teamNum);
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    
+    if (selectedOption.value) {
+        // Set team name
+        document.getElementById('tournamentTeam' + teamNum).value = selectedOption.value;
+        
+        // Set difficulty
+        const difficulty = parseInt(selectedOption.dataset.difficulty);
+        const sliderElement = document.getElementById('tournamentSlider' + teamNum);
+        if (sliderElement) {
+            sliderElement.value = difficulty;
+            updateTournamentSlider(teamNum);
+        }
+    }
+}
+
 function updateTournamentSlider(teamNum) {
     const sliderElement = document.getElementById('tournamentSlider' + teamNum);
     const difficultyElement = document.getElementById('tournamentDiff' + teamNum);
+    const difficultyLabelElement = document.getElementById('tournamentDiffLabel' + teamNum);
     const barElement = document.getElementById('tournamentDiffBar' + teamNum);
     
     const difficulty = parseInt(sliderElement.value);
     difficultyElement.textContent = difficulty;
+    
+    if (difficultyLabelElement) {
+        difficultyLabelElement.textContent = getDifficultyLabel(difficulty);
+    }
+    
     const percentage = (difficulty / 7) * 100;
     barElement.style.width = percentage + '%';
 }
@@ -168,14 +232,32 @@ function autoGenerateTeams() {
     
     for (let i = 1; i <= teamCount; i++) {
         const team = shuffled[i - 1];
+        
+        // Set dropdown
+        const selectElement = document.getElementById('tournamentTeamSelect' + i);
+        if (selectElement) {
+            selectElement.value = team.name;
+        }
+        
+        // Set team name input
         document.getElementById('tournamentTeam' + i).value = team.name;
         
+        // Set slider
         const sliderElement = document.getElementById('tournamentSlider' + i);
         if (sliderElement) {
             sliderElement.value = team.difficulty;
         }
         
+        // Update difficulty display
         document.getElementById('tournamentDiff' + i).textContent = team.difficulty;
+        
+        // Update difficulty label
+        const difficultyLabelElement = document.getElementById('tournamentDiffLabel' + i);
+        if (difficultyLabelElement) {
+            difficultyLabelElement.textContent = getDifficultyLabel(team.difficulty);
+        }
+        
+        // Update bar
         const percentage = (team.difficulty / 7) * 100;
         document.getElementById('tournamentDiffBar' + i).style.width = percentage + '%';
     }

@@ -201,13 +201,17 @@
                 <div class="teams-grid" id="teamsGrid">
                     <div class="tournament-team-input">
                         <h3>Tim 1</h3>
-                        <input type="text" id="tournamentTeam1" placeholder="Nama Tim 1" maxlength="20" value="Manchester United">
+                        <select id="tournamentTeamSelect1" class="team-select" onchange="selectPredefinedTeam(1)">
+                            <option value="">-- Pilih Tim atau Ketik Manual --</option>
+                        </select>
+                        <input type="text" id="tournamentTeam1" placeholder="Atau ketik nama tim manual" maxlength="20" value="Manchester United">
                         <div class="difficulty-selector">
                             <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
                             <div class="difficulty-slider-container">
                                 <input type="range" id="tournamentSlider1" class="difficulty-slider" min="1" max="7" value="5" oninput="updateTournamentSlider(1)">
                                 <div class="difficulty-value" id="tournamentDiff1">5</div>
                             </div>
+                            <div class="difficulty-label" id="tournamentDiffLabel1">Cukup Kuat</div>
                         </div>
                         <div class="difficulty-bar">
                             <div id="tournamentDiffBar1" class="difficulty-fill" style="width: 71.4%"></div>
@@ -216,13 +220,17 @@
                     
                     <div class="tournament-team-input">
                         <h3>Tim 2</h3>
-                        <input type="text" id="tournamentTeam2" placeholder="Nama Tim 2" maxlength="20" value="Liverpool FC">
+                        <select id="tournamentTeamSelect2" class="team-select" onchange="selectPredefinedTeam(2)">
+                            <option value="">-- Pilih Tim atau Ketik Manual --</option>
+                        </select>
+                        <input type="text" id="tournamentTeam2" placeholder="Atau ketik nama tim manual" maxlength="20" value="Liverpool FC">
                         <div class="difficulty-selector">
                             <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
                             <div class="difficulty-slider-container">
                                 <input type="range" id="tournamentSlider2" class="difficulty-slider" min="1" max="7" value="5" oninput="updateTournamentSlider(2)">
                                 <div class="difficulty-value" id="tournamentDiff2">5</div>
                             </div>
+                            <div class="difficulty-label" id="tournamentDiffLabel2">Cukup Kuat</div>
                         </div>
                         <div class="difficulty-bar">
                             <div id="tournamentDiffBar2" class="difficulty-fill" style="width: 71.4%"></div>
@@ -231,13 +239,17 @@
                     
                     <div class="tournament-team-input">
                         <h3>Tim 3</h3>
-                        <input type="text" id="tournamentTeam3" placeholder="Nama Tim 3" maxlength="20" value="Chelsea FC">
+                        <select id="tournamentTeamSelect3" class="team-select" onchange="selectPredefinedTeam(3)">
+                            <option value="">-- Pilih Tim atau Ketik Manual --</option>
+                        </select>
+                        <input type="text" id="tournamentTeam3" placeholder="Atau ketik nama tim manual" maxlength="20" value="Chelsea FC">
                         <div class="difficulty-selector">
                             <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
                             <div class="difficulty-slider-container">
                                 <input type="range" id="tournamentSlider3" class="difficulty-slider" min="1" max="7" value="4" oninput="updateTournamentSlider(3)">
                                 <div class="difficulty-value" id="tournamentDiff3">4</div>
                             </div>
+                            <div class="difficulty-label" id="tournamentDiffLabel3">Sedang</div>
                         </div>
                         <div class="difficulty-bar">
                             <div id="tournamentDiffBar3" class="difficulty-fill" style="width: 57.1%"></div>
@@ -246,13 +258,17 @@
                     
                     <div class="tournament-team-input">
                         <h3>Tim 4</h3>
-                        <input type="text" id="tournamentTeam4" placeholder="Nama Tim 4" maxlength="20" value="Arsenal FC">
+                        <select id="tournamentTeamSelect4" class="team-select" onchange="selectPredefinedTeam(4)">
+                            <option value="">-- Pilih Tim atau Ketik Manual --</option>
+                        </select>
+                        <input type="text" id="tournamentTeam4" placeholder="Atau ketik nama tim manual" maxlength="20" value="Arsenal FC">
                         <div class="difficulty-selector">
                             <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
                             <div class="difficulty-slider-container">
                                 <input type="range" id="tournamentSlider4" class="difficulty-slider" min="1" max="7" value="4" oninput="updateTournamentSlider(4)">
                                 <div class="difficulty-value" id="tournamentDiff4">4</div>
                             </div>
+                            <div class="difficulty-label" id="tournamentDiffLabel4">Sedang</div>
                         </div>
                         <div class="difficulty-bar">
                             <div id="tournamentDiffBar4" class="difficulty-fill" style="width: 57.1%"></div>
@@ -261,13 +277,17 @@
                     
                     <div class="tournament-team-input">
                         <h3>Tim 5</h3>
-                        <input type="text" id="tournamentTeam5" placeholder="Nama Tim 5" maxlength="20" value="Bayern Munich">
+                        <select id="tournamentTeamSelect5" class="team-select" onchange="selectPredefinedTeam(5)">
+                            <option value="">-- Pilih Tim atau Ketik Manual --</option>
+                        </select>
+                        <input type="text" id="tournamentTeam5" placeholder="Atau ketik nama tim manual" maxlength="20" value="Bayern Munich">
                         <div class="difficulty-selector">
                             <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
                             <div class="difficulty-slider-container">
                                 <input type="range" id="tournamentSlider5" class="difficulty-slider" min="1" max="7" value="6" oninput="updateTournamentSlider(5)">
                                 <div class="difficulty-value" id="tournamentDiff5">6</div>
                             </div>
+                            <div class="difficulty-label" id="tournamentDiffLabel5">Kuat</div>
                         </div>
                         <div class="difficulty-bar">
                             <div id="tournamentDiffBar5" class="difficulty-fill" style="width: 85.7%"></div>
@@ -276,13 +296,17 @@
                     
                     <div class="tournament-team-input">
                         <h3>Tim 6</h3>
-                        <input type="text" id="tournamentTeam6" placeholder="Nama Tim 6" maxlength="20" value="Real Madrid">
+                        <select id="tournamentTeamSelect6" class="team-select" onchange="selectPredefinedTeam(6)">
+                            <option value="">-- Pilih Tim atau Ketik Manual --</option>
+                        </select>
+                        <input type="text" id="tournamentTeam6" placeholder="Atau ketik nama tim manual" maxlength="20" value="Real Madrid">
                         <div class="difficulty-selector">
                             <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
                             <div class="difficulty-slider-container">
                                 <input type="range" id="tournamentSlider6" class="difficulty-slider" min="1" max="7" value="6" oninput="updateTournamentSlider(6)">
                                 <div class="difficulty-value" id="tournamentDiff6">6</div>
                             </div>
+                            <div class="difficulty-label" id="tournamentDiffLabel6">Kuat</div>
                         </div>
                         <div class="difficulty-bar">
                             <div id="tournamentDiffBar6" class="difficulty-fill" style="width: 85.7%"></div>
@@ -291,13 +315,17 @@
                     
                     <div class="tournament-team-input">
                         <h3>Tim 7</h3>
-                        <input type="text" id="tournamentTeam7" placeholder="Nama Tim 7" maxlength="20" value="Barcelona FC">
+                        <select id="tournamentTeamSelect7" class="team-select" onchange="selectPredefinedTeam(7)">
+                            <option value="">-- Pilih Tim atau Ketik Manual --</option>
+                        </select>
+                        <input type="text" id="tournamentTeam7" placeholder="Atau ketik nama tim manual" maxlength="20" value="Barcelona FC">
                         <div class="difficulty-selector">
                             <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
                             <div class="difficulty-slider-container">
                                 <input type="range" id="tournamentSlider7" class="difficulty-slider" min="1" max="7" value="5" oninput="updateTournamentSlider(7)">
                                 <div class="difficulty-value" id="tournamentDiff7">5</div>
                             </div>
+                            <div class="difficulty-label" id="tournamentDiffLabel7">Cukup Kuat</div>
                         </div>
                         <div class="difficulty-bar">
                             <div id="tournamentDiffBar7" class="difficulty-fill" style="width: 71.4%"></div>
@@ -306,13 +334,17 @@
                     
                     <div class="tournament-team-input">
                         <h3>Tim 8</h3>
-                        <input type="text" id="tournamentTeam8" placeholder="Nama Tim 8" maxlength="20" value="PSG">
+                        <select id="tournamentTeamSelect8" class="team-select" onchange="selectPredefinedTeam(8)">
+                            <option value="">-- Pilih Tim atau Ketik Manual --</option>
+                        </select>
+                        <input type="text" id="tournamentTeam8" placeholder="Atau ketik nama tim manual" maxlength="20" value="PSG">
                         <div class="difficulty-selector">
                             <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
                             <div class="difficulty-slider-container">
                                 <input type="range" id="tournamentSlider8" class="difficulty-slider" min="1" max="7" value="5" oninput="updateTournamentSlider(8)">
                                 <div class="difficulty-value" id="tournamentDiff8">5</div>
                             </div>
+                            <div class="difficulty-label" id="tournamentDiffLabel8">Cukup Kuat</div>
                         </div>
                         <div class="difficulty-bar">
                             <div id="tournamentDiffBar8" class="difficulty-fill" style="width: 71.4%"></div>
