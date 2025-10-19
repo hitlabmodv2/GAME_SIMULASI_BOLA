@@ -8,8 +8,8 @@ let matchData = {
     speed: 200,
     logs: [],
     stats: {
-        teamA: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0 },
-        teamB: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0 }
+        teamA: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0, penaltiesScored: 0, penaltiesMissed: 0, substitutions: 0 },
+        teamB: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0, penaltiesScored: 0, penaltiesMissed: 0, substitutions: 0 }
     },
     injuryTime: { firstHalf: 0, secondHalf: 0, currentHalf: 1 },
     isRunning: false,
@@ -798,8 +798,8 @@ function playTournamentMatch(match) {
     matchData.currentMinute = 0;
     matchData.logs = [];
     matchData.stats = {
-        teamA: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0 },
-        teamB: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0 }
+        teamA: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0, penaltiesScored: 0, penaltiesMissed: 0, substitutions: 0 },
+        teamB: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0, penaltiesScored: 0, penaltiesMissed: 0, substitutions: 0 }
     };
     matchData.injuryTime = { firstHalf: 0, secondHalf: 0, currentHalf: 1 };
     
@@ -982,6 +982,7 @@ function simulateTournamentSubstitution() {
     const playerOut = generatePlayerName();
     const playerIn = generatePlayerName();
     
+    matchData.stats[team].substitutions++;
     addTournamentLog(`🔄 Substitusi ${teamName}: ${playerOut} keluar, ${playerIn} masuk!`, 'substitution');
     addLiveEvent(`🔄 ${teamName}: ${playerIn} masuk`);
 }
@@ -1070,9 +1071,11 @@ function simulatePenaltyShootout(match) {
         const penaltyA = executePenalty(match.teamA, match.teamB.difficulty);
         if (penaltyA.scored) {
             penaltyScoreA++;
+            matchData.stats.teamA.penaltiesScored++;
             addTournamentLog(`${penaltyA.icon} ${match.teamA.name} - ${penaltyA.result}! Penalti ${roundLabel} ${penaltyA.message} (${penaltyScoreA}-${penaltyScoreB})`, penaltyA.type);
             addLiveEvent(`⚽ ${match.teamA.name} skor!`, 'goal');
         } else {
+            matchData.stats.teamA.penaltiesMissed++;
             addTournamentLog(`${penaltyA.icon} ${match.teamA.name} - ${penaltyA.result}! Penalti ${roundLabel} ${penaltyA.message}`, penaltyA.type);
             addLiveEvent(`${penaltyA.icon} ${match.teamA.name} gagal!`, penaltyA.type);
         }
@@ -1084,9 +1087,11 @@ function simulatePenaltyShootout(match) {
             const penaltyB = executePenalty(match.teamB, match.teamA.difficulty);
             if (penaltyB.scored) {
                 penaltyScoreB++;
+                matchData.stats.teamB.penaltiesScored++;
                 addTournamentLog(`${penaltyB.icon} ${match.teamB.name} - ${penaltyB.result}! Penalti ${roundLabel} ${penaltyB.message} (${penaltyScoreA}-${penaltyScoreB})`, penaltyB.type);
                 addLiveEvent(`⚽ ${match.teamB.name} skor!`, 'goal');
             } else {
+                matchData.stats.teamB.penaltiesMissed++;
                 addTournamentLog(`${penaltyB.icon} ${match.teamB.name} - ${penaltyB.result}! Penalti ${roundLabel} ${penaltyB.message}`, penaltyB.type);
                 addLiveEvent(`${penaltyB.icon} ${match.teamB.name} gagal!`, penaltyB.type);
             }
@@ -1627,8 +1632,8 @@ function startMatch() {
     matchData.currentMinute = 0;
     matchData.logs = [];
     matchData.stats = {
-        teamA: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0 },
-        teamB: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0 }
+        teamA: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0, penaltiesScored: 0, penaltiesMissed: 0, substitutions: 0 },
+        teamB: { shots: 0, shotsOnTarget: 0, possession: 50, passes: 0, fouls: 0, corners: 0, yellowCards: 0, redCards: 0, offsides: 0, assists: 0, penaltiesScored: 0, penaltiesMissed: 0, substitutions: 0 }
     };
     
     // Update UI
@@ -1696,6 +1701,25 @@ function simulateMinute() {
         addLog(minute, 'Babak kedua dimulai!', 'important');
         addLiveEvent('▶️ Babak 2 dimulai');
     }
+    
+    // Substitutions at specific minutes
+    if (minute === 60 || minute === 70 || minute === 80) {
+        if (Math.random() < 0.7) {
+            simulateSubstitution();
+        }
+    }
+}
+
+function simulateSubstitution() {
+    const team = Math.random() > 0.5 ? 'teamA' : 'teamB';
+    const teamName = matchData[team].name;
+    const playerOut = generatePlayerName();
+    const playerIn = generatePlayerName();
+    
+    matchData.stats[team].substitutions++;
+    addLog(matchData.currentMinute, `🔄 Substitusi ${teamName}: ${playerOut} keluar, ${playerIn} masuk!`, 'substitution');
+    addMatchCommentary(`Tim ${teamName} melakukan perubahan dengan memasukkan ${playerIn}.`);
+    addLiveEvent(`🔄 ${teamName}: ${playerIn} masuk`);
 }
 
 function simulateAttack() {
@@ -2041,6 +2065,57 @@ function updateStats() {
                 </div>
             </div>
         </div>
+        
+        <div class="stat-row">
+            <div class="stat-label">
+                <span>${matchData.teamA.name}</span>
+                <span>Penalti Berhasil</span>
+                <span>${matchData.teamB.name}</span>
+            </div>
+            <div class="stat-bar-container">
+                <div class="stat-bar reverse">
+                    <div class="stat-bar-fill" style="width: ${getStatPercentage(stats.teamA.penaltiesScored, stats.teamB.penaltiesScored, 'A')}%"></div>
+                </div>
+                <div class="stat-value">${stats.teamA.penaltiesScored} - ${stats.teamB.penaltiesScored}</div>
+                <div class="stat-bar">
+                    <div class="stat-bar-fill" style="width: ${getStatPercentage(stats.teamA.penaltiesScored, stats.teamB.penaltiesScored, 'B')}%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stat-row">
+            <div class="stat-label">
+                <span>${matchData.teamA.name}</span>
+                <span>Penalti Gagal</span>
+                <span>${matchData.teamB.name}</span>
+            </div>
+            <div class="stat-bar-container">
+                <div class="stat-bar reverse">
+                    <div class="stat-bar-fill" style="width: ${getStatPercentage(stats.teamA.penaltiesMissed, stats.teamB.penaltiesMissed, 'A')}%"></div>
+                </div>
+                <div class="stat-value">${stats.teamA.penaltiesMissed} - ${stats.teamB.penaltiesMissed}</div>
+                <div class="stat-bar">
+                    <div class="stat-bar-fill" style="width: ${getStatPercentage(stats.teamA.penaltiesMissed, stats.teamB.penaltiesMissed, 'B')}%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stat-row">
+            <div class="stat-label">
+                <span>${matchData.teamA.name}</span>
+                <span>Pergantian Pemain</span>
+                <span>${matchData.teamB.name}</span>
+            </div>
+            <div class="stat-bar-container">
+                <div class="stat-bar reverse">
+                    <div class="stat-bar-fill" style="width: ${getStatPercentage(stats.teamA.substitutions, stats.teamB.substitutions, 'A')}%"></div>
+                </div>
+                <div class="stat-value">${stats.teamA.substitutions} - ${stats.teamB.substitutions}</div>
+                <div class="stat-bar">
+                    <div class="stat-bar-fill" style="width: ${getStatPercentage(stats.teamA.substitutions, stats.teamB.substitutions, 'B')}%"></div>
+                </div>
+            </div>
+        </div>
     `;
 }
 
@@ -2187,5 +2262,17 @@ function clearEventAnimations() {
     const container = document.getElementById('eventAnimations');
     if (container) {
         container.innerHTML = '';
+    }
+    
+    // Clear tournament live display
+    const liveMatchDisplay = document.getElementById('liveMatchDisplay');
+    if (liveMatchDisplay) {
+        liveMatchDisplay.style.display = 'none';
+    }
+    
+    // Clear live events
+    const liveEvents = document.getElementById('liveEvents');
+    if (liveEvents) {
+        liveEvents.innerHTML = '';
     }
 }
