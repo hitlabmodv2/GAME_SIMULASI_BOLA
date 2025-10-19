@@ -268,74 +268,80 @@ function randomizeTeams() {
 
 function updateRealtimeData() {
     const teamCount = parseInt(document.getElementById('teamCount').value);
+    const currentMode = tournamentData.setupMode;
     let updatedCount = 0;
     
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth() + 1;
     const currentYear = currentDate.getFullYear();
     
-    const performanceAdjustments = {
-        'Manchester City': { difficulty: 7, trend: '+1' },
-        'Real Madrid': { difficulty: 7, trend: 'stable' },
-        'Bayern Munich': { difficulty: 7, trend: 'stable' },
-        'Liverpool FC': { difficulty: 6, trend: '+1' },
-        'Barcelona FC': { difficulty: 6, trend: 'stable' },
-        'PSG': { difficulty: 6, trend: 'stable' },
-        'Arsenal FC': { difficulty: 6, trend: '+1' },
-        'Manchester United': { difficulty: 5, trend: '-1' },
-        'Chelsea FC': { difficulty: 5, trend: 'stable' },
-        'Atletico Madrid': { difficulty: 5, trend: 'stable' },
-        'Inter Milan': { difficulty: 6, trend: '+1' },
-        'AC Milan': { difficulty: 5, trend: 'stable' },
-        'Juventus': { difficulty: 5, trend: 'stable' },
-        'Borussia Dortmund': { difficulty: 5, trend: 'stable' },
-        'Napoli': { difficulty: 5, trend: 'stable' },
-        'Tottenham': { difficulty: 5, trend: '+1' },
-        'Newcastle United': { difficulty: 5, trend: '+1' },
-        'RB Leipzig': { difficulty: 5, trend: 'stable' },
-        'Bayer Leverkusen': { difficulty: 6, trend: '+1' },
-        'Benfica': { difficulty: 5, trend: 'stable' },
-        'FC Porto': { difficulty: 5, trend: 'stable' },
-        'Ajax Amsterdam': { difficulty: 4, trend: '-1' },
-        'AS Roma': { difficulty: 4, trend: 'stable' },
-        'Sevilla FC': { difficulty: 4, trend: 'stable' },
-        'Valencia CF': { difficulty: 4, trend: 'stable' },
-        'Sporting CP': { difficulty: 5, trend: '+1' },
-        'West Ham United': { difficulty: 4, trend: 'stable' },
-        'Leicester City': { difficulty: 4, trend: 'stable' },
-        'Olympique Lyon': { difficulty: 4, trend: 'stable' },
-        'Marseille': { difficulty: 4, trend: 'stable' },
-        'Monaco': { difficulty: 4, trend: 'stable' },
-        'Shakhtar Donetsk': { difficulty: 3, trend: '-1' }
+    const realtimePerformanceData = {
+        'Manchester City': { difficulty: 7, reason: 'Dominan Premier League & Champions League' },
+        'Real Madrid': { difficulty: 7, reason: 'Juara La Liga & performa konsisten' },
+        'Bayern Munich': { difficulty: 7, reason: 'Dominan Bundesliga' },
+        'Liverpool FC': { difficulty: 6, reason: 'Performa kuat Premier League' },
+        'Barcelona FC': { difficulty: 6, reason: 'Rebuild berhasil, performa membaik' },
+        'PSG': { difficulty: 6, reason: 'Dominan Ligue 1' },
+        'Arsenal FC': { difficulty: 6, reason: 'Konsisten di top 3 Premier League' },
+        'Inter Milan': { difficulty: 6, reason: 'Juara Serie A, performa solid' },
+        'Bayer Leverkusen': { difficulty: 6, reason: 'Performa impresif Bundesliga' },
+        'Manchester United': { difficulty: 5, reason: 'Inkonsisten, rebuild masih berlanjut' },
+        'Chelsea FC': { difficulty: 5, reason: 'Squad muda, performa naik turun' },
+        'Atletico Madrid': { difficulty: 5, reason: 'Solid tapi tidak dominan' },
+        'AC Milan': { difficulty: 5, reason: 'Kompetitif Serie A' },
+        'Juventus': { difficulty: 5, reason: 'Masa transisi' },
+        'Borussia Dortmund': { difficulty: 5, reason: 'Kompetitif Bundesliga' },
+        'Napoli': { difficulty: 5, reason: 'Performa turun setelah juara' },
+        'Tottenham': { difficulty: 5, reason: 'Performa membaik di Premier League' },
+        'Newcastle United': { difficulty: 5, reason: 'Investasi besar, squad kuat' },
+        'RB Leipzig': { difficulty: 5, reason: 'Konsisten Bundesliga' },
+        'Benfica': { difficulty: 5, reason: 'Dominan Liga Portugal' },
+        'FC Porto': { difficulty: 5, reason: 'Kuat di Portugal' },
+        'Sporting CP': { difficulty: 5, reason: 'Kompetitif Liga Portugal' },
+        'Ajax Amsterdam': { difficulty: 4, reason: 'Kehilangan pemain kunci' },
+        'AS Roma': { difficulty: 4, reason: 'Mid-table Serie A' },
+        'Sevilla FC': { difficulty: 4, reason: 'Performa menurun' },
+        'Valencia CF': { difficulty: 4, reason: 'Berjuang di mid-table' },
+        'West Ham United': { difficulty: 4, reason: 'Inkonsisten' },
+        'Leicester City': { difficulty: 4, reason: 'Berjuang liga menengah' },
+        'Olympique Lyon': { difficulty: 4, reason: 'Mid-table Ligue 1' },
+        'Marseille': { difficulty: 4, reason: 'Kompetitif tapi tidak stabil' },
+        'Monaco': { difficulty: 4, reason: 'Developing young talents' },
+        'Shakhtar Donetsk': { difficulty: 3, reason: 'Terdampak kondisi negara' }
     };
     
-    for (let i = 1; i <= teamCount; i++) {
-        const inputElement = document.getElementById('tournamentTeam' + i);
-        const teamName = inputElement ? inputElement.value : '';
-        
-        if (teamName && performanceAdjustments[teamName]) {
-            const newData = performanceAdjustments[teamName];
-            const sliderElement = document.getElementById('tournamentSlider' + i);
-            const diffElement = document.getElementById('tournamentDiff' + i);
-            const diffBarElement = document.getElementById('tournamentDiffBar' + i);
-            const diffLabelElement = document.getElementById('tournamentDiffLabel' + i);
+    if (currentMode === 'manual') {
+        for (let i = 1; i <= teamCount; i++) {
+            const inputElement = document.getElementById('tournamentTeam' + i);
+            const teamName = inputElement ? inputElement.value : '';
             
-            if (sliderElement) sliderElement.value = newData.difficulty;
-            if (diffElement) diffElement.textContent = newData.difficulty;
-            if (diffLabelElement) diffLabelElement.textContent = getDifficultyLabel(newData.difficulty);
-            if (diffBarElement) {
-                const percentage = (newData.difficulty / 7) * 100;
-                diffBarElement.style.width = percentage + '%';
+            if (teamName && realtimePerformanceData[teamName]) {
+                const newData = realtimePerformanceData[teamName];
+                const sliderElement = document.getElementById('tournamentSlider' + i);
+                const diffElement = document.getElementById('tournamentDiff' + i);
+                const diffBarElement = document.getElementById('tournamentDiffBar' + i);
+                const diffLabelElement = document.getElementById('tournamentDiffLabel' + i);
+                
+                if (sliderElement) sliderElement.value = newData.difficulty;
+                if (diffElement) diffElement.textContent = newData.difficulty;
+                if (diffLabelElement) diffLabelElement.textContent = getDifficultyLabel(newData.difficulty);
+                if (diffBarElement) {
+                    const percentage = (newData.difficulty / 7) * 100;
+                    diffBarElement.style.width = percentage + '%';
+                }
+                
+                updatedCount++;
             }
-            
-            updatedCount++;
         }
+    } else {
+        autoGenerateTeams();
+        updatedCount = teamCount;
     }
     
     if (updatedCount > 0) {
-        showEventAnimation(`🔄 Data berhasil diupdate! ${updatedCount} tim diperbarui berdasarkan performa ${currentMonth}/${currentYear}`, 'success');
+        showEventAnimation(`🔄 Data realtime berhasil diupdate! ${updatedCount} tim diperbarui (${currentMonth}/${currentYear})`, 'success');
     } else {
-        showEventAnimation('ℹ️ Tidak ada tim yang perlu diupdate. Gunakan tim dari database terlebih dahulu!', 'info');
+        showEventAnimation('ℹ️ Gunakan tim dari database untuk update data realtime!', 'info');
     }
 }
 
@@ -354,7 +360,7 @@ function setSetupMode(mode) {
     } else {
         document.getElementById('autoModeBtn').classList.add('active');
         document.querySelector('.tournament-teams-setup').style.display = 'none';
-        if (randomButtonContainer) randomButtonContainer.style.display = 'none';
+        if (randomButtonContainer) randomButtonContainer.style.display = 'flex';
         autoGenerateTeams();
     }
 }
