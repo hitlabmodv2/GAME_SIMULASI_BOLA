@@ -1257,6 +1257,30 @@ function displayMatchStats(match) {
                     <span>${stats.teamB.redCards}</span>
                 </div>
             </div>
+            <div class="stat-item">
+                <span class="stat-label">⚽ Penalti Berhasil</span>
+                <div class="stat-values">
+                    <span>${stats.teamA.penaltiesScored || 0}</span>
+                    <span>-</span>
+                    <span>${stats.teamB.penaltiesScored || 0}</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">❌ Penalti Gagal</span>
+                <div class="stat-values">
+                    <span>${stats.teamA.penaltiesMissed || 0}</span>
+                    <span>-</span>
+                    <span>${stats.teamB.penaltiesMissed || 0}</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">🔄 Pergantian Pemain</span>
+                <div class="stat-values">
+                    <span>${stats.teamA.substitutions || 0}</span>
+                    <span>-</span>
+                    <span>${stats.teamB.substitutions || 0}</span>
+                </div>
+            </div>
         </div>
     `;
     
@@ -2259,6 +2283,7 @@ function showEventAnimation(message, type = 'goal') {
 }
 
 function clearEventAnimations() {
+    // Clear all event animations
     const container = document.getElementById('eventAnimations');
     if (container) {
         container.innerHTML = '';
@@ -2275,4 +2300,8 @@ function clearEventAnimations() {
     if (liveEvents) {
         liveEvents.innerHTML = '';
     }
+    
+    // Force remove all event-animation elements that might still exist
+    const allAnimations = document.querySelectorAll('.event-animation');
+    allAnimations.forEach(animation => animation.remove());
 }
