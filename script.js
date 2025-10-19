@@ -210,18 +210,57 @@ function updateTournamentSlider(teamNum) {
     barElement.style.width = percentage + '%';
 }
 
+function randomizeTeams() {
+    const teamCount = parseInt(document.getElementById('teamCount').value);
+    const availableTeams = [...predefinedTeams];
+    const selectedTeams = [];
+    
+    for (let i = 0; i < teamCount; i++) {
+        const randomIndex = Math.floor(Math.random() * availableTeams.length);
+        selectedTeams.push(availableTeams[randomIndex]);
+        availableTeams.splice(randomIndex, 1);
+    }
+    
+    for (let i = 1; i <= teamCount; i++) {
+        const team = selectedTeams[i - 1];
+        const inputElement = document.getElementById('tournamentTeam' + i);
+        const sliderElement = document.getElementById('tournamentSlider' + i);
+        const diffElement = document.getElementById('tournamentDiff' + i);
+        const diffBarElement = document.getElementById('tournamentDiffBar' + i);
+        const diffLabelElement = document.getElementById('tournamentDiffLabel' + i);
+        
+        if (inputElement) inputElement.value = team.name;
+        if (sliderElement) sliderElement.value = team.difficulty;
+        if (diffElement) diffElement.textContent = team.difficulty;
+        if (diffLabelElement) diffLabelElement.textContent = getDifficultyLabel(team.difficulty);
+        if (diffBarElement) {
+            const percentage = (team.difficulty / 7) * 100;
+            diffBarElement.style.width = percentage + '%';
+        }
+        
+        const selectElement = document.getElementById('tournamentTeamSelect' + i);
+        if (selectElement) selectElement.value = '';
+    }
+    
+    showEventAnimation('🎲 Tim berhasil di-random dengan tim real!', 'success');
+}
+
 function setSetupMode(mode) {
     tournamentData.setupMode = mode;
     
     document.getElementById('manualModeBtn').classList.remove('active');
     document.getElementById('autoModeBtn').classList.remove('active');
     
+    const randomButtonContainer = document.getElementById('randomButtonContainer');
+    
     if (mode === 'manual') {
         document.getElementById('manualModeBtn').classList.add('active');
         document.querySelector('.tournament-teams-setup').style.display = 'block';
+        if (randomButtonContainer) randomButtonContainer.style.display = 'flex';
     } else {
         document.getElementById('autoModeBtn').classList.add('active');
         document.querySelector('.tournament-teams-setup').style.display = 'none';
+        if (randomButtonContainer) randomButtonContainer.style.display = 'none';
         autoGenerateTeams();
     }
 }

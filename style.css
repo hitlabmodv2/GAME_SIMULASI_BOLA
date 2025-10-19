@@ -619,6 +619,39 @@ body {
     transform: scale(1.05);
 }
 
+.random-button-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.btn-random {
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    border: 3px solid var(--warning-color);
+    background: linear-gradient(135deg, var(--warning-color), #d97706);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 700;
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-random:hover {
+    background: linear-gradient(135deg, #d97706, var(--warning-color));
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
+}
+
+.btn-random:active {
+    transform: translateY(-1px) scale(1.02);
+}
+
 .tournament-teams-setup {
     max-width: 1100px;
     margin: 0 auto 30px;
@@ -1838,6 +1871,11 @@ footer {
     .mode-btn {
         max-width: 100%;
         padding: 15px 25px;
+        font-size: 1rem;
+    }
+    
+    .btn-random {
+        padding: 12px 30px;
         font-size: 1rem;
     }
     
