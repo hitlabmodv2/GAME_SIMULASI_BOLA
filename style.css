@@ -673,6 +673,160 @@ body {
     transform: translateY(-1px) scale(1.02);
 }
 
+.changelog-container {
+    max-width: 900px;
+    margin: 0 auto 30px;
+    background: var(--surface-color);
+    border-radius: 15px;
+    border: 2px solid var(--border-color);
+    overflow: hidden;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.changelog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: var(--bg-color);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.changelog-header h3 {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.btn-close-changelog {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    background: var(--surface-color);
+    color: var(--text-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-close-changelog:hover {
+    background: var(--danger-color);
+    border-color: var(--danger-color);
+    color: white;
+    transform: rotate(90deg);
+}
+
+.changelog-content {
+    padding: 20px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.changelog-empty {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 30px;
+    font-style: italic;
+}
+
+.changelog-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px;
+    margin-bottom: 12px;
+    background: var(--bg-color);
+    border-radius: 10px;
+    border-left: 4px solid var(--primary-color);
+    transition: all 0.3s;
+}
+
+.changelog-item:hover {
+    background: var(--border-color);
+    transform: translateX(5px);
+}
+
+.changelog-item.level-up {
+    border-left-color: var(--success-color);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.changelog-item.level-down {
+    border-left-color: var(--danger-color);
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.changelog-item.level-stable {
+    border-left-color: var(--warning-color);
+    background: rgba(245, 158, 11, 0.05);
+}
+
+.changelog-icon {
+    font-size: 1.8rem;
+    min-width: 40px;
+    text-align: center;
+}
+
+.changelog-details {
+    flex: 1;
+}
+
+.changelog-team-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--text-color);
+    margin-bottom: 5px;
+}
+
+.changelog-level-change {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.level-badge {
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.level-badge.old-level {
+    background: var(--border-color);
+    color: var(--text-secondary);
+}
+
+.level-badge.new-level {
+    background: var(--primary-color);
+    color: white;
+}
+
+.level-arrow {
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+}
+
+.changelog-reason {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin-top: 5px;
+}
+
+.changelog-timestamp {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: 8px;
+    font-style: italic;
+}
+
 .tournament-teams-setup {
     max-width: 1100px;
     margin: 0 auto 30px;
@@ -1948,6 +2102,42 @@ footer {
         font-size: 1.3rem;
         bottom: 70px;
         right: 15px;
+    }
+    
+    .changelog-container {
+        margin: 0 15px 20px;
+    }
+    
+    .changelog-header {
+        padding: 15px;
+    }
+    
+    .changelog-header h3 {
+        font-size: 1rem;
+    }
+    
+    .changelog-content {
+        padding: 15px;
+        max-height: 400px;
+    }
+    
+    .changelog-item {
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px;
+    }
+    
+    .changelog-icon {
+        font-size: 1.5rem;
+    }
+    
+    .changelog-team-name {
+        font-size: 1rem;
+    }
+    
+    .changelog-level-change {
+        flex-wrap: wrap;
+        gap: 8px;
     }
     
     .tournament-teams-setup {

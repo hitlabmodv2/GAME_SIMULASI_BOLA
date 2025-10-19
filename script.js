@@ -270,10 +270,18 @@ function updateRealtimeData() {
     const teamCount = parseInt(document.getElementById('teamCount').value);
     const currentMode = tournamentData.setupMode;
     let updatedCount = 0;
+    const changelog = [];
     
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth() + 1;
     const currentYear = currentDate.getFullYear();
+    const timestamp = currentDate.toLocaleString('id-ID', { 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
     
     const realtimePerformanceData = {
         'Manchester City': { difficulty: 7, reason: 'Dominan Premier League & Champions League' },
@@ -319,6 +327,7 @@ function updateRealtimeData() {
                 const newData = realtimePerformanceData[teamName];
                 const sliderElement = document.getElementById('tournamentSlider' + i);
                 const diffElement = document.getElementById('tournamentDiff' + i);
+                const oldDifficulty = diffElement ? parseInt(diffElement.textContent) : 0;
                 const diffBarElement = document.getElementById('tournamentDiffBar' + i);
                 const diffLabelElement = document.getElementById('tournamentDiffLabel' + i);
                 
@@ -330,18 +339,110 @@ function updateRealtimeData() {
                     diffBarElement.style.width = percentage + '%';
                 }
                 
+                changelog.push({
+                    team: teamName,
+                    oldLevel: oldDifficulty,
+                    newLevel: newData.difficulty,
+                    reason: newData.reason,
+                    timestamp: timestamp
+                });
+                
                 updatedCount++;
             }
         }
     } else {
         autoGenerateTeams();
+        
+        for (let i = 1; i <= teamCount; i++) {
+            const inputElement = document.getElementById('tournamentTeam' + i);
+            const teamName = inputElement ? inputElement.value : '';
+            
+            if (teamName && realtimePerformanceData[teamName]) {
+                const newData = realtimePerformanceData[teamName];
+                changelog.push({
+                    team: teamName,
+                    oldLevel: 0,
+                    newLevel: newData.difficulty,
+                    reason: newData.reason,
+                    timestamp: timestamp
+                });
+            }
+        }
         updatedCount = teamCount;
+    }
+    
+    if (changelog.length > 0) {
+        displayChangelog(changelog);
     }
     
     if (updatedCount > 0) {
         showEventAnimation(`🔄 Data realtime berhasil diupdate! ${updatedCount} tim diperbarui (${currentMonth}/${currentYear})`, 'success');
     } else {
         showEventAnimation('ℹ️ Gunakan tim dari database untuk update data realtime!', 'info');
+    }
+}
+
+function displayChangelog(changelog) {
+    const container = document.getElementById('changelogContainer');
+    const content = document.getElementById('changelogContent');
+    
+    if (!container || !content) return;
+    
+    content.innerHTML = '';
+    
+    changelog.forEach(change => {
+        const levelDiff = change.newLevel - change.oldLevel;
+        let changeType = 'level-stable';
+        let icon = '📊';
+        
+        if (levelDiff > 0) {
+            changeType = 'level-up';
+            icon = '📈';
+        } else if (levelDiff < 0) {
+            changeType = 'level-down';
+            icon = '📉';
+        }
+        
+        const changeItem = document.createElement('div');
+        changeItem.className = `changelog-item ${changeType}`;
+        
+        let levelChangeHTML = '';
+        if (change.oldLevel > 0) {
+            levelChangeHTML = `
+                <div class="changelog-level-change">
+                    <span class="level-badge old-level">Level ${change.oldLevel}</span>
+                    <span class="level-arrow">→</span>
+                    <span class="level-badge new-level">Level ${change.newLevel}</span>
+                </div>
+            `;
+        } else {
+            levelChangeHTML = `
+                <div class="changelog-level-change">
+                    <span class="level-badge new-level">Level ${change.newLevel}</span>
+                </div>
+            `;
+        }
+        
+        changeItem.innerHTML = `
+            <div class="changelog-icon">${icon}</div>
+            <div class="changelog-details">
+                <div class="changelog-team-name">${change.team}</div>
+                ${levelChangeHTML}
+                <div class="changelog-reason">💬 ${change.reason}</div>
+                <span class="changelog-timestamp">⏰ ${change.timestamp}</span>
+            </div>
+        `;
+        
+        content.appendChild(changeItem);
+    });
+    
+    container.style.display = 'block';
+}
+
+function closeChangelog() {
+    const container = document.getElementById('changelogContainer');
+    if (container) {
+        container.style.display = 'none';
     }
 }
 
