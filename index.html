@@ -103,7 +103,18 @@
                 <div class="match-log-container">
                     <div class="log-header">
                         <h3>Log Pertandingan</h3>
-                        <button class="btn-small" onclick="toggleStats()">📊 Statistik</button>
+                        <div class="log-controls">
+                            <button class="btn-auto-scroll" id="matchAutoScrollToggle" onclick="toggleMatchAutoScroll()" title="Toggle Auto Scroll">
+                                🔽 Auto
+                            </button>
+                            <button class="btn-log-action" onclick="clearMatchLog()" title="Hapus Log">
+                                🗑️
+                            </button>
+                            <button class="btn-log-action" onclick="downloadMatchLog()" title="Download Log">
+                                📥
+                            </button>
+                            <button class="btn-small" onclick="toggleStats()">📊 Statistik</button>
+                        </div>
                     </div>
                     <div id="matchLog" class="match-log"></div>
                 </div>
@@ -352,16 +363,27 @@
                 </div>
                 
                 <div class="tournament-stats-section" id="tournamentStatsSection" style="display: none;">
-                    <h3>📊 Statistik Pertandingan</h3>
+                    <div class="stats-header-collapsible" onclick="toggleTournamentStatsCollapse()">
+                        <h3>📊 Statistik Pertandingan</h3>
+                        <button class="btn-collapse" id="statsCollapseBtn">▼</button>
+                    </div>
                     <div id="tournamentStats" class="tournament-stats"></div>
                 </div>
                 
                 <div class="tournament-log-section">
                     <div class="log-header-tournament">
                         <h3>📋 Log Pertandingan Tournament</h3>
-                        <button class="btn-auto-scroll" id="autoScrollToggle" onclick="toggleAutoScroll()" title="Toggle Auto Scroll">
-                            🔽 Auto
-                        </button>
+                        <div class="log-controls">
+                            <button class="btn-auto-scroll" id="autoScrollToggle" onclick="toggleAutoScroll()" title="Toggle Auto Scroll">
+                                🔽 Auto
+                            </button>
+                            <button class="btn-log-action" onclick="clearTournamentLog()" title="Hapus Log">
+                                🗑️
+                            </button>
+                            <button class="btn-log-action" onclick="downloadTournamentLog()" title="Download Log">
+                                📥
+                            </button>
+                        </div>
                     </div>
                     <div id="tournamentLog" class="tournament-log"></div>
                 </div>
@@ -371,6 +393,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Event Animations Container -->
+    <div id="eventAnimations" class="event-animations-container"></div>
 
     <!-- Footer -->
     <footer id="footer">

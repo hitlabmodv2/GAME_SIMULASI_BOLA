@@ -13,7 +13,8 @@ let matchData = {
     },
     injuryTime: { firstHalf: 0, secondHalf: 0, currentHalf: 1 },
     isRunning: false,
-    interval: null
+    interval: null,
+    autoScrollEnabled: true
 };
 
 let tournamentData = {
@@ -31,7 +32,8 @@ let tournamentData = {
     setupMode: 'manual',
     autoPlayEnabled: true,
     teamCount: 8,
-    autoScrollEnabled: true
+    autoScrollEnabled: true,
+    statsCollapsed: true
 };
 
 const predefinedTeams = [
@@ -445,10 +447,12 @@ function simulateTournamentAttack() {
                 addTournamentLog(`⚽ GOOOL! ${scorer} mencetak gol untuk ${attackTeamName}! Assist dari ${assister}! Skor: ${matchData.teamA.score}-${matchData.teamB.score}`, 'goal');
                 addCommentary(getRandomComment('goal'));
                 addLiveEvent(`⚽ ${scorer} - Assist: ${assister}`, 'goal');
+                showEventAnimation(`⚽ GOOOL!<br>${scorer}<br><small>Assist: ${assister}</small>`, 'goal');
             } else {
                 addTournamentLog(`⚽ GOOOL! ${scorer} mencetak gol untuk ${attackTeamName}! Skor: ${matchData.teamA.score}-${matchData.teamB.score}`, 'goal');
                 addCommentary(getRandomComment('goal'));
                 addLiveEvent(`⚽ ${scorer} (${attackTeamName})`, 'goal');
+                showEventAnimation(`⚽ GOOOL!<br>${scorer}`, 'goal');
             }
         } else {
             const saveType = ['refleks cemerlang', 'menangkap dengan aman', 'memukul ke pojok', 'menepis sempurna'];
@@ -534,10 +538,11 @@ function addLiveEvent(message, type = 'normal') {
     eventDiv.className = 'live-event' + (type !== 'normal' ? ' ' + type : '');
     eventDiv.textContent = `${matchData.currentMinute}' - ${message}`;
     
-    liveEvents.insertBefore(eventDiv, liveEvents.firstChild);
+    liveEvents.appendChild(eventDiv);
+    liveEvents.scrollTop = liveEvents.scrollHeight;
     
-    while (liveEvents.children.length > 5) {
-        liveEvents.removeChild(liveEvents.lastChild);
+    while (liveEvents.children.length > 8) {
+        liveEvents.removeChild(liveEvents.firstChild);
     }
 }
 
@@ -816,6 +821,7 @@ function setupSemiFinals() {
     tournamentData.currentMatchIndex = 0;
     
     addTournamentLog('🔥 Semi Finals dimulai! 4 tim tersisa berjuang untuk masuk Final!', 'round-change');
+    showEventAnimation('🔥 Semi Finals!<br>4 Tim Tersisa', 'goal');
     renderBracket();
 }
 
@@ -836,6 +842,7 @@ function setupFinal() {
         tournamentData.currentMatchIndex = 0;
         
         addTournamentLog(`🏆 Final: ${tournamentData.final.teamA.name} vs ${tournamentData.final.teamB.name}!`, 'round-change');
+        showEventAnimation('🏆 FINAL!<br>Perebutan Juara', 'goal');
         renderBracket();
     }
 }
@@ -926,8 +933,11 @@ function createMatchCard(match, matchId) {
     const scoreBDisplay = match.scoreB !== null ? 
         (hasPenalty ? `${match.scoreB} (${match.penaltyScoreB})` : match.scoreB) : '-';
     
+    const viewStatsBtn = match.status === 'completed' && match.stats ? 
+        `<button class="btn-view-stats" onclick="viewMatchStats('${matchId}')">📊</button>` : '';
+    
     return `
-        <div class="match-card ${statusClass}" id="${matchId}">
+        <div class="match-card ${statusClass}" id="${matchId}" data-match='${JSON.stringify(match).replace(/'/g, "&apos;")}'>
             <div class="match-team ${teamAClass} ${teamALosses} ${teamAPending}">
                 <span class="match-team-name">${teamAName}</span>
                 <span class="match-team-score">${scoreADisplay}</span>
@@ -938,9 +948,34 @@ function createMatchCard(match, matchId) {
             </div>
             <div class="match-status">
                 ${match.status === 'playing' ? '⚽ Berlangsung' : match.status === 'completed' ? (hasPenalty ? '✓ Penalti' : '✓ Selesai') : 'Menunggu'}
+                ${viewStatsBtn}
             </div>
         </div>
     `;
+}
+
+function viewMatchStats(matchId) {
+    const matchCard = document.getElementById(matchId);
+    if (!matchCard) return;
+    
+    const matchDataStr = matchCard.getAttribute('data-match');
+    if (!matchDataStr) return;
+    
+    const match = JSON.parse(matchDataStr);
+    displayMatchStats(match);
+    
+    const statsDiv = document.getElementById('tournamentStats');
+    const collapseBtn = document.getElementById('statsCollapseBtn');
+    
+    statsDiv.classList.remove('collapsed');
+    tournamentData.statsCollapsed = false;
+    if (collapseBtn) {
+        collapseBtn.classList.add('rotated');
+        collapseBtn.innerHTML = '▲';
+    }
+    
+    const statsSection = document.getElementById('tournamentStatsSection');
+    statsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function displayChampion() {
@@ -956,6 +991,7 @@ function displayChampion() {
     `;
     
     updateTournamentStatus(`🎉 ${champion.name} adalah Juara Tournament! Selamat!`);
+    showEventAnimation(`🏆 ${champion.name}<br>JUARA TOURNAMENT!`, 'goal');
 }
 
 // Komentator Commentary System
@@ -1214,6 +1250,7 @@ function simulateAttack() {
             addMatchCommentary(getRandomComment('goal'));
             updateScore();
             addLiveEvent(`⚽ GOOL! ${scorer} (${attackTeamName})`, 'goal');
+            showEventAnimation(`⚽ GOOOL!<br>${scorer}`, 'goal');
         } else {
             const saveType = ['refleks cemerlang', 'menangkap bola dengan aman', 'memukul bola ke pojok', 'menepis dengan sempurna'];
             const saveMessage = saveType[Math.floor(Math.random() * saveType.length)];
@@ -1326,7 +1363,10 @@ function addLog(minute, message, type = 'normal') {
     logEntry.innerHTML = `<span class="log-time">${minute}'</span>${message}`;
     
     logContainer.appendChild(logEntry);
-    logContainer.scrollTop = logContainer.scrollHeight;
+    
+    if (matchData.autoScrollEnabled) {
+        logContainer.scrollTop = logContainer.scrollHeight;
+    }
     
     matchData.logs.push({ minute, message, type });
 }
@@ -1548,4 +1588,118 @@ function backToMenu() {
     } else {
         showScreen('mainMenu');
     }
+}
+
+function toggleMatchAutoScroll() {
+    matchData.autoScrollEnabled = !matchData.autoScrollEnabled;
+    const toggleBtn = document.getElementById('matchAutoScrollToggle');
+    
+    if (matchData.autoScrollEnabled) {
+        toggleBtn.classList.remove('disabled');
+        toggleBtn.innerHTML = '🔽 Auto';
+        const logContainer = document.getElementById('matchLog');
+        if (logContainer) {
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+    } else {
+        toggleBtn.classList.add('disabled');
+        toggleBtn.innerHTML = '⏸️ Manual';
+    }
+}
+
+function clearMatchLog() {
+    if (confirm('Yakin ingin menghapus semua log pertandingan?')) {
+        document.getElementById('matchLog').innerHTML = '';
+        matchData.logs = [];
+    }
+}
+
+function downloadMatchLog() {
+    if (matchData.logs.length === 0) {
+        alert('Tidak ada log untuk didownload!');
+        return;
+    }
+    
+    let logText = `Log Pertandingan: ${matchData.teamA.name} vs ${matchData.teamB.name}\n`;
+    logText += `Skor Akhir: ${matchData.teamA.score} - ${matchData.teamB.score}\n`;
+    logText += `${'='.repeat(60)}\n\n`;
+    
+    matchData.logs.forEach(log => {
+        logText += `[${log.minute}'] ${log.message}\n`;
+    });
+    
+    const blob = new Blob([logText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Match_Log_${matchData.teamA.name}_vs_${matchData.teamB.name}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function clearTournamentLog() {
+    if (confirm('Yakin ingin menghapus semua log tournament?')) {
+        document.getElementById('tournamentLog').innerHTML = '';
+        tournamentData.matchLogs = [];
+    }
+}
+
+function downloadTournamentLog() {
+    if (tournamentData.matchLogs.length === 0) {
+        alert('Tidak ada log untuk didownload!');
+        return;
+    }
+    
+    let logText = `Log Tournament - ${tournamentData.teamCount} Tim\n`;
+    logText += `${'='.repeat(60)}\n\n`;
+    
+    tournamentData.matchLogs.forEach(log => {
+        logText += `[${log.timestamp}] ${log.message}\n`;
+    });
+    
+    const blob = new Blob([logText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Tournament_Log_${new Date().toISOString().slice(0,10)}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function toggleTournamentStatsCollapse() {
+    tournamentData.statsCollapsed = !tournamentData.statsCollapsed;
+    const statsDiv = document.getElementById('tournamentStats');
+    const collapseBtn = document.getElementById('statsCollapseBtn');
+    
+    if (tournamentData.statsCollapsed) {
+        statsDiv.classList.add('collapsed');
+        collapseBtn.classList.remove('rotated');
+        collapseBtn.innerHTML = '▼';
+    } else {
+        statsDiv.classList.remove('collapsed');
+        collapseBtn.classList.add('rotated');
+        collapseBtn.innerHTML = '▲';
+    }
+}
+
+function showEventAnimation(message, type = 'goal') {
+    const container = document.getElementById('eventAnimations');
+    if (!container) return;
+    
+    const animation = document.createElement('div');
+    animation.className = `event-animation ${type}`;
+    animation.innerHTML = message;
+    
+    const randomOffset = (Math.random() - 0.5) * 20;
+    animation.style.top = `${30 + randomOffset}%`;
+    
+    container.appendChild(animation);
+    
+    setTimeout(() => {
+        animation.remove();
+    }, 3000);
 }
