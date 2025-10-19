@@ -137,6 +137,19 @@ function updateDateTime() {
 
 // Screen Navigation
 function showScreen(screenName) {
+    // ALWAYS clear animations when changing screens
+    clearEventAnimations();
+    
+    // Hide eventAnimations container on menu screen, show on other screens
+    const eventAnimationsContainer = document.getElementById('eventAnimations');
+    if (eventAnimationsContainer) {
+        if (screenName === 'mainMenu' || screenName === 'settings') {
+            eventAnimationsContainer.style.display = 'none';
+        } else {
+            eventAnimationsContainer.style.display = 'block';
+        }
+    }
+    
     document.querySelectorAll('.screen').forEach(screen => {
         screen.classList.remove('active');
     });
@@ -2283,10 +2296,18 @@ function showEventAnimation(message, type = 'goal') {
 }
 
 function clearEventAnimations() {
-    // Clear all event animations
+    // Force remove all event-animation elements FIRST
+    const allAnimations = document.querySelectorAll('.event-animation');
+    allAnimations.forEach(animation => {
+        animation.remove();
+    });
+    
+    // Clear all event animations container
     const container = document.getElementById('eventAnimations');
     if (container) {
         container.innerHTML = '';
+        // Force hide container
+        container.style.display = 'none';
     }
     
     // Clear tournament live display
@@ -2300,8 +2321,4 @@ function clearEventAnimations() {
     if (liveEvents) {
         liveEvents.innerHTML = '';
     }
-    
-    // Force remove all event-animation elements that might still exist
-    const allAnimations = document.querySelectorAll('.event-animation');
-    allAnimations.forEach(animation => animation.remove());
 }
