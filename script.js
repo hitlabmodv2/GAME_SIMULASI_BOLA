@@ -1562,9 +1562,11 @@ function backToMenuFromTournament() {
     if (tournamentData.isRunning) {
         if (confirm('Tournament masih berlangsung. Yakin ingin kembali ke menu?')) {
             tournamentData.isRunning = false;
+            clearEventAnimations();
             showScreen('mainMenu');
         }
     } else {
+        clearEventAnimations();
         showScreen('mainMenu');
     }
 }
@@ -2058,9 +2060,11 @@ function backToMenu() {
         if (confirm('Pertandingan masih berlangsung. Yakin ingin kembali ke menu?')) {
             clearInterval(matchData.interval);
             matchData.isRunning = false;
+            clearEventAnimations();
             showScreen('mainMenu');
         }
     } else {
+        clearEventAnimations();
         showScreen('mainMenu');
     }
 }
@@ -2177,4 +2181,11 @@ function showEventAnimation(message, type = 'goal') {
     setTimeout(() => {
         animation.remove();
     }, 3000);
+}
+
+function clearEventAnimations() {
+    const container = document.getElementById('eventAnimations');
+    if (container) {
+        container.innerHTML = '';
+    }
 }
