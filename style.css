@@ -22,7 +22,6 @@ body {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     color: var(--text-color);
     min-height: 100vh;
-    padding-bottom: 70px;
     display: flex;
     flex-direction: column;
 }
@@ -1476,15 +1475,11 @@ body::after {
 
 /* Footer */
 footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
     width: 100%;
     background: var(--surface-color);
     border-top: 2px solid var(--border-color);
     padding: 12px 20px;
-    z-index: 1000;
+    margin-top: 40px;
 }
 
 .footer-content {
