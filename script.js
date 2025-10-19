@@ -33,7 +33,8 @@ let tournamentData = {
     autoPlayEnabled: true,
     teamCount: 8,
     autoScrollEnabled: true,
-    statsCollapsed: true
+    statsCollapsed: true,
+    randomizeHistory: []
 };
 
 const predefinedTeams = [
@@ -242,6 +243,20 @@ function randomizeTeams() {
         availableTeams.splice(randomIndex, 1);
     }
     
+    const currentDate = new Date();
+    const timestamp = currentDate.toLocaleString('id-ID', { 
+        day: 'numeric', 
+        month: 'long', 
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    const historyEntry = {
+        timestamp: timestamp,
+        teams: []
+    };
+    
     for (let i = 1; i <= teamCount; i++) {
         const team = selectedTeams[i - 1];
         const inputElement = document.getElementById('tournamentTeam' + i);
@@ -259,9 +274,18 @@ function randomizeTeams() {
             diffBarElement.style.width = percentage + '%';
         }
         
+        historyEntry.teams.push({
+            position: i,
+            name: team.name,
+            difficulty: team.difficulty
+        });
+        
         const selectElement = document.getElementById('tournamentTeamSelect' + i);
         if (selectElement) selectElement.value = '';
     }
+    
+    tournamentData.randomizeHistory.push(historyEntry);
+    displayRandomizeHistory();
     
     showEventAnimation('🎲 Tim berhasil di-random dengan tim real!', 'success');
 }
@@ -441,6 +465,66 @@ function displayChangelog(changelog) {
 
 function closeChangelog() {
     const container = document.getElementById('changelogContainer');
+    if (container) {
+        container.style.display = 'none';
+    }
+}
+
+function displayRandomizeHistory() {
+    const container = document.getElementById('randomizeHistoryContainer');
+    const content = document.getElementById('randomizeHistoryContent');
+    
+    if (!container || !content) return;
+    
+    content.innerHTML = '';
+    
+    if (tournamentData.randomizeHistory.length === 0) {
+        content.innerHTML = '<p class="changelog-empty">Belum ada riwayat. Klik "Random Tim Real" untuk memilih tim secara acak.</p>';
+        return;
+    }
+    
+    const historyToShow = [...tournamentData.randomizeHistory].reverse();
+    
+    historyToShow.forEach((entry, index) => {
+        const historySection = document.createElement('div');
+        historySection.className = 'randomize-history-section';
+        historySection.style.marginBottom = '20px';
+        historySection.style.paddingBottom = '15px';
+        historySection.style.borderBottom = index < historyToShow.length - 1 ? '1px solid var(--border-color)' : 'none';
+        
+        const headerDiv = document.createElement('div');
+        headerDiv.style.marginBottom = '10px';
+        headerDiv.style.fontWeight = 'bold';
+        headerDiv.style.color = 'var(--primary-color)';
+        headerDiv.innerHTML = `🎲 Random #${tournamentData.randomizeHistory.length - index} - ⏰ ${entry.timestamp}`;
+        historySection.appendChild(headerDiv);
+        
+        entry.teams.forEach(team => {
+            const teamItem = document.createElement('div');
+            teamItem.className = 'changelog-item level-stable';
+            
+            teamItem.innerHTML = `
+                <div class="changelog-icon">⚽</div>
+                <div class="changelog-details">
+                    <div class="changelog-team-name">Tim ${team.position}: ${team.name}</div>
+                    <div class="changelog-level-change">
+                        <span class="level-badge new-level">Level ${team.difficulty}</span>
+                    </div>
+                    <div class="changelog-reason">💬 ${getDifficultyLabel(team.difficulty)}</div>
+                </div>
+            `;
+            
+            historySection.appendChild(teamItem);
+        });
+        
+        content.appendChild(historySection);
+    });
+    
+    container.style.display = 'block';
+}
+
+function closeRandomizeHistory() {
+    const container = document.getElementById('randomizeHistoryContainer');
     if (container) {
         container.style.display = 'none';
     }
