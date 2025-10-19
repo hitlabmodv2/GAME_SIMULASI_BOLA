@@ -38,39 +38,57 @@ let tournamentData = {
 };
 
 const predefinedTeams = [
-    { name: 'Manchester City', difficulty: 7 },
-    { name: 'Real Madrid', difficulty: 7 },
-    { name: 'Bayern Munich', difficulty: 7 },
-    { name: 'Liverpool FC', difficulty: 6 },
-    { name: 'Barcelona FC', difficulty: 6 },
-    { name: 'PSG', difficulty: 6 },
-    { name: 'Arsenal FC', difficulty: 6 },
-    { name: 'Inter Milan', difficulty: 6 },
-    { name: 'Bayer Leverkusen', difficulty: 6 },
-    { name: 'Manchester United', difficulty: 5 },
-    { name: 'Chelsea FC', difficulty: 5 },
-    { name: 'Atletico Madrid', difficulty: 5 },
-    { name: 'AC Milan', difficulty: 5 },
-    { name: 'Juventus', difficulty: 5 },
-    { name: 'Borussia Dortmund', difficulty: 5 },
-    { name: 'Napoli', difficulty: 5 },
-    { name: 'Tottenham', difficulty: 5 },
-    { name: 'Newcastle United', difficulty: 5 },
-    { name: 'RB Leipzig', difficulty: 5 },
-    { name: 'Benfica', difficulty: 5 },
-    { name: 'FC Porto', difficulty: 5 },
-    { name: 'Sporting CP', difficulty: 5 },
-    { name: 'Ajax Amsterdam', difficulty: 4 },
-    { name: 'AS Roma', difficulty: 4 },
-    { name: 'Sevilla FC', difficulty: 4 },
-    { name: 'Valencia CF', difficulty: 4 },
-    { name: 'West Ham United', difficulty: 4 },
-    { name: 'Leicester City', difficulty: 4 },
-    { name: 'Olympique Lyon', difficulty: 4 },
-    { name: 'Marseille', difficulty: 4 },
-    { name: 'Monaco', difficulty: 4 },
-    { name: 'Shakhtar Donetsk', difficulty: 3 }
+    { name: 'Manchester City', difficulty: 7, logo: 'team-logos/manchester-city.png', country: 'England' },
+    { name: 'Real Madrid', difficulty: 7, logo: 'team-logos/real-madrid.png', country: 'Spain' },
+    { name: 'Bayern Munich', difficulty: 7, logo: 'team-logos/bayern-munich.png', country: 'Germany' },
+    { name: 'Liverpool FC', difficulty: 6, logo: 'team-logos/liverpool.png', country: 'England' },
+    { name: 'Barcelona FC', difficulty: 6, logo: 'team-logos/barcelona.png', country: 'Spain' },
+    { name: 'PSG', difficulty: 6, logo: 'team-logos/psg.png', country: 'France' },
+    { name: 'Arsenal FC', difficulty: 6, logo: 'team-logos/arsenal.png', country: 'England' },
+    { name: 'Inter Milan', difficulty: 6, logo: 'team-logos/inter-milan.png', country: 'Italy' },
+    { name: 'Bayer Leverkusen', difficulty: 6, logo: 'team-logos/bayer-leverkusen.png', country: 'Germany' },
+    { name: 'Manchester United', difficulty: 5, logo: 'team-logos/manchester-united.png', country: 'England' },
+    { name: 'Chelsea FC', difficulty: 5, logo: 'team-logos/chelsea.png', country: 'England' },
+    { name: 'Atletico Madrid', difficulty: 5, logo: 'team-logos/atletico-madrid.png', country: 'Spain' },
+    { name: 'AC Milan', difficulty: 5, logo: 'team-logos/ac-milan.png', country: 'Italy' },
+    { name: 'Juventus', difficulty: 5, logo: 'team-logos/juventus.png', country: 'Italy' },
+    { name: 'Borussia Dortmund', difficulty: 5, logo: 'team-logos/borussia-dortmund.png', country: 'Germany' },
+    { name: 'Napoli', difficulty: 5, logo: 'team-logos/napoli.png', country: 'Italy' },
+    { name: 'Tottenham', difficulty: 5, logo: 'team-logos/tottenham.png', country: 'England' },
+    { name: 'Newcastle United', difficulty: 5, logo: 'team-logos/newcastle-united.png', country: 'England' },
+    { name: 'RB Leipzig', difficulty: 5, logo: 'team-logos/rb-leipzig.png', country: 'Germany' },
+    { name: 'Benfica', difficulty: 5, logo: 'team-logos/benfica.png', country: 'Portugal' },
+    { name: 'FC Porto', difficulty: 5, logo: 'team-logos/fc-porto.png', country: 'Portugal' },
+    { name: 'Sporting CP', difficulty: 5, logo: 'team-logos/sporting-cp.png', country: 'Portugal' },
+    { name: 'Ajax Amsterdam', difficulty: 4, logo: 'team-logos/ajax-amsterdam.png', country: 'Netherlands' },
+    { name: 'AS Roma', difficulty: 4, logo: 'team-logos/as-roma.png', country: 'Italy' },
+    { name: 'Sevilla FC', difficulty: 4, logo: 'team-logos/sevilla.png', country: 'Spain' },
+    { name: 'Valencia CF', difficulty: 4, logo: 'team-logos/valencia.png', country: 'Spain' },
+    { name: 'West Ham United', difficulty: 4, logo: 'team-logos/west-ham-united.png', country: 'England' },
+    { name: 'Leicester City', difficulty: 4, logo: 'team-logos/leicester-city.png', country: 'England' },
+    { name: 'Olympique Lyon', difficulty: 4, logo: 'team-logos/olympique-lyon.png', country: 'France' },
+    { name: 'Marseille', difficulty: 4, logo: 'team-logos/marseille.png', country: 'France' },
+    { name: 'Monaco', difficulty: 4, logo: 'team-logos/monaco.png', country: 'France' },
+    { name: 'Shakhtar Donetsk', difficulty: 3, logo: 'team-logos/shakhtar-donetsk.png', country: 'Ukraine' }
 ];
+
+// Helper function untuk mendapatkan logo tim
+function getTeamLogo(teamName) {
+    const teamInfo = teamsInfo[teamName];
+    return teamInfo ? teamInfo.logo : '';
+}
+
+// Helper function untuk mendapatkan country tim
+function getTeamCountry(teamName) {
+    const teamInfo = teamsInfo[teamName];
+    return teamInfo ? teamInfo.country : '';
+}
+
+// Helper function untuk mendapatkan warna tim
+function getTeamColors(teamName) {
+    const teamInfo = teamsInfo[teamName];
+    return teamInfo ? teamInfo.colors : { primary: '#333', secondary: '#666' };
+}
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
@@ -102,7 +120,7 @@ function scrollToTop() {
 }
 
 function populateTeamDropdowns() {
-    // Populate all dropdowns with team options
+    // Populate all dropdowns with team options including country info
     for (let i = 1; i <= 8; i++) {
         const selectElement = document.getElementById('tournamentTeamSelect' + i);
         if (selectElement && selectElement.options.length === 1) {
@@ -110,10 +128,70 @@ function populateTeamDropdowns() {
                 const option = document.createElement('option');
                 option.value = team.name;
                 option.dataset.difficulty = team.difficulty;
-                option.textContent = `${team.name} (${getDifficultyLabel(team.difficulty)})`;
+                option.dataset.logo = team.logo;
+                option.dataset.country = team.country;
+                option.textContent = `${team.name} - ${team.country} (${getDifficultyLabel(team.difficulty)})`;
                 selectElement.appendChild(option);
             });
         }
+    }
+}
+
+// Function untuk menampilkan logo tim di match header
+function displayTeamLogos() {
+    const teamALogo = getTeamLogo(matchData.teamA.name);
+    const teamBLogo = getTeamLogo(matchData.teamB.name);
+    
+    if (teamALogo) {
+        const teamADisplay = document.getElementById('teamANameDisplay');
+        if (teamADisplay && !teamADisplay.querySelector('img')) {
+            const logoImg = document.createElement('img');
+            logoImg.src = teamALogo;
+            logoImg.alt = matchData.teamA.name;
+            logoImg.style.width = '30px';
+            logoImg.style.height = '30px';
+            logoImg.style.marginRight = '8px';
+            logoImg.style.verticalAlign = 'middle';
+            teamADisplay.insertBefore(logoImg, teamADisplay.firstChild);
+        }
+    }
+    
+    if (teamBLogo) {
+        const teamBDisplay = document.getElementById('teamBNameDisplay');
+        if (teamBDisplay && !teamBDisplay.querySelector('img')) {
+            const logoImg = document.createElement('img');
+            logoImg.src = teamBLogo;
+            logoImg.alt = matchData.teamB.name;
+            logoImg.style.width = '30px';
+            logoImg.style.height = '30px';
+            logoImg.style.marginLeft = '8px';
+            logoImg.style.verticalAlign = 'middle';
+            teamBDisplay.appendChild(logoImg);
+        }
+    }
+}
+
+// Function untuk menampilkan skuad dan formasi tim
+function displayTeamSquads() {
+    const teamASquad = getFullSquad(matchData.teamA.name);
+    const teamBSquad = getFullSquad(matchData.teamB.name);
+    
+    let squadInfo = '<div style="margin: 10px 0; padding: 10px; background: var(--card-bg); border-radius: 8px;">';
+    squadInfo += '<h4 style="margin-bottom: 10px;">📋 Formasi & Skuad</h4>';
+    
+    if (teamASquad) {
+        squadInfo += `<div style="margin: 5px 0;"><strong>${matchData.teamA.name}:</strong> Formasi ${teamASquad.formation} | ${teamASquad.totalPlayers} Pemain</div>`;
+    }
+    
+    if (teamBSquad) {
+        squadInfo += `<div style="margin: 5px 0;"><strong>${matchData.teamB.name}:</strong> Formasi ${teamBSquad.formation} | ${teamBSquad.totalPlayers} Pemain</div>`;
+    }
+    
+    squadInfo += '</div>';
+    
+    const matchLog = document.getElementById('matchLog');
+    if (matchLog) {
+        matchLog.innerHTML = squadInfo + matchLog.innerHTML;
     }
 }
 
@@ -1682,7 +1760,19 @@ function startMatch() {
     document.getElementById('matchTime').textContent = "0'";
     document.getElementById('matchLog').innerHTML = '';
     
+    // Reset substitution manager
+    if (typeof substitutionManager !== 'undefined') {
+        substitutionManager.reset();
+    }
+    
     showScreen('matchScreen');
+    
+    // Display team logos and squad info
+    setTimeout(() => {
+        displayTeamLogos();
+        displayTeamSquads();
+    }, 100);
+    
     runMatch();
 }
 
@@ -1749,7 +1839,23 @@ function simulateMinute() {
 
 function simulateSubstitution() {
     const team = Math.random() > 0.5 ? 'teamA' : 'teamB';
+    const teamKey = team === 'teamA' ? 'A' : 'B';
     const teamName = matchData[team].name;
+    
+    // Coba gunakan substitution manager untuk mendapatkan pergantian pemain real
+    if (typeof substitutionManager !== 'undefined') {
+        const result = substitutionManager.generateAutoSubstitution(teamName, matchData.currentMinute);
+        
+        if (result && result.success) {
+            matchData.stats[team].substitutions++;
+            addLog(matchData.currentMinute, `🔄 Substitusi ${teamName}: ${result.substitution.playerOut.name} (#${result.substitution.playerOut.number}) ↔ ${result.substitution.playerIn.name} (#${result.substitution.playerIn.number})`, 'substitution');
+            addMatchCommentary(`Tim ${teamName} melakukan pergantian pemain. ${result.substitution.playerIn.name} masuk menggantikan ${result.substitution.playerOut.name}.`);
+            addLiveEvent(`🔄 ${teamName}: ${result.substitution.playerIn.name} masuk`);
+            return;
+        }
+    }
+    
+    // Fallback jika tidak ada data pemain atau sudah maksimal substitusi
     const playerOut = generatePlayerName();
     const playerIn = generatePlayerName();
     
