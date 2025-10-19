@@ -30,7 +30,8 @@ let tournamentData = {
     matchLogs: [],
     setupMode: 'manual',
     autoPlayEnabled: true,
-    teamCount: 8
+    teamCount: 8,
+    autoScrollEnabled: true
 };
 
 const predefinedTeams = [
@@ -198,7 +199,12 @@ function initializeTournament() {
     
     showScreen('tournament');
     
-    // Setup bracket berdasarkan jumlah tim
+    tournamentData.semiFinals = [
+        { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' },
+        { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' }
+    ];
+    tournamentData.final = { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' };
+    
     if (teamCount === 4) {
         tournamentData.currentRound = 'semi';
         setupSemiFinals();
@@ -215,6 +221,8 @@ function initializeTournament() {
         document.getElementById('tournamentRoundTitle').textContent = 'Babak 1: Round of 16';
         addTournamentLog('🏆 Tournament dimulai! 16 tim siap berkompetisi untuk menjadi juara!', 'round-change');
     }
+    
+    renderBracket();
     
     setTimeout(() => {
         playNextMatch();
@@ -410,9 +418,10 @@ function simulateTournamentAttack() {
     const defendingTeam = attackingTeam === 'teamA' ? 'teamB' : 'teamA';
     const attackTeamName = matchData[attackingTeam].name;
     const defendTeamName = matchData[defendingTeam].name;
-    const difficulty = matchData[attackingTeam].difficulty;
+    const attackDiff = matchData[attackingTeam].difficulty;
+    const defendDiff = matchData[defendingTeam].difficulty;
     
-    const shotAccuracy = 20 + (difficulty * 8);
+    const shotAccuracy = 18 + (attackDiff * 9) - (defendDiff * 2);
     const shootChance = Math.random() * 100;
     
     matchData.stats[attackingTeam].shots++;
@@ -420,11 +429,13 @@ function simulateTournamentAttack() {
     if (shootChance < shotAccuracy) {
         matchData.stats[attackingTeam].shotsOnTarget++;
         
-        const goalChance = 15 + (difficulty * 5);
+        const baseGoalChance = 12 + (attackDiff * 6);
+        const defenseReduction = defendDiff * 3.5;
+        const goalChance = baseGoalChance - defenseReduction;
+        const finalGoalChance = Math.max(8, Math.min(50, goalChance));
         const goalRoll = Math.random() * 100;
         
-        if (goalRoll < goalChance) {
-            // GOAL!
+        if (goalRoll < finalGoalChance) {
             matchData[attackingTeam].score++;
             const scorer = generatePlayerName();
             const assister = Math.random() < 0.7 ? generatePlayerName() : null;
@@ -563,10 +574,13 @@ function simulatePenaltyShootout(match) {
     function executePenalty(team, opponentDifficulty) {
         const rand = Math.random() * 100;
         const diff = team.difficulty;
+        const oppDiff = opponentDifficulty;
         
-        const goalChance = 50 + (diff * 4);
-        const saveChance = goalChance + (20 - diff * 1);
-        const missChance = saveChance + (15 - diff * 1);
+        const baseGoalChance = 55 + (diff * 5);
+        const kiperFactor = oppDiff * 3;
+        const goalChance = baseGoalChance - kiperFactor;
+        const saveChance = goalChance + (18 + kiperFactor);
+        const missChance = saveChance + (12 - diff * 0.5);
         
         if (rand < goalChance) {
             return { result: 'GOOL', scored: true, icon: '⚽', message: 'masuk dengan sempurna!', type: 'goal' };
@@ -592,7 +606,6 @@ function simulatePenaltyShootout(match) {
             addLiveEvent(`${penaltyA.icon} ${match.teamA.name} gagal!`, penaltyA.type);
         }
         
-        // Update skor penalty setelah team A
         document.getElementById('liveScoreA').textContent = `${match.scoreA} (${penaltyScoreA})`;
         document.getElementById('liveScoreB').textContent = `${match.scoreB} (${penaltyScoreB})`;
         
@@ -607,18 +620,24 @@ function simulatePenaltyShootout(match) {
                 addLiveEvent(`${penaltyB.icon} ${match.teamB.name} gagal!`, penaltyB.type);
             }
             
-            // Update skor penalty setelah team B
             document.getElementById('liveScoreA').textContent = `${match.scoreA} (${penaltyScoreA})`;
             document.getElementById('liveScoreB').textContent = `${match.scoreB} (${penaltyScoreB})`;
             
-            if (round >= 5) {
+            const remainingRounds = 5 - round;
+            const scoreDiff = Math.abs(penaltyScoreA - penaltyScoreB);
+            
+            if (round >= 5 || scoreDiff > remainingRounds) {
                 if (penaltyScoreA > penaltyScoreB) {
                     match.winner = match.teamA;
+                    match.penaltyScoreA = penaltyScoreA;
+                    match.penaltyScoreB = penaltyScoreB;
                     addTournamentLog(`🏆 ${match.teamA.name} menang adu penalti ${penaltyScoreA}-${penaltyScoreB}!`, 'match-end');
                     proceedAfterMatch(match);
                     return;
                 } else if (penaltyScoreB > penaltyScoreA) {
                     match.winner = match.teamB;
+                    match.penaltyScoreA = penaltyScoreA;
+                    match.penaltyScoreB = penaltyScoreB;
                     addTournamentLog(`🏆 ${match.teamB.name} menang adu penalti ${penaltyScoreB}-${penaltyScoreA}!`, 'match-end');
                     proceedAfterMatch(match);
                     return;
@@ -770,15 +789,12 @@ function displayMatchStats(match) {
 }
 
 function setupSemiFinals() {
-    // Setup Semi Finals berdasarkan sumber tim
     if (tournamentData.teamCount === 4) {
-        // Langsung dari teams untuk 4 tim
         tournamentData.semiFinals = [
             { teamA: tournamentData.teams[0], teamB: tournamentData.teams[1], scoreA: null, scoreB: null, winner: null, status: 'pending' },
             { teamA: tournamentData.teams[2], teamB: tournamentData.teams[3], scoreA: null, scoreB: null, winner: null, status: 'pending' }
         ];
-    } else {
-        // Dari Quarter Finals winners untuk 8 atau 16 tim
+    } else if (tournamentData.quarterFinals && tournamentData.quarterFinals.length >= 4) {
         tournamentData.semiFinals = [
             { teamA: tournamentData.quarterFinals[0].winner, teamB: tournamentData.quarterFinals[1].winner, scoreA: null, scoreB: null, winner: null, status: 'pending' },
             { teamA: tournamentData.quarterFinals[2].winner, teamB: tournamentData.quarterFinals[3].winner, scoreA: null, scoreB: null, winner: null, status: 'pending' }
@@ -794,21 +810,24 @@ function setupSemiFinals() {
 }
 
 function setupFinal() {
-    tournamentData.final = {
-        teamA: tournamentData.semiFinals[0].winner,
-        teamB: tournamentData.semiFinals[1].winner,
-        scoreA: null,
-        scoreB: null,
-        winner: null,
-        status: 'pending'
-    };
-    
-    tournamentData.currentRound = 'final';
-    tournamentData.matchQueue = [tournamentData.final];
-    tournamentData.currentMatchIndex = 0;
-    
-    addTournamentLog(`🏆 Final: ${tournamentData.final.teamA.name} vs ${tournamentData.final.teamB.name}!`, 'round-change');
-    renderBracket();
+    if (tournamentData.semiFinals && tournamentData.semiFinals.length >= 2 &&
+        tournamentData.semiFinals[0].winner && tournamentData.semiFinals[1].winner) {
+        tournamentData.final = {
+            teamA: tournamentData.semiFinals[0].winner,
+            teamB: tournamentData.semiFinals[1].winner,
+            scoreA: null,
+            scoreB: null,
+            winner: null,
+            status: 'pending'
+        };
+        
+        tournamentData.currentRound = 'final';
+        tournamentData.matchQueue = [tournamentData.final];
+        tournamentData.currentMatchIndex = 0;
+        
+        addTournamentLog(`🏆 Final: ${tournamentData.final.teamA.name} vs ${tournamentData.final.teamB.name}!`, 'round-change');
+        renderBracket();
+    }
 }
 
 function renderBracket() {
@@ -880,24 +899,35 @@ function renderBracket() {
 }
 
 function createMatchCard(match, matchId) {
-    if (!match.teamA || !match.teamB) return '';
+    const teamAName = match.teamA ? match.teamA.name : 'TBD';
+    const teamBName = match.teamB ? match.teamB.name : 'TBD';
+    const teamAPending = !match.teamA ? 'pending-team' : '';
+    const teamBPending = !match.teamB ? 'pending-team' : '';
     
     const statusClass = match.status === 'playing' ? 'active' : match.status === 'completed' ? 'completed' : '';
-    const teamAClass = match.winner && match.winner.name === match.teamA.name ? 'winner' : '';
-    const teamBClass = match.winner && match.winner.name === match.teamB.name ? 'winner' : '';
+    const teamAClass = match.winner && match.teamA && match.winner.name === match.teamA.name ? 'winner' : '';
+    const teamBClass = match.winner && match.teamB && match.winner.name === match.teamB.name ? 'winner' : '';
+    const teamALosses = match.status === 'completed' && match.winner && match.teamA && match.winner.name !== match.teamA.name ? 'loser' : '';
+    const teamBLosses = match.status === 'completed' && match.winner && match.teamB && match.winner.name !== match.teamB.name ? 'loser' : '';
+    
+    const hasPenalty = match.penaltyScoreA !== undefined && match.penaltyScoreB !== undefined;
+    const scoreADisplay = match.scoreA !== null ? 
+        (hasPenalty ? `${match.scoreA} (${match.penaltyScoreA})` : match.scoreA) : '-';
+    const scoreBDisplay = match.scoreB !== null ? 
+        (hasPenalty ? `${match.scoreB} (${match.penaltyScoreB})` : match.scoreB) : '-';
     
     return `
         <div class="match-card ${statusClass}" id="${matchId}">
-            <div class="match-team ${teamAClass}">
-                <span class="match-team-name">${match.teamA.name}</span>
-                <span class="match-team-score">${match.scoreA !== null ? match.scoreA : '-'}</span>
+            <div class="match-team ${teamAClass} ${teamALosses} ${teamAPending}">
+                <span class="match-team-name">${teamAName}</span>
+                <span class="match-team-score">${scoreADisplay}</span>
             </div>
-            <div class="match-team ${teamBClass}">
-                <span class="match-team-name">${match.teamB.name}</span>
-                <span class="match-team-score">${match.scoreB !== null ? match.scoreB : '-'}</span>
+            <div class="match-team ${teamBClass} ${teamBLosses} ${teamBPending}">
+                <span class="match-team-name">${teamBName}</span>
+                <span class="match-team-score">${scoreBDisplay}</span>
             </div>
             <div class="match-status">
-                ${match.status === 'playing' ? '⚽ Berlangsung' : match.status === 'completed' ? '✓ Selesai' : 'Menunggu'}
+                ${match.status === 'playing' ? '⚽ Berlangsung' : match.status === 'completed' ? (hasPenalty ? '✓ Penalti' : '✓ Selesai') : 'Menunggu'}
             </div>
         </div>
     `;
@@ -965,9 +995,27 @@ function addTournamentLog(message, type = 'normal') {
     logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
     
     logContainer.appendChild(logEntry);
-    logContainer.scrollTop = logContainer.scrollHeight;
+    
+    if (tournamentData.autoScrollEnabled) {
+        logContainer.scrollTop = logContainer.scrollHeight;
+    }
     
     tournamentData.matchLogs.push({ timestamp, message, type });
+}
+
+function toggleAutoScroll() {
+    tournamentData.autoScrollEnabled = !tournamentData.autoScrollEnabled;
+    const toggleBtn = document.getElementById('autoScrollToggle');
+    
+    if (tournamentData.autoScrollEnabled) {
+        toggleBtn.classList.remove('disabled');
+        toggleBtn.innerHTML = '🔽 Auto';
+        const logContainer = document.getElementById('tournamentLog');
+        logContainer.scrollTop = logContainer.scrollHeight;
+    } else {
+        toggleBtn.classList.add('disabled');
+        toggleBtn.innerHTML = '⏸️ Manual';
+    }
 }
 
 function addCommentary(message) {
@@ -979,7 +1027,10 @@ function addCommentary(message) {
     commentEntry.innerHTML = `<strong>[${timestamp}]</strong> 🎙️ <em>"${message}"</em>`;
     
     logContainer.appendChild(commentEntry);
-    logContainer.scrollTop = logContainer.scrollHeight;
+    
+    if (tournamentData.autoScrollEnabled) {
+        logContainer.scrollTop = logContainer.scrollHeight;
+    }
 }
 
 function updateTournamentStatus(message) {

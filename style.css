@@ -22,7 +22,14 @@ body {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     color: var(--text-color);
     min-height: 100vh;
-    padding-bottom: 60px;
+    padding-bottom: 70px;
+    display: flex;
+    flex-direction: column;
+}
+
+body::after {
+    content: '';
+    flex: 1;
 }
 
 .container {
@@ -624,6 +631,17 @@ body {
     color: var(--success-color);
 }
 
+.match-team.loser {
+    opacity: 0.6;
+    background: rgba(100, 100, 100, 0.15);
+}
+
+.match-team.pending-team {
+    opacity: 0.5;
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
 .match-team-name {
     flex: 1;
 }
@@ -702,8 +720,39 @@ body {
 .tournament-log-section h3 {
     padding: 20px;
     margin: 0;
-    border-bottom: 2px solid var(--border-color);
     color: var(--text-color);
+}
+
+.log-header-tournament {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--border-color);
+    padding-right: 15px;
+}
+
+.btn-auto-scroll {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    border-radius: 6px;
+    border: 2px solid var(--border-color);
+    background: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.btn-auto-scroll:hover {
+    background: var(--secondary-color);
+    transform: scale(1.05);
+}
+
+.btn-auto-scroll.disabled {
+    background: var(--surface-color);
+    color: var(--text-secondary);
+    border-color: var(--border-color);
 }
 
 .tournament-log {
