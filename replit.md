@@ -5,7 +5,7 @@ Aplikasi simulasi pertandingan sepak bola dengan AI yang lengkap dan interaktif.
 ## Overview
 Proyek ini adalah aplikasi simulasi sepak bola berbasis web yang memungkinkan pengguna untuk:
 - Menyaksikan pertandingan AI vs AI
-- Menjalankan tournament dengan 8 tim
+- Menjalankan tournament dengan 4, 8, atau 16 tim
 - Melihat statistik dan log pertandingan real-time
 - Mengatur tingkat kesulitan tim dan durasi pertandingan
 
@@ -71,6 +71,18 @@ This application aims to provide an engaging and realistic soccer simulation exp
 -   **Performance:** Optimized with controlled simulation speeds, specific penalty timings, and efficient rendering by updating only changed DOM elements. Auto-cleanup limits live events to the 8 most recent.
 -   **Event Animations:** Simplified system showing only critical events (goals and round progressions) using absolute positioning with auto-removal after 3 seconds.
 -   **Footer Design:** Fixed positioning at viewport bottom, ensuring visibility during scrolling without overlap issues.
+-   **Bracket Initialization (16 Teams):** Tournament bracket placeholders for Quarter Finals, Semi Finals, and Final are initialized at tournament start, displaying "TBD" for teams yet to be determined. Winners from previous rounds are populated automatically after each match completion.
+-   **Stats Display:** Match statistics appear automatically after each match completes, with auto-expand enabled and mobile-optimized smooth scrolling for better visibility.
+-   **Input Validation:** Comprehensive validation prevents tournament matches from starting with null/undefined teams, with error logging for debugging.
+
+## Recent Changes (October 2025)
+**Tournament 16 Tim - Bracket & Stats Improvements:**
+- Fixed bracket initialization for 16-team tournaments - Quarter Finals, Semi Finals, and Final now properly display "TBD" placeholders before teams are determined
+- Improved real-time bracket updates - winning teams immediately appear in the next round after match completion
+- Enhanced statistics display - match stats now appear automatically after each match and remain visible (no longer auto-hide after 5.5 seconds)
+- Added mobile optimization - stats section auto-scrolls into view on mobile devices for better accessibility
+- Implemented validation checks - prevents tournament errors by validating team existence before match simulation
+- Battle log maintains real-time auto-scroll enabled by default for continuous event tracking
 
 ## External Dependencies
 -   **Storage:** `localStorage` for persisting user preferences and settings.
