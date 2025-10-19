@@ -303,6 +303,22 @@ function initializeTournament() {
     
     showScreen('tournament');
     
+    if (teamCount === 16) {
+        tournamentData.quarterFinals = [
+            { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' },
+            { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' },
+            { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' },
+            { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' }
+        ];
+    } else if (teamCount === 8) {
+        tournamentData.quarterFinals = [
+            { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' },
+            { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' },
+            { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' },
+            { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' }
+        ];
+    }
+    
     tournamentData.semiFinals = [
         { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' },
         { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' }
@@ -353,20 +369,26 @@ function setupQuarterFinals() {
     // Setup Quarter Finals berdasarkan sumber tim
     if (tournamentData.teamCount === 8) {
         // Langsung dari teams untuk 8 tim
-        tournamentData.quarterFinals = [
-            { teamA: tournamentData.teams[0], teamB: tournamentData.teams[1], scoreA: null, scoreB: null, winner: null, status: 'pending' },
-            { teamA: tournamentData.teams[2], teamB: tournamentData.teams[3], scoreA: null, scoreB: null, winner: null, status: 'pending' },
-            { teamA: tournamentData.teams[4], teamB: tournamentData.teams[5], scoreA: null, scoreB: null, winner: null, status: 'pending' },
-            { teamA: tournamentData.teams[6], teamB: tournamentData.teams[7], scoreA: null, scoreB: null, winner: null, status: 'pending' }
-        ];
+        tournamentData.quarterFinals[0] = { teamA: tournamentData.teams[0], teamB: tournamentData.teams[1], scoreA: null, scoreB: null, winner: null, status: 'pending' };
+        tournamentData.quarterFinals[1] = { teamA: tournamentData.teams[2], teamB: tournamentData.teams[3], scoreA: null, scoreB: null, winner: null, status: 'pending' };
+        tournamentData.quarterFinals[2] = { teamA: tournamentData.teams[4], teamB: tournamentData.teams[5], scoreA: null, scoreB: null, winner: null, status: 'pending' };
+        tournamentData.quarterFinals[3] = { teamA: tournamentData.teams[6], teamB: tournamentData.teams[7], scoreA: null, scoreB: null, winner: null, status: 'pending' };
     } else if (tournamentData.teamCount === 16) {
-        // Dari Round of 16 winners untuk 16 tim
-        tournamentData.quarterFinals = [
-            { teamA: tournamentData.roundOf16[0].winner, teamB: tournamentData.roundOf16[1].winner, scoreA: null, scoreB: null, winner: null, status: 'pending' },
-            { teamA: tournamentData.roundOf16[2].winner, teamB: tournamentData.roundOf16[3].winner, scoreA: null, scoreB: null, winner: null, status: 'pending' },
-            { teamA: tournamentData.roundOf16[4].winner, teamB: tournamentData.roundOf16[5].winner, scoreA: null, scoreB: null, winner: null, status: 'pending' },
-            { teamA: tournamentData.roundOf16[6].winner, teamB: tournamentData.roundOf16[7].winner, scoreA: null, scoreB: null, winner: null, status: 'pending' }
-        ];
+        // Dari Round of 16 winners untuk 16 tim - update placeholder yang sudah ada
+        // Validasi: pastikan semua winners ada sebelum update
+        const allWinnersExist = tournamentData.roundOf16.every(match => match.winner);
+        if (allWinnersExist) {
+            tournamentData.quarterFinals[0].teamA = tournamentData.roundOf16[0].winner;
+            tournamentData.quarterFinals[0].teamB = tournamentData.roundOf16[1].winner;
+            tournamentData.quarterFinals[1].teamA = tournamentData.roundOf16[2].winner;
+            tournamentData.quarterFinals[1].teamB = tournamentData.roundOf16[3].winner;
+            tournamentData.quarterFinals[2].teamA = tournamentData.roundOf16[4].winner;
+            tournamentData.quarterFinals[2].teamB = tournamentData.roundOf16[5].winner;
+            tournamentData.quarterFinals[3].teamA = tournamentData.roundOf16[6].winner;
+            tournamentData.quarterFinals[3].teamB = tournamentData.roundOf16[7].winner;
+        } else {
+            console.error('Error: Tidak semua Round of 16 matches memiliki winner');
+        }
     }
     
     tournamentData.currentRound = 'quarter';
@@ -414,6 +436,14 @@ function playNextMatch() {
 }
 
 function playTournamentMatch(match) {
+    // Validasi: pastikan kedua tim ada sebelum memulai pertandingan
+    if (!match || !match.teamA || !match.teamB) {
+        console.error('Error: Match memiliki tim yang tidak valid', match);
+        tournamentData.currentMatchIndex++;
+        playNextMatch();
+        return;
+    }
+    
     match.status = 'playing';
     
     const roundName = tournamentData.currentRound === 'round16' ? 'Round of 16' :
@@ -790,6 +820,7 @@ function proceedAfterMatch(match) {
 function displayMatchStats(match) {
     const statsSection = document.getElementById('tournamentStatsSection');
     const statsDiv = document.getElementById('tournamentStats');
+    const collapseBtn = document.getElementById('statsCollapseBtn');
     
     statsSection.style.display = 'block';
     
@@ -900,22 +931,36 @@ function displayMatchStats(match) {
         </div>
     `;
     
+    // Tampilkan stats dan buat expanded (tidak collapsed)
+    statsDiv.classList.remove('collapsed');
+    tournamentData.statsCollapsed = false;
+    if (collapseBtn) {
+        collapseBtn.textContent = '▼';
+    }
+    
+    // Scroll ke stats section untuk mobile
     setTimeout(() => {
-        statsSection.style.display = 'none';
-    }, 5500);
+        statsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
 }
 
 function setupSemiFinals() {
     if (tournamentData.teamCount === 4) {
-        tournamentData.semiFinals = [
-            { teamA: tournamentData.teams[0], teamB: tournamentData.teams[1], scoreA: null, scoreB: null, winner: null, status: 'pending' },
-            { teamA: tournamentData.teams[2], teamB: tournamentData.teams[3], scoreA: null, scoreB: null, winner: null, status: 'pending' }
-        ];
+        // Langsung dari teams untuk 4 tim
+        tournamentData.semiFinals[0] = { teamA: tournamentData.teams[0], teamB: tournamentData.teams[1], scoreA: null, scoreB: null, winner: null, status: 'pending' };
+        tournamentData.semiFinals[1] = { teamA: tournamentData.teams[2], teamB: tournamentData.teams[3], scoreA: null, scoreB: null, winner: null, status: 'pending' };
     } else if (tournamentData.quarterFinals && tournamentData.quarterFinals.length >= 4) {
-        tournamentData.semiFinals = [
-            { teamA: tournamentData.quarterFinals[0].winner, teamB: tournamentData.quarterFinals[1].winner, scoreA: null, scoreB: null, winner: null, status: 'pending' },
-            { teamA: tournamentData.quarterFinals[2].winner, teamB: tournamentData.quarterFinals[3].winner, scoreA: null, scoreB: null, winner: null, status: 'pending' }
-        ];
+        // Dari Quarter Finals winners - update placeholder yang sudah ada
+        // Validasi: pastikan semua winners ada sebelum update
+        const allWinnersExist = tournamentData.quarterFinals.every(match => match.winner);
+        if (allWinnersExist) {
+            tournamentData.semiFinals[0].teamA = tournamentData.quarterFinals[0].winner;
+            tournamentData.semiFinals[0].teamB = tournamentData.quarterFinals[1].winner;
+            tournamentData.semiFinals[1].teamA = tournamentData.quarterFinals[2].winner;
+            tournamentData.semiFinals[1].teamB = tournamentData.quarterFinals[3].winner;
+        } else {
+            console.error('Error: Tidak semua Quarter Finals matches memiliki winner');
+        }
     }
     
     tournamentData.currentRound = 'semi';
@@ -928,24 +973,28 @@ function setupSemiFinals() {
 }
 
 function setupFinal() {
-    if (tournamentData.semiFinals && tournamentData.semiFinals.length >= 2 &&
-        tournamentData.semiFinals[0].winner && tournamentData.semiFinals[1].winner) {
-        tournamentData.final = {
-            teamA: tournamentData.semiFinals[0].winner,
-            teamB: tournamentData.semiFinals[1].winner,
-            scoreA: null,
-            scoreB: null,
-            winner: null,
-            status: 'pending'
-        };
-        
-        tournamentData.currentRound = 'final';
-        tournamentData.matchQueue = [tournamentData.final];
-        tournamentData.currentMatchIndex = 0;
-        
-        addTournamentLog(`🏆 Final: ${tournamentData.final.teamA.name} vs ${tournamentData.final.teamB.name}!`, 'round-change');
-        showEventAnimation('🏆 FINAL!<br>Perebutan Juara', 'goal');
-        renderBracket();
+    if (tournamentData.semiFinals && tournamentData.semiFinals.length >= 2) {
+        // Validasi: pastikan kedua semi final winners ada
+        const allWinnersExist = tournamentData.semiFinals.every(match => match.winner);
+        if (allWinnersExist) {
+            // Update placeholder yang sudah ada
+            tournamentData.final.teamA = tournamentData.semiFinals[0].winner;
+            tournamentData.final.teamB = tournamentData.semiFinals[1].winner;
+            tournamentData.final.scoreA = null;
+            tournamentData.final.scoreB = null;
+            tournamentData.final.winner = null;
+            tournamentData.final.status = 'pending';
+            
+            tournamentData.currentRound = 'final';
+            tournamentData.matchQueue = [tournamentData.final];
+            tournamentData.currentMatchIndex = 0;
+            
+            addTournamentLog(`🏆 Final: ${tournamentData.final.teamA.name} vs ${tournamentData.final.teamB.name}!`, 'round-change');
+            showEventAnimation('🏆 FINAL!<br>Perebutan Juara', 'goal');
+            renderBracket();
+        } else {
+            console.error('Error: Tidak semua Semi Finals matches memiliki winner');
+        }
     }
 }
 
