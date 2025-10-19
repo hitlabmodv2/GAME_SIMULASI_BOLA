@@ -117,9 +117,11 @@ function updateTeamInputs() {
             <h3>Tim ${i}</h3>
             <input type="text" id="tournamentTeam${i}" placeholder="Nama Tim ${i}" maxlength="20" value="">
             <div class="difficulty-selector">
-                <button onclick="changeTournamentDifficulty(${i}, -1)">−</button>
-                <span id="tournamentDiff${i}">5</span>
-                <button onclick="changeTournamentDifficulty(${i}, 1)">+</button>
+                <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
+                <div class="difficulty-slider-container">
+                    <input type="range" id="tournamentSlider${i}" class="difficulty-slider" min="1" max="7" value="5" oninput="updateTournamentSlider(${i})">
+                    <div class="difficulty-value" id="tournamentDiff${i}">5</div>
+                </div>
             </div>
             <div class="difficulty-bar">
                 <div id="tournamentDiffBar${i}" class="difficulty-fill" style="width: 71.4%"></div>
@@ -131,6 +133,17 @@ function updateTeamInputs() {
     if (tournamentData.setupMode === 'auto') {
         autoGenerateTeams();
     }
+}
+
+function updateTournamentSlider(teamNum) {
+    const sliderElement = document.getElementById('tournamentSlider' + teamNum);
+    const difficultyElement = document.getElementById('tournamentDiff' + teamNum);
+    const barElement = document.getElementById('tournamentDiffBar' + teamNum);
+    
+    const difficulty = parseInt(sliderElement.value);
+    difficultyElement.textContent = difficulty;
+    const percentage = (difficulty / 7) * 100;
+    barElement.style.width = percentage + '%';
 }
 
 function setSetupMode(mode) {
@@ -156,6 +169,12 @@ function autoGenerateTeams() {
     for (let i = 1; i <= teamCount; i++) {
         const team = shuffled[i - 1];
         document.getElementById('tournamentTeam' + i).value = team.name;
+        
+        const sliderElement = document.getElementById('tournamentSlider' + i);
+        if (sliderElement) {
+            sliderElement.value = team.difficulty;
+        }
+        
         document.getElementById('tournamentDiff' + i).textContent = team.difficulty;
         const percentage = (team.difficulty / 7) * 100;
         document.getElementById('tournamentDiffBar' + i).style.width = percentage + '%';
@@ -183,7 +202,8 @@ function initializeTournament() {
     
     for (let i = 1; i <= teamCount; i++) {
         const teamName = document.getElementById('tournamentTeam' + i).value || 'Tim ' + i;
-        const difficulty = parseInt(document.getElementById('tournamentDiff' + i).textContent);
+        const sliderElement = document.getElementById('tournamentSlider' + i);
+        const difficulty = sliderElement ? parseInt(sliderElement.value) : parseInt(document.getElementById('tournamentDiff' + i).textContent);
         tournamentData.teams.push({ name: teamName, difficulty: difficulty });
     }
     

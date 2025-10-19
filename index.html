@@ -203,9 +203,11 @@
                         <h3>Tim 1</h3>
                         <input type="text" id="tournamentTeam1" placeholder="Nama Tim 1" maxlength="20" value="Manchester United">
                         <div class="difficulty-selector">
-                            <button onclick="changeTournamentDifficulty(1, -1)">−</button>
-                            <span id="tournamentDiff1">5</span>
-                            <button onclick="changeTournamentDifficulty(1, 1)">+</button>
+                            <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
+                            <div class="difficulty-slider-container">
+                                <input type="range" id="tournamentSlider1" class="difficulty-slider" min="1" max="7" value="5" oninput="updateTournamentSlider(1)">
+                                <div class="difficulty-value" id="tournamentDiff1">5</div>
+                            </div>
                         </div>
                         <div class="difficulty-bar">
                             <div id="tournamentDiffBar1" class="difficulty-fill" style="width: 71.4%"></div>
@@ -216,9 +218,11 @@
                         <h3>Tim 2</h3>
                         <input type="text" id="tournamentTeam2" placeholder="Nama Tim 2" maxlength="20" value="Liverpool FC">
                         <div class="difficulty-selector">
-                            <button onclick="changeTournamentDifficulty(2, -1)">−</button>
-                            <span id="tournamentDiff2">5</span>
-                            <button onclick="changeTournamentDifficulty(2, 1)">+</button>
+                            <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
+                            <div class="difficulty-slider-container">
+                                <input type="range" id="tournamentSlider2" class="difficulty-slider" min="1" max="7" value="5" oninput="updateTournamentSlider(2)">
+                                <div class="difficulty-value" id="tournamentDiff2">5</div>
+                            </div>
                         </div>
                         <div class="difficulty-bar">
                             <div id="tournamentDiffBar2" class="difficulty-fill" style="width: 71.4%"></div>
@@ -229,9 +233,11 @@
                         <h3>Tim 3</h3>
                         <input type="text" id="tournamentTeam3" placeholder="Nama Tim 3" maxlength="20" value="Chelsea FC">
                         <div class="difficulty-selector">
-                            <button onclick="changeTournamentDifficulty(3, -1)">−</button>
-                            <span id="tournamentDiff3">4</span>
-                            <button onclick="changeTournamentDifficulty(3, 1)">+</button>
+                            <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
+                            <div class="difficulty-slider-container">
+                                <input type="range" id="tournamentSlider3" class="difficulty-slider" min="1" max="7" value="4" oninput="updateTournamentSlider(3)">
+                                <div class="difficulty-value" id="tournamentDiff3">4</div>
+                            </div>
                         </div>
                         <div class="difficulty-bar">
                             <div id="tournamentDiffBar3" class="difficulty-fill" style="width: 57.1%"></div>
@@ -242,9 +248,11 @@
                         <h3>Tim 4</h3>
                         <input type="text" id="tournamentTeam4" placeholder="Nama Tim 4" maxlength="20" value="Arsenal FC">
                         <div class="difficulty-selector">
-                            <button onclick="changeTournamentDifficulty(4, -1)">−</button>
-                            <span id="tournamentDiff4">4</span>
-                            <button onclick="changeTournamentDifficulty(4, 1)">+</button>
+                            <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
+                            <div class="difficulty-slider-container">
+                                <input type="range" id="tournamentSlider4" class="difficulty-slider" min="1" max="7" value="4" oninput="updateTournamentSlider(4)">
+                                <div class="difficulty-value" id="tournamentDiff4">4</div>
+                            </div>
                         </div>
                         <div class="difficulty-bar">
                             <div id="tournamentDiffBar4" class="difficulty-fill" style="width: 57.1%"></div>
@@ -255,9 +263,11 @@
                         <h3>Tim 5</h3>
                         <input type="text" id="tournamentTeam5" placeholder="Nama Tim 5" maxlength="20" value="Bayern Munich">
                         <div class="difficulty-selector">
-                            <button onclick="changeTournamentDifficulty(5, -1)">−</button>
-                            <span id="tournamentDiff5">6</span>
-                            <button onclick="changeTournamentDifficulty(5, 1)">+</button>
+                            <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
+                            <div class="difficulty-slider-container">
+                                <input type="range" id="tournamentSlider5" class="difficulty-slider" min="1" max="7" value="6" oninput="updateTournamentSlider(5)">
+                                <div class="difficulty-value" id="tournamentDiff5">6</div>
+                            </div>
                         </div>
                         <div class="difficulty-bar">
                             <div id="tournamentDiffBar5" class="difficulty-fill" style="width: 85.7%"></div>
@@ -268,9 +278,11 @@
                         <h3>Tim 6</h3>
                         <input type="text" id="tournamentTeam6" placeholder="Nama Tim 6" maxlength="20" value="Real Madrid">
                         <div class="difficulty-selector">
-                            <button onclick="changeTournamentDifficulty(6, -1)">−</button>
-                            <span id="tournamentDiff6">6</span>
-                            <button onclick="changeTournamentDifficulty(6, 1)">+</button>
+                            <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
+                            <div class="difficulty-slider-container">
+                                <input type="range" id="tournamentSlider6" class="difficulty-slider" min="1" max="7" value="6" oninput="updateTournamentSlider(6)">
+                                <div class="difficulty-value" id="tournamentDiff6">6</div>
+                            </div>
                         </div>
                         <div class="difficulty-bar">
                             <div id="tournamentDiffBar6" class="difficulty-fill" style="width: 85.7%"></div>
@@ -281,9 +293,11 @@
                         <h3>Tim 7</h3>
                         <input type="text" id="tournamentTeam7" placeholder="Nama Tim 7" maxlength="20" value="Barcelona FC">
                         <div class="difficulty-selector">
-                            <button onclick="changeTournamentDifficulty(7, -1)">−</button>
-                            <span id="tournamentDiff7">5</span>
-                            <button onclick="changeTournamentDifficulty(7, 1)">+</button>
+                            <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
+                            <div class="difficulty-slider-container">
+                                <input type="range" id="tournamentSlider7" class="difficulty-slider" min="1" max="7" value="5" oninput="updateTournamentSlider(7)">
+                                <div class="difficulty-value" id="tournamentDiff7">5</div>
+                            </div>
                         </div>
                         <div class="difficulty-bar">
                             <div id="tournamentDiffBar7" class="difficulty-fill" style="width: 71.4%"></div>
@@ -294,9 +308,11 @@
                         <h3>Tim 8</h3>
                         <input type="text" id="tournamentTeam8" placeholder="Nama Tim 8" maxlength="20" value="PSG">
                         <div class="difficulty-selector">
-                            <button onclick="changeTournamentDifficulty(8, -1)">−</button>
-                            <span id="tournamentDiff8">5</span>
-                            <button onclick="changeTournamentDifficulty(8, 1)">+</button>
+                            <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
+                            <div class="difficulty-slider-container">
+                                <input type="range" id="tournamentSlider8" class="difficulty-slider" min="1" max="7" value="5" oninput="updateTournamentSlider(8)">
+                                <div class="difficulty-value" id="tournamentDiff8">5</div>
+                            </div>
                         </div>
                         <div class="difficulty-bar">
                             <div id="tournamentDiffBar8" class="difficulty-fill" style="width: 71.4%"></div>
