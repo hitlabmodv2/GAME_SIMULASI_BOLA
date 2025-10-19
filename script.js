@@ -1839,23 +1839,32 @@ function simulateMinute() {
 
 function simulateSubstitution() {
     const team = Math.random() > 0.5 ? 'teamA' : 'teamB';
-    const teamKey = team === 'teamA' ? 'A' : 'B';
     const teamName = matchData[team].name;
     
-    // Coba gunakan substitution manager untuk mendapatkan pergantian pemain real
-    if (typeof substitutionManager !== 'undefined') {
-        const result = substitutionManager.generateAutoSubstitution(teamName, matchData.currentMinute);
-        
-        if (result && result.success) {
-            matchData.stats[team].substitutions++;
-            addLog(matchData.currentMinute, `🔄 Substitusi ${teamName}: ${result.substitution.playerOut.name} (#${result.substitution.playerOut.number}) ↔ ${result.substitution.playerIn.name} (#${result.substitution.playerIn.number})`, 'substitution');
-            addMatchCommentary(`Tim ${teamName} melakukan pergantian pemain. ${result.substitution.playerIn.name} masuk menggantikan ${result.substitution.playerOut.name}.`);
-            addLiveEvent(`🔄 ${teamName}: ${result.substitution.playerIn.name} masuk`);
+    // Gunakan substitution manager dengan data pemain real dari teamSquads
+    if (typeof substitutionManager !== 'undefined' && typeof teamSquads !== 'undefined') {
+        // Cek apakah tim ini ada di database skuad
+        if (teamSquads[teamName]) {
+            const result = substitutionManager.generateAutoSubstitution(teamName, matchData.currentMinute);
+            
+            if (result && result.success) {
+                // Increment stats hanya jika substitusi berhasil
+                matchData.stats[team].substitutions++;
+                
+                const playerOutInfo = `${result.substitution.playerOut.name} (#${result.substitution.playerOut.number})`;
+                const playerInInfo = `${result.substitution.playerIn.name} (#${result.substitution.playerIn.number})`;
+                
+                addLog(matchData.currentMinute, `🔄 Substitusi ${teamName}: ${playerOutInfo} ↔ ${playerInInfo}`, 'substitution');
+                addMatchCommentary(`Tim ${teamName} melakukan pergantian pemain. ${result.substitution.playerIn.name} masuk menggantikan ${result.substitution.playerOut.name}.`);
+                addLiveEvent(`🔄 ${teamName}: ${result.substitution.playerIn.name} masuk`);
+            }
+            // Jika tim punya data skuad tapi generateAutoSubstitution return null atau !success,
+            // keluar tanpa substitusi (belum waktunya atau sudah maksimal)
             return;
         }
     }
     
-    // Fallback jika tidak ada data pemain atau sudah maksimal substitusi
+    // Fallback HANYA untuk tim custom user yang TIDAK ada di database skuad
     const playerOut = generatePlayerName();
     const playerIn = generatePlayerName();
     
