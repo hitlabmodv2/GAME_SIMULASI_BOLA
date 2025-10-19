@@ -37,38 +37,38 @@ let tournamentData = {
 };
 
 const predefinedTeams = [
-    { name: 'Manchester United', difficulty: 6 },
-    { name: 'Liverpool FC', difficulty: 6 },
-    { name: 'Chelsea FC', difficulty: 5 },
-    { name: 'Arsenal FC', difficulty: 5 },
-    { name: 'Bayern Munich', difficulty: 7 },
+    { name: 'Manchester City', difficulty: 7 },
     { name: 'Real Madrid', difficulty: 7 },
+    { name: 'Bayern Munich', difficulty: 7 },
+    { name: 'Liverpool FC', difficulty: 6 },
     { name: 'Barcelona FC', difficulty: 6 },
     { name: 'PSG', difficulty: 6 },
-    { name: 'Manchester City', difficulty: 7 },
-    { name: 'Juventus', difficulty: 5 },
-    { name: 'AC Milan', difficulty: 5 },
-    { name: 'Inter Milan', difficulty: 5 },
-    { name: 'Borussia Dortmund', difficulty: 5 },
+    { name: 'Arsenal FC', difficulty: 6 },
+    { name: 'Inter Milan', difficulty: 6 },
+    { name: 'Bayer Leverkusen', difficulty: 6 },
+    { name: 'Manchester United', difficulty: 5 },
+    { name: 'Chelsea FC', difficulty: 5 },
     { name: 'Atletico Madrid', difficulty: 5 },
-    { name: 'Tottenham', difficulty: 4 },
-    { name: 'Ajax Amsterdam', difficulty: 4 },
+    { name: 'AC Milan', difficulty: 5 },
+    { name: 'Juventus', difficulty: 5 },
+    { name: 'Borussia Dortmund', difficulty: 5 },
     { name: 'Napoli', difficulty: 5 },
+    { name: 'Tottenham', difficulty: 5 },
+    { name: 'Newcastle United', difficulty: 5 },
+    { name: 'RB Leipzig', difficulty: 5 },
+    { name: 'Benfica', difficulty: 5 },
+    { name: 'FC Porto', difficulty: 5 },
+    { name: 'Sporting CP', difficulty: 5 },
+    { name: 'Ajax Amsterdam', difficulty: 4 },
     { name: 'AS Roma', difficulty: 4 },
     { name: 'Sevilla FC', difficulty: 4 },
     { name: 'Valencia CF', difficulty: 4 },
-    { name: 'Benfica', difficulty: 5 },
-    { name: 'FC Porto', difficulty: 5 },
-    { name: 'Sporting CP', difficulty: 4 },
-    { name: 'RB Leipzig', difficulty: 5 },
-    { name: 'Bayer Leverkusen', difficulty: 5 },
-    { name: 'Newcastle United', difficulty: 4 },
     { name: 'West Ham United', difficulty: 4 },
     { name: 'Leicester City', difficulty: 4 },
     { name: 'Olympique Lyon', difficulty: 4 },
     { name: 'Marseille', difficulty: 4 },
     { name: 'Monaco', difficulty: 4 },
-    { name: 'Shakhtar Donetsk', difficulty: 4 }
+    { name: 'Shakhtar Donetsk', difficulty: 3 }
 ];
 
 // Initialize
@@ -77,7 +77,28 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(updateDateTime, 1000);
     loadSettings();
     populateTeamDropdowns();
+    initScrollToTop();
 });
+
+// Scroll to Top Functionality
+function initScrollToTop() {
+    const scrollBtn = document.getElementById('scrollToTopBtn');
+    
+    window.addEventListener('scroll', function() {
+        if (window.pageYOffset > 300) {
+            scrollBtn.classList.add('visible');
+        } else {
+            scrollBtn.classList.remove('visible');
+        }
+    });
+}
+
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
 
 function populateTeamDropdowns() {
     // Populate all dropdowns with team options
@@ -243,6 +264,79 @@ function randomizeTeams() {
     }
     
     showEventAnimation('🎲 Tim berhasil di-random dengan tim real!', 'success');
+}
+
+function updateRealtimeData() {
+    const teamCount = parseInt(document.getElementById('teamCount').value);
+    let updatedCount = 0;
+    
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentYear = currentDate.getFullYear();
+    
+    const performanceAdjustments = {
+        'Manchester City': { difficulty: 7, trend: '+1' },
+        'Real Madrid': { difficulty: 7, trend: 'stable' },
+        'Bayern Munich': { difficulty: 7, trend: 'stable' },
+        'Liverpool FC': { difficulty: 6, trend: '+1' },
+        'Barcelona FC': { difficulty: 6, trend: 'stable' },
+        'PSG': { difficulty: 6, trend: 'stable' },
+        'Arsenal FC': { difficulty: 6, trend: '+1' },
+        'Manchester United': { difficulty: 5, trend: '-1' },
+        'Chelsea FC': { difficulty: 5, trend: 'stable' },
+        'Atletico Madrid': { difficulty: 5, trend: 'stable' },
+        'Inter Milan': { difficulty: 6, trend: '+1' },
+        'AC Milan': { difficulty: 5, trend: 'stable' },
+        'Juventus': { difficulty: 5, trend: 'stable' },
+        'Borussia Dortmund': { difficulty: 5, trend: 'stable' },
+        'Napoli': { difficulty: 5, trend: 'stable' },
+        'Tottenham': { difficulty: 5, trend: '+1' },
+        'Newcastle United': { difficulty: 5, trend: '+1' },
+        'RB Leipzig': { difficulty: 5, trend: 'stable' },
+        'Bayer Leverkusen': { difficulty: 6, trend: '+1' },
+        'Benfica': { difficulty: 5, trend: 'stable' },
+        'FC Porto': { difficulty: 5, trend: 'stable' },
+        'Ajax Amsterdam': { difficulty: 4, trend: '-1' },
+        'AS Roma': { difficulty: 4, trend: 'stable' },
+        'Sevilla FC': { difficulty: 4, trend: 'stable' },
+        'Valencia CF': { difficulty: 4, trend: 'stable' },
+        'Sporting CP': { difficulty: 5, trend: '+1' },
+        'West Ham United': { difficulty: 4, trend: 'stable' },
+        'Leicester City': { difficulty: 4, trend: 'stable' },
+        'Olympique Lyon': { difficulty: 4, trend: 'stable' },
+        'Marseille': { difficulty: 4, trend: 'stable' },
+        'Monaco': { difficulty: 4, trend: 'stable' },
+        'Shakhtar Donetsk': { difficulty: 3, trend: '-1' }
+    };
+    
+    for (let i = 1; i <= teamCount; i++) {
+        const inputElement = document.getElementById('tournamentTeam' + i);
+        const teamName = inputElement ? inputElement.value : '';
+        
+        if (teamName && performanceAdjustments[teamName]) {
+            const newData = performanceAdjustments[teamName];
+            const sliderElement = document.getElementById('tournamentSlider' + i);
+            const diffElement = document.getElementById('tournamentDiff' + i);
+            const diffBarElement = document.getElementById('tournamentDiffBar' + i);
+            const diffLabelElement = document.getElementById('tournamentDiffLabel' + i);
+            
+            if (sliderElement) sliderElement.value = newData.difficulty;
+            if (diffElement) diffElement.textContent = newData.difficulty;
+            if (diffLabelElement) diffLabelElement.textContent = getDifficultyLabel(newData.difficulty);
+            if (diffBarElement) {
+                const percentage = (newData.difficulty / 7) * 100;
+                diffBarElement.style.width = percentage + '%';
+            }
+            
+            updatedCount++;
+        }
+    }
+    
+    if (updatedCount > 0) {
+        showEventAnimation(`🔄 Data berhasil diupdate! ${updatedCount} tim diperbarui berdasarkan performa ${currentMonth}/${currentYear}`, 'success');
+    } else {
+        showEventAnimation('ℹ️ Tidak ada tim yang perlu diupdate. Gunakan tim dari database terlebih dahulu!', 'info');
+    }
 }
 
 function setSetupMode(mode) {

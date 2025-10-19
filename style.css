@@ -622,24 +622,29 @@ body {
 .random-button-container {
     display: flex;
     justify-content: center;
+    gap: 15px;
     margin-bottom: 20px;
     animation: fadeIn 0.3s ease-in;
+    flex-wrap: wrap;
 }
 
-.btn-random {
+.btn-random, .btn-update-realtime {
     padding: 15px 40px;
     font-size: 1.1rem;
     border-radius: 12px;
-    border: 3px solid var(--warning-color);
-    background: linear-gradient(135deg, var(--warning-color), #d97706);
     color: white;
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 700;
-    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4);
     display: flex;
     align-items: center;
     gap: 10px;
+}
+
+.btn-random {
+    border: 3px solid var(--warning-color);
+    background: linear-gradient(135deg, var(--warning-color), #d97706);
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4);
 }
 
 .btn-random:hover {
@@ -649,6 +654,22 @@ body {
 }
 
 .btn-random:active {
+    transform: translateY(-1px) scale(1.02);
+}
+
+.btn-update-realtime {
+    border: 3px solid var(--success-color);
+    background: linear-gradient(135deg, var(--success-color), #059669);
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+}
+
+.btn-update-realtime:hover {
+    background: linear-gradient(135deg, #059669, var(--success-color));
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+}
+
+.btn-update-realtime:active {
     transform: translateY(-1px) scale(1.02);
 }
 
@@ -1502,6 +1523,44 @@ body {
     }
 }
 
+/* Scroll to Top Button */
+.scroll-to-top {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scroll-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.scroll-to-top:hover {
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.6);
+}
+
+.scroll-to-top:active {
+    transform: translateY(-2px) scale(1.05);
+}
+
 /* Footer */
 footer {
     width: 100%;
@@ -1874,9 +1933,21 @@ footer {
         font-size: 1rem;
     }
     
-    .btn-random {
+    .btn-random, .btn-update-realtime {
         padding: 12px 30px;
         font-size: 1rem;
+    }
+    
+    .random-button-container {
+        gap: 10px;
+    }
+    
+    .scroll-to-top {
+        width: 45px;
+        height: 45px;
+        font-size: 1.3rem;
+        bottom: 70px;
+        right: 15px;
     }
     
     .tournament-teams-setup {
