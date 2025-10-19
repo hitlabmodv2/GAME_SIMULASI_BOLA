@@ -2278,8 +2278,18 @@ function toggleTournamentStatsCollapse() {
 }
 
 function showEventAnimation(message, type = 'goal') {
+    // JANGAN TAMPILKAN ANIMASI kalau di menu atau settings!
+    if (currentScreen === 'mainMenu' || currentScreen === 'settings') {
+        return; // Langsung keluar, jangan buat animasi
+    }
+    
     const container = document.getElementById('eventAnimations');
     if (!container) return;
+    
+    // Double check - jangan tampilkan kalau container hidden
+    if (container.style.display === 'none') {
+        return;
+    }
     
     const animation = document.createElement('div');
     animation.className = `event-animation ${type}`;
