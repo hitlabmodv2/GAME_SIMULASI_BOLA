@@ -1327,6 +1327,128 @@ footer {
         font-size: 0.9rem;
     }
     
+    /* AI vs AI Match Log */
+    .match-log {
+        height: 40vh;
+        max-height: 300px;
+    }
+    
+    .match-header {
+        padding: 15px;
+    }
+    
+    .match-header h2 {
+        font-size: 1.3rem;
+    }
+    
+    .time {
+        padding: 10px 20px;
+        font-size: 1.2rem;
+    }
+}
+
+/* Extra Small Mobile (≤480px) */
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.4rem;
+    }
+    
+    .header h2 {
+        font-size: 1.2rem;
+    }
+    
+    .container {
+        padding: 8px;
+    }
+    
+    /* Tournament Bracket - Stack Vertically */
+    .live-match-info {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 12px;
+    }
+    
+    .live-team {
+        justify-content: space-between;
+        font-size: 0.9rem;
+    }
+    
+    .live-team:last-child {
+        flex-direction: row;
+    }
+    
+    .live-score {
+        font-size: 1.3rem;
+    }
+    
+    .live-time {
+        padding: 8px 12px;
+        font-size: 1rem;
+    }
+    
+    .match-log {
+        height: 35vh;
+        max-height: 250px;
+        padding: 12px;
+    }
+    
+    .log-entry {
+        padding: 8px 10px;
+        font-size: 0.85rem;
+    }
+    
+    /* Tournament Match Cards - Smaller */
+    .match-card {
+        padding: 10px;
+    }
+    
+    .match-team-name {
+        font-size: 0.85rem;
+    }
+    
+    .match-team-score {
+        font-size: 0.9rem;
+    }
+    
+    .match-status {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+    
+    /* Buttons */
+    .main-btn {
+        padding: 15px 18px;
+        font-size: 0.95rem;
+        gap: 12px;
+    }
+    
+    .main-btn .icon {
+        font-size: 1.3rem;
+    }
+    
+    .btn, .btn-secondary {
+        padding: 10px 18px;
+        font-size: 0.9rem;
+    }
+    
+    .btn-small {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+    }
+    
+    /* Champion Display */
+    .champion-trophy {
+        font-size: 2.5rem;
+    }
+    
+    .champion-name {
+        font-size: 1.1rem;
+    }
+    
+    .champion-label {
+        font-size: 0.9rem;
+    }
+    
     /* Tournament Setup Mobile */
     .teams-grid {
         grid-template-columns: 1fr;

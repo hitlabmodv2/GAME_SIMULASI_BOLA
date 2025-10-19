@@ -576,11 +576,21 @@ function simulatePenaltyShootout(match) {
         const diff = team.difficulty;
         const oppDiff = opponentDifficulty;
         
-        const baseGoalChance = 55 + (diff * 5);
-        const kiperFactor = oppDiff * 3;
-        const goalChance = baseGoalChance - kiperFactor;
-        const saveChance = goalChance + (18 + kiperFactor);
-        const missChance = saveChance + (12 - diff * 0.5);
+        const baseGoalChance = 76;
+        const kickerBonus = (diff - 4) * 1.0;
+        const keeperPenalty = Math.max(0, (oppDiff - 4)) * 0.8;
+        const goalChance = baseGoalChance + kickerBonus - keeperPenalty;
+        
+        const remaining = 100 - goalChance;
+        const saveWeight = 1.8 + (oppDiff * 0.15);
+        const missWeight = 0.8 + Math.max(0, (4 - diff) * 0.15);
+        const totalWeight = saveWeight + missWeight + 0.2;
+        
+        const saveRate = (remaining * saveWeight / totalWeight);
+        const missRate = (remaining * missWeight / totalWeight);
+        
+        const saveChance = goalChance + saveRate;
+        const missChance = saveChance + missRate;
         
         if (rand < goalChance) {
             return { result: 'GOOL', scored: true, icon: '⚽', message: 'masuk dengan sempurna!', type: 'goal' };
