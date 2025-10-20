@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulasi Sepak Bola AI</title>
+    <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -163,6 +164,30 @@
                 </div>
             </div>
             
+            <div class="settings-stats-panel">
+                <div class="stats-card">
+                    <div class="stats-icon">🏆</div>
+                    <div class="stats-info">
+                        <div class="stats-label">Total Tim Tersedia</div>
+                        <div class="stats-value" id="totalTeamsAvailable">32</div>
+                    </div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-icon">⚽</div>
+                    <div class="stats-info">
+                        <div class="stats-label">Total Pemain</div>
+                        <div class="stats-value" id="totalPlayers">576</div>
+                    </div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-icon">🌍</div>
+                    <div class="stats-info">
+                        <div class="stats-label">Negara Terwakili</div>
+                        <div class="stats-value" id="totalCountries">8</div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="settings-content">
                 <div class="setting-item">
                     <label>Durasi Pertandingan (menit):</label>
@@ -186,6 +211,20 @@
                     <select id="displayMode">
                         <option value="light">Terang</option>
                         <option value="dark" selected>Gelap</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label>Auto Scroll Log:</label>
+                    <select id="autoScrollSetting">
+                        <option value="enabled" selected>Aktif</option>
+                        <option value="disabled">Nonaktif</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label>Tampilkan Statistik:</label>
+                    <select id="showStatsSetting">
+                        <option value="enabled" selected>Selalu Tampilkan</option>
+                        <option value="disabled">Sembunyikan</option>
                     </select>
                 </div>
             </div>

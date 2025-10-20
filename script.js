@@ -293,11 +293,14 @@ function updateTeamInputs() {
                 ${teamOptions}
             </select>
             <input type="text" id="tournamentTeam${i}" placeholder="Atau ketik nama tim manual" maxlength="20" value="" oninput="updateTeamLogo(${i})">
-            <button type="button" class="btn-show-logo" id="btnShowLogo${i}" onclick="toggleTeamLogo(${i})" style="margin: 6px auto; padding: 4px 12px; background: var(--primary-color); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.8rem; display: block; transition: all 0.3s; opacity: 0.5; font-weight: 500;" disabled>
-                👁️ Logo
-            </button>
-            <div id="teamLogo${i}" class="team-logo-display" style="width: 32px; height: 32px; margin: 6px auto 0; display: none; justify-content: center; align-items: center; border-radius: 50%; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.3); background: rgba(255,255,255,0.05); opacity: 0; transform: scale(0.8); transition: all 0.3s ease;">
-                <img id="teamLogoImg${i}" src="" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+            <div class="team-logo-section">
+                <button type="button" class="btn-show-logo" id="btnShowLogo${i}" onclick="toggleTeamLogo(${i})" disabled>
+                    <span class="logo-icon">🖼️</span>
+                    <span class="logo-text">Lihat Logo</span>
+                </button>
+                <div id="teamLogo${i}" class="team-logo-display">
+                    <img id="teamLogoImg${i}" src="" alt="">
+                </div>
             </div>
             <div class="difficulty-selector">
                 <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
@@ -359,10 +362,8 @@ function updateTeamLogo(teamNum) {
     
     const teamName = teamInput.value.trim();
     
-    // Always hide logo and reset button when team name changes
-    logoDisplay.style.display = 'none';
-    logoDisplay.style.opacity = '0';
-    logoDisplay.style.transform = 'scale(0.8)';
+    // Always hide logo and reset button state when team name changes
+    logoDisplay.classList.remove('show');
     
     if (teamName) {
         const logo = getTeamLogo(teamName);
@@ -372,16 +373,16 @@ function updateTeamLogo(teamNum) {
             logoImg.alt = teamName;
             if (button) {
                 button.disabled = false;
-                button.style.opacity = '1';
-                button.innerHTML = '👁️ Logo';
+                button.classList.remove('disabled');
+                button.classList.remove('active');
             }
         } else {
             // No logo found - disable button
             logoImg.src = '';
             if (button) {
                 button.disabled = true;
-                button.style.opacity = '0.5';
-                button.innerHTML = '👁️ Logo';
+                button.classList.add('disabled');
+                button.classList.remove('active');
             }
         }
     } else {
@@ -389,8 +390,8 @@ function updateTeamLogo(teamNum) {
         logoImg.src = '';
         if (button) {
             button.disabled = true;
-            button.style.opacity = '0.5';
-            button.innerHTML = '👁️ Logo';
+            button.classList.add('disabled');
+            button.classList.remove('active');
         }
     }
 }
@@ -414,22 +415,14 @@ function toggleTeamLogo(teamNum) {
         return;
     }
     
-    const isVisible = logoDisplay.style.display === 'flex';
+    const isVisible = logoDisplay.classList.contains('show');
     
     if (isVisible) {
-        logoDisplay.style.opacity = '0';
-        logoDisplay.style.transform = 'scale(0.8)';
-        setTimeout(() => {
-            logoDisplay.style.display = 'none';
-        }, 300);
-        button.innerHTML = '👁️ Logo';
+        logoDisplay.classList.remove('show');
+        button.classList.remove('active');
     } else {
-        logoDisplay.style.display = 'flex';
-        setTimeout(() => {
-            logoDisplay.style.opacity = '1';
-            logoDisplay.style.transform = 'scale(1)';
-        }, 10);
-        button.innerHTML = '✖️ Hide';
+        logoDisplay.classList.add('show');
+        button.classList.add('active');
     }
 }
 
@@ -760,11 +753,13 @@ function setSetupMode(mode) {
     if (mode === 'manual') {
         document.getElementById('manualModeBtn').classList.add('active');
         document.querySelector('.tournament-teams-setup').style.display = 'block';
+        // Show random buttons only in manual mode
         if (randomButtonContainer) randomButtonContainer.style.display = 'flex';
     } else {
         document.getElementById('autoModeBtn').classList.add('active');
         document.querySelector('.tournament-teams-setup').style.display = 'none';
-        if (randomButtonContainer) randomButtonContainer.style.display = 'flex';
+        // Hide random buttons in auto mode
+        if (randomButtonContainer) randomButtonContainer.style.display = 'none';
         autoGenerateTeams();
     }
 }
@@ -1872,13 +1867,18 @@ function saveSettings() {
     const duration = document.getElementById('matchDuration').value;
     const speed = document.getElementById('simulationSpeed').value;
     const displayMode = document.getElementById('displayMode').value;
+    const autoScroll = document.getElementById('autoScrollSetting').value;
+    const showStats = document.getElementById('showStatsSetting').value;
     
     localStorage.setItem('matchDuration', duration);
     localStorage.setItem('simulationSpeed', speed);
     localStorage.setItem('displayMode', displayMode);
+    localStorage.setItem('autoScrollSetting', autoScroll);
+    localStorage.setItem('showStatsSetting', showStats);
     
     matchData.duration = parseInt(duration);
     matchData.speed = parseInt(speed);
+    matchData.autoScrollEnabled = (autoScroll === 'enabled');
     
     showScreen('mainMenu');
 }
@@ -1887,13 +1887,18 @@ function loadSettings() {
     const duration = localStorage.getItem('matchDuration') || '90';
     const speed = localStorage.getItem('simulationSpeed') || '200';
     const displayMode = localStorage.getItem('displayMode') || 'dark';
+    const autoScroll = localStorage.getItem('autoScrollSetting') || 'enabled';
+    const showStats = localStorage.getItem('showStatsSetting') || 'enabled';
     
     document.getElementById('matchDuration').value = duration;
     document.getElementById('simulationSpeed').value = speed;
     document.getElementById('displayMode').value = displayMode;
+    document.getElementById('autoScrollSetting').value = autoScroll;
+    document.getElementById('showStatsSetting').value = showStats;
     
     matchData.duration = parseInt(duration);
     matchData.speed = parseInt(speed);
+    matchData.autoScrollEnabled = (autoScroll === 'enabled');
 }
 
 // Match Setup
