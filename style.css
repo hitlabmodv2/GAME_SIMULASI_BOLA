@@ -1048,6 +1048,7 @@ body {
 }
 
 .team-logo-display.show {
+    display: flex !important;
     max-height: 100px;
     margin-top: 10px;
     opacity: 1;
