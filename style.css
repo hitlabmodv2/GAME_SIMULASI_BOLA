@@ -2104,6 +2104,10 @@ footer {
 
 .footer-links {
     margin: 15px 0;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
 .footer-link {
