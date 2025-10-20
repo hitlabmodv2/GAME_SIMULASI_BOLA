@@ -60,7 +60,7 @@ body.night-bg {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 20px;
     flex: 1;
@@ -87,7 +87,7 @@ body.night-bg {
 }
 
 .header h1 {
-    font-size: 2.5rem;
+    font-size: 2rem;
     margin-bottom: 10px;
     background: linear-gradient(135deg, #3b82f6, #8b5cf6);
     -webkit-background-clip: text;
@@ -96,7 +96,7 @@ body.night-bg {
 }
 
 .header h2 {
-    font-size: 2rem;
+    font-size: 1.6rem;
     margin-bottom: 10px;
     color: var(--text-color);
 }
@@ -131,15 +131,15 @@ body.night-bg {
 
 .subtitle {
     color: var(--text-secondary);
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 /* Menu Buttons */
 .menu-buttons {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    max-width: 500px;
+    gap: 15px;
+    max-width: 450px;
     margin: 0 auto;
 }
 
@@ -147,14 +147,14 @@ body.night-bg {
     background: var(--surface-color);
     border: 2px solid var(--border-color);
     color: var(--text-color);
-    padding: 25px 30px;
-    font-size: 1.3rem;
-    border-radius: 15px;
+    padding: 20px 25px;
+    font-size: 1.1rem;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 15px;
 }
 
 .main-btn:hover {
@@ -165,7 +165,7 @@ body.night-bg {
 }
 
 .main-btn .icon {
-    font-size: 2rem;
+    font-size: 1.6rem;
 }
 
 .main-btn .text {
