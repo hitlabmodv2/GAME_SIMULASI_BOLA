@@ -419,9 +419,11 @@ function toggleTeamLogo(teamNum) {
     
     if (isVisible) {
         logoDisplay.classList.remove('show');
+        logoDisplay.style.display = 'none';
         button.classList.remove('active');
     } else {
         logoDisplay.classList.add('show');
+        logoDisplay.style.display = 'flex';
         button.classList.add('active');
     }
 }
