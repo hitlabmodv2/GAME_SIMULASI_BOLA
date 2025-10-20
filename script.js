@@ -95,10 +95,61 @@ function getTeamColors(teamName) {
     return teamInfo ? teamInfo.colors : { primary: '#333', secondary: '#666' };
 }
 
+// Fungsi untuk mengubah background berdasarkan waktu
+function updateBackgroundByTime() {
+    const now = new Date();
+    const hour = now.getHours();
+    const body = document.body;
+    
+    // Hapus semua class background
+    body.classList.remove('morning-bg', 'afternoon-bg', 'evening-bg', 'night-bg');
+    
+    // Tentukan background berdasarkan waktu
+    if (hour >= 5 && hour < 11) {
+        // Pagi (05:00 - 10:59)
+        body.classList.add('morning-bg');
+    } else if (hour >= 11 && hour < 15) {
+        // Siang (11:00 - 14:59)
+        body.classList.add('afternoon-bg');
+    } else if (hour >= 15 && hour < 18) {
+        // Sore (15:00 - 17:59)
+        body.classList.add('evening-bg');
+    } else {
+        // Malam (18:00 - 04:59)
+        body.classList.add('night-bg');
+    }
+}
+
+// Fungsi untuk menghitung pengunjung
+function updateVisitorCount() {
+    const VISITOR_KEY = 'soccerSimVisitorCount';
+    const SESSION_KEY = 'soccerSimCurrentSession';
+    
+    // Cek apakah ini session baru
+    if (!sessionStorage.getItem(SESSION_KEY)) {
+        // Session baru, tambahkan counter
+        sessionStorage.setItem(SESSION_KEY, 'active');
+        
+        let visitorCount = parseInt(localStorage.getItem(VISITOR_KEY) || '0');
+        visitorCount++;
+        localStorage.setItem(VISITOR_KEY, visitorCount.toString());
+    }
+    
+    // Tampilkan jumlah pengunjung
+    const count = parseInt(localStorage.getItem(VISITOR_KEY) || '0');
+    const visitorElement = document.getElementById('visitorCount');
+    if (visitorElement) {
+        visitorElement.textContent = count;
+    }
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     updateDateTime();
     setInterval(updateDateTime, 1000);
+    updateBackgroundByTime();
+    setInterval(updateBackgroundByTime, 60000); // Update setiap menit
+    updateVisitorCount();
     loadSettings();
     populateTeamDropdowns();
     initScrollToTop();

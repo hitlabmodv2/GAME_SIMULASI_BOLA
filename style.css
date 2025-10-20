@@ -24,6 +24,38 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.75);
+    z-index: -1;
+}
+
+body.morning-bg {
+    background-image: url('anime-backgrounds/morning.png');
+}
+
+body.afternoon-bg {
+    background-image: url('anime-backgrounds/afternoon.png');
+}
+
+body.evening-bg {
+    background-image: url('anime-backgrounds/evening.png');
+}
+
+body.night-bg {
+    background-image: url('anime-backgrounds/night.png');
 }
 
 .container {
