@@ -105,19 +105,26 @@ function updateBackgroundByTime() {
     body.classList.remove('morning-bg', 'afternoon-bg', 'evening-bg', 'night-bg');
     
     // Tentukan background berdasarkan waktu
+    let timeOfDay = '';
     if (hour >= 5 && hour < 11) {
         // Pagi (05:00 - 10:59)
         body.classList.add('morning-bg');
+        timeOfDay = 'morning';
     } else if (hour >= 11 && hour < 15) {
         // Siang (11:00 - 14:59)
         body.classList.add('afternoon-bg');
+        timeOfDay = 'afternoon';
     } else if (hour >= 15 && hour < 18) {
         // Sore (15:00 - 17:59)
         body.classList.add('evening-bg');
+        timeOfDay = 'evening';
     } else {
         // Malam (18:00 - 04:59)
         body.classList.add('night-bg');
+        timeOfDay = 'night';
     }
+    
+    console.log(`Background updated: Hour ${hour}, Time of Day: ${timeOfDay}`);
 }
 
 // Fungsi untuk menghitung pengunjung
