@@ -64,6 +64,28 @@ The application aims to deliver an engaging and realistic soccer simulation with
     *   **Data Persistence:** All settings saved to `localStorage` for user convenience.
     *   **Mobile Responsive:** Optimized layout for mobile devices with adjusted card sizes and spacing.
 
+4.  **Dynamic Anime Background:**
+    *   **Time-Based Backgrounds:** Background changes automatically based on user's local time (Morning, Afternoon, Evening, Night).
+    *   **Anime Style:** Inspired by "Kimi no Nawa" aesthetic with beautiful cityscape scenes.
+    *   **Smooth Transitions:** Background updates every minute with smooth 1.5s transition effects.
+    *   **Time Periods:**
+        - Morning: 5:00 AM - 10:59 AM
+        - Afternoon: 11:00 AM - 2:59 PM
+        - Evening: 3:00 PM - 5:59 PM
+        - Night: 6:00 PM - 4:59 AM
+    *   **Images:** Stored in `anime-backgrounds/` folder with optimized sizes.
+
+5.  **Visitor Counter & Footer:**
+    *   **Real-Time Visitor Count:** Session-based visitor tracking using localStorage.
+    *   **Privacy Policy Page:** Comprehensive privacy policy with legal information, copyright, and disclaimer.
+    *   **Footer Elements:**
+        - Current date/time display
+        - Visitor counter with badge styling
+        - Privacy Policy link (clickable, opens new page)
+        - Copyright notice: "Copyright © 2025 Soccer AI Simulator. All Rights Reserved."
+        - Disclaimer about simulation nature and data usage
+    *   **Responsive Footer:** Mobile-optimized with stacked layout for smaller screens.
+
 **System Design Choices:**
 -   **Frontend:** Pure HTML5, CSS3, and Vanilla JavaScript for a lightweight and performant web application.
 -   **State Management:** The `tournamentData` object centrally manages all tournament-related states.
@@ -81,6 +103,26 @@ The application aims to deliver an engaging and realistic soccer simulation with
 -   **Logo Integration:** Team logos are displayed across various modes (setup, bracket, live match, champion) with toggle buttons for visibility, responsive sizing, and fallbacks.
 
 ## External Dependencies
--   **Storage:** `localStorage` for persisting user preferences and settings.
+-   **Storage:** `localStorage` for persisting user preferences, settings, and visitor count.
 -   **Server:** Node.js serve package on port 5000 for static file hosting.
--   **Assets:** Custom favicon.png for browser tab icon (AI-generated soccer ball).
+-   **Assets:** 
+    - Custom favicon.png for browser tab icon (AI-generated soccer ball).
+    - Dynamic anime backgrounds (4 images) in `anime-backgrounds/` folder.
+
+## Recent Updates (October 2025)
+1. **Dynamic Anime Background System:**
+   - Added 4 AI-generated anime-style backgrounds inspired by "Kimi no Nawa"
+   - Automatic background switching based on time of day
+   - Smooth transition effects between backgrounds
+   
+2. **Enhanced Footer:**
+   - Added visitor counter with session tracking
+   - Added Privacy Policy page with comprehensive legal information
+   - Added copyright and disclaimer notices
+   - Improved mobile responsiveness
+   
+3. **Privacy Policy Page:**
+   - New standalone page (`privacy-policy.html`)
+   - Detailed sections on data collection, copyright, licensing, and disclaimers
+   - Scroll to top button and back button for easy navigation
+   - Same dynamic background as main app
