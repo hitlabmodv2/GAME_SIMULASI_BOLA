@@ -1032,9 +1032,8 @@ body {
 .team-logo-display {
     width: 80px;
     height: 80px;
-    margin-top: 0;
-    max-height: 0;
-    display: flex;
+    margin: 10px auto 0;
+    display: none;
     justify-content: center;
     align-items: center;
     border-radius: 50%;
@@ -1049,8 +1048,6 @@ body {
 
 .team-logo-display.show {
     display: flex !important;
-    max-height: 100px;
-    margin-top: 10px;
     opacity: 1;
     transform: scale(1);
 }
