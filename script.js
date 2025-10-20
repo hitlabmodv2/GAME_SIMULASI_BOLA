@@ -497,8 +497,6 @@ function randomizeTeams() {
     
     tournamentData.randomizeHistory.push(historyEntry);
     displayRandomizeHistory();
-    
-    showEventAnimation('🎲 Tim berhasil di-random dengan tim real!', 'success');
 }
 
 function updateRealtimeData() {
@@ -609,12 +607,6 @@ function updateRealtimeData() {
     if (changelog.length > 0) {
         displayChangelog(changelog);
     }
-    
-    if (updatedCount > 0) {
-        showEventAnimation(`🔄 Data realtime berhasil diupdate! ${updatedCount} tim diperbarui (${currentMonth}/${currentYear})`, 'success');
-    } else {
-        showEventAnimation('ℹ️ Gunakan tim dari database untuk update data realtime!', 'info');
-    }
 }
 
 function displayChangelog(changelog) {
@@ -641,6 +633,9 @@ function displayChangelog(changelog) {
         const changeItem = document.createElement('div');
         changeItem.className = `changelog-item ${changeType}`;
         
+        const logo = getTeamLogo(change.team);
+        const logoHTML = logo ? `<img src="${logo}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: 8px; vertical-align: middle; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);" alt="${change.team}">` : '';
+        
         let levelChangeHTML = '';
         if (change.oldLevel > 0) {
             levelChangeHTML = `
@@ -659,7 +654,7 @@ function displayChangelog(changelog) {
         }
         
         changeItem.innerHTML = `
-            <div class="changelog-icon">${icon}</div>
+            <div class="changelog-icon">${logoHTML || icon}</div>
             <div class="changelog-details">
                 <div class="changelog-team-name">${change.team}</div>
                 ${levelChangeHTML}
@@ -714,8 +709,11 @@ function displayRandomizeHistory() {
             const teamItem = document.createElement('div');
             teamItem.className = 'changelog-item level-stable';
             
+            const logo = getTeamLogo(team.name);
+            const logoHTML = logo ? `<img src="${logo}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: 8px; vertical-align: middle; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);" alt="${team.name}">` : '';
+            
             teamItem.innerHTML = `
-                <div class="changelog-icon">⚽</div>
+                <div class="changelog-icon">${logoHTML || '⚽'}</div>
                 <div class="changelog-details">
                     <div class="changelog-team-name">Tim ${team.position}: ${team.name}</div>
                     <div class="changelog-level-change">
@@ -753,26 +751,11 @@ function setSetupMode(mode) {
         document.getElementById('manualModeBtn').classList.add('active');
         document.querySelector('.tournament-teams-setup').style.display = 'block';
         if (randomButtonContainer) randomButtonContainer.style.display = 'flex';
-        showEventAnimation('⚙️ Manual Setup<br><small>Atur tim secara manual</small>', 'info');
     } else {
         document.getElementById('autoModeBtn').classList.add('active');
         document.querySelector('.tournament-teams-setup').style.display = 'none';
         if (randomButtonContainer) randomButtonContainer.style.display = 'flex';
         autoGenerateTeams();
-        
-        // Get team logos for notification
-        const teamCount = parseInt(document.getElementById('teamCount').value);
-        const maxLogos = Math.min(4, teamCount); // Show max 4 logos
-        let logosHTML = '';
-        for (let i = 1; i <= maxLogos; i++) {
-            const teamName = document.getElementById('tournamentTeam' + i).value;
-            const logo = getTeamLogo(teamName);
-            if (logo) {
-                logosHTML += `<img src="${logo}" style="width: 24px; height: 24px; border-radius: 50%; margin: 0 2px; object-fit: cover; vertical-align: middle;" alt="${teamName}">`;
-            }
-        }
-        
-        showEventAnimation(`🤖 Auto Setup<br><small>Tim dipilih otomatis</small><br><div style="margin-top: 5px;">${logosHTML}</div>`, 'success');
     }
 }
 
