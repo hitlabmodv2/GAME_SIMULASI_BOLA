@@ -1347,12 +1347,13 @@ body {
 }
 
 .live-team-logo {
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     object-fit: cover;
     flex-shrink: 0;
     background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -1934,8 +1935,8 @@ footer {
     }
     
     .live-team-logo {
-        width: 24px;
-        height: 24px;
+        width: 20px;
+        height: 20px;
     }
     
     .live-score {
@@ -2060,8 +2061,8 @@ footer {
     }
     
     .live-team-logo {
-        width: 20px;
-        height: 20px;
+        width: 18px;
+        height: 18px;
     }
     
     .live-score {
