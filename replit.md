@@ -76,6 +76,18 @@ This application aims to provide an engaging and realistic soccer simulation exp
 -   **Input Validation:** Comprehensive validation prevents tournament matches from starting with null/undefined teams, with error logging for debugging.
 
 ## Recent Changes (October 2025)
+**Tournament Logo Size Optimization & Setup Notifications (20 Oktober 2025):**
+- **Logo Size Reduction di Tournament Mode:**
+  - Logo tim di bracket tournament dikecilkan dari 20px (desktop) menjadi 14px untuk tampilan lebih compact
+  - Responsive sizes: 14px (desktop), 12px (tablet), 12px (mobile) - lebih kecil seperti tampilan awal
+  - Match card lebih rapih dan tidak terlalu ramai dengan logo yang lebih kecil
+- **Setup Mode Notifications dengan Logo Tim:**
+  - Notifikasi interaktif saat switch antara Manual Setup dan Auto Setup
+  - Auto Setup notification menampilkan 4 logo tim pertama yang dipilih secara otomatis
+  - Logo berukuran 24px dalam notifikasi dengan border radius dan styling yang bagus
+  - Manual Setup notification dengan icon ⚙️ dan deskripsi yang jelas
+  - Notifikasi menggunakan actual team logos (img tags) bukan hanya emoji
+
 **Logo Accuracy Fix - Random & Auto Setup (20 Oktober 2025):**
 - **Fixed Logo Mismatch Issue:** Logo sekarang akurat dan sesuai dengan tim yang dipilih
 - **randomizeTeams() Fix:** Menambahkan updateTeamLogo(i) setelah random tim real agar logo update dengan benar
@@ -86,9 +98,9 @@ This application aims to provide an engaging and realistic soccer simulation exp
 
 **Logo Tim Compact & Responsive Design (20 Oktober 2025):**
 - **Tournament Bracket Logos:** 
-  - Logo tim berukuran 20px ditampilkan di samping nama tim di setiap match card
+  - Logo tim berukuran 14px ditampilkan di samping nama tim di setiap match card (updated)
   - Desain compact dan rapih dengan flex layout yang tidak saling bentrok
-  - Fully responsive: 20px (desktop), 18px (tablet), 16px (mobile)
+  - Fully responsive: 14px (desktop), 12px (tablet), 12px (mobile) - optimized for better space
   - Error handling otomatis menyembunyikan logo jika tidak ditemukan (onerror handler)
 - **Live Match Display Logos:**
   - Logo tim muncul secara realtime saat pertandingan berlangsung
