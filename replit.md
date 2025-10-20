@@ -104,8 +104,9 @@ This application aims to provide an engaging and realistic soccer simulation exp
   - Error handling otomatis menyembunyikan logo jika tidak ditemukan (onerror handler)
 - **Live Match Display Logos:**
   - Logo tim muncul secara realtime saat pertandingan berlangsung
-  - Ukuran responsive: 28px (desktop), 24px (tablet), 20px (mobile)
+  - Ukuran responsive: 24px (desktop), 20px (tablet), 18px (mobile) - optimized for compact display
   - Logo update otomatis sesuai tim yang bermain
+  - Enhanced styling: subtle background, border, dan box shadow untuk tampilan lebih bagus
   - Desain kecil dan pas dengan box untuk mobile optimization
 - **Champion Display:** Logo juara berukuran 80x80px dengan box shadow
 - **CSS Improvements:**
