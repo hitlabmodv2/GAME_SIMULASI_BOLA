@@ -76,6 +76,28 @@ This application aims to provide an engaging and realistic soccer simulation exp
 -   **Input Validation:** Comprehensive validation prevents tournament matches from starting with null/undefined teams, with error logging for debugging.
 
 ## Recent Changes (October 2025)
+**Logo Tim Compact & Responsive Design (20 Oktober 2025):**
+- **Tournament Bracket Logos:** 
+  - Logo tim berukuran 20px ditampilkan di samping nama tim di setiap match card
+  - Desain compact dan rapih dengan flex layout yang tidak saling bentrok
+  - Fully responsive: 20px (desktop), 18px (tablet), 16px (mobile)
+  - Error handling otomatis menyembunyikan logo jika tidak ditemukan (onerror handler)
+- **Live Match Display Logos:**
+  - Logo tim muncul secara realtime saat pertandingan berlangsung
+  - Ukuran responsive: 28px (desktop), 24px (tablet), 20px (mobile)
+  - Logo update otomatis sesuai tim yang bermain
+  - Desain kecil dan pas dengan box untuk mobile optimization
+- **Champion Display:** Logo juara berukuran 80x80px dengan box shadow
+- **CSS Improvements:**
+  - Match card styling lebih compact dengan padding 10px (desktop), 8px (mobile)
+  - Team name dengan text ellipsis untuk nama tim panjang
+  - Semua logo menggunakan border-radius 50% dan object-fit cover
+  - Background subtle untuk logo dengan box shadow
+- **Scoring Accuracy:**
+  - Bracket render dipanggil setelah score update untuk akurasi realtime
+  - Validasi winner sebelum proceed untuk mencegah error
+  - Error logging untuk debugging match completion issues
+
 **Logo Tim dengan Button Toggle (20 Oktober 2025):**
 - Logo tim ditampilkan di semua mode dengan desain interaktif menggunakan button toggle
 - **Tournament Setup Screen:** 
@@ -84,8 +106,6 @@ This application aims to provide an engaging and realistic soccer simulation exp
   - Logo berukuran 60x60px dalam lingkaran dengan shadow, muncul dengan smooth animation (opacity + scale transform)
   - Logo hidden otomatis saat nama tim diubah, user harus klik button lagi untuk melihat logo tim baru
   - Button text berubah jadi "❌ Sembunyikan Logo" saat logo ditampilkan
-- **Tournament Bracket:** Logo tim berukuran 24x24px ditampilkan di samping nama tim di setiap match card
-- **Champion Display:** Logo juara berukuran 80x80px ditampilkan dengan box shadow di tampilan juara
 - Mendukung 4, 8, dan 16 tim tournament dengan button toggle yang ditampilkan secara dinamis
 - Semua 32 tim predefined memiliki logo lengkap yang tersimpan di folder `team-logos/`
 - Real-time update: button state dan logo langsung update saat tim dipilih atau nama diketik
