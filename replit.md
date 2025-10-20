@@ -76,6 +76,14 @@ This application aims to provide an engaging and realistic soccer simulation exp
 -   **Input Validation:** Comprehensive validation prevents tournament matches from starting with null/undefined teams, with error logging for debugging.
 
 ## Recent Changes (October 2025)
+**Logo Accuracy Fix - Random & Auto Setup (20 Oktober 2025):**
+- **Fixed Logo Mismatch Issue:** Logo sekarang akurat dan sesuai dengan tim yang dipilih
+- **randomizeTeams() Fix:** Menambahkan updateTeamLogo(i) setelah random tim real agar logo update dengan benar
+- **autoGenerateTeams() Fix:** Menambahkan updateTeamLogo(i) setelah auto setup agar logo akurat
+- **Button Redesign:** Button toggle logo dikecilkan dari "🖼️ Lihat Logo Tim" menjadi "👁️ Logo" (show) dan "✖️ Hide" (hide)
+- **Logo Size Reduction:** Logo di setup screen dikecilkan dari 60x60px menjadi 32x32px untuk desain yang lebih compact dan simple
+- **Consistent Updates:** Semua fungsi yang mengisi nama tim (random, auto, select) sekarang memanggil updateTeamLogo() untuk akurasi logo
+
 **Logo Tim Compact & Responsive Design (20 Oktober 2025):**
 - **Tournament Bracket Logos:** 
   - Logo tim berukuran 20px ditampilkan di samping nama tim di setiap match card
