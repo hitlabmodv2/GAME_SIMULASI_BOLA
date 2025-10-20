@@ -37,7 +37,9 @@ The application aims to deliver an engaging and realistic soccer simulation with
 
 2.  **Tournament Mode:**
     *   **Flexible Team Count:** Supports 4, 8, or 16 teams with dynamic bracket generation.
-    *   **Setup Modes:** Manual (custom input) and Auto (generates from 32 predefined teams).
+    *   **Setup Modes:** Manual (custom input with team selection) and Auto (auto-generates from 32 predefined teams).
+    *   **Team Logo Display:** Modern toggle button with smooth animations (scale + fade effect) to show/hide team logos.
+    *   **Smart Button Visibility:** Random Team and Update Data buttons only appear in Manual Setup mode (hidden in Auto mode).
     *   **Auto Play:** Matches proceed automatically, with slowed simulation speed for viewing.
     *   **Realistic Penalty Shootout:** Detailed system with 4 outcomes, success rates based on difficulty, 5 alternating rounds, and sudden death.
     *   **Live Display:** Real-time animated scoreboard, timer, and event log, including penalty scores.
@@ -53,7 +55,12 @@ The application aims to deliver an engaging and realistic soccer simulation with
     *   **Expanded Match Statistics:** Includes Assists, Offsides, and Red Cards.
     *   **Enhanced Event Simulation:** More realistic goal events with assist tracking, offside detection, red card chances, and player substitutions.
 
-3.  **Settings:** Adjustable match duration (5/45/90 minutes), simulation speed, and display mode (light/dark) saved to `localStorage`.
+3.  **Settings:**
+    *   **Match Configuration:** Adjustable match duration (5/45/90 minutes) and simulation speed.
+    *   **Display Options:** Light/Dark mode, Auto scroll log, and statistics display preferences.
+    *   **Statistics Dashboard:** Real-time dashboard showing total teams (32), total players (576), and countries represented (8).
+    *   **Data Persistence:** All settings saved to `localStorage` for user convenience.
+    *   **Mobile Responsive:** Optimized layout for mobile devices with adjusted card sizes and spacing.
 
 **System Design Choices:**
 -   **Frontend:** Pure HTML5, CSS3, and Vanilla JavaScript for a lightweight and performant web application.
@@ -73,4 +80,5 @@ The application aims to deliver an engaging and realistic soccer simulation with
 
 ## External Dependencies
 -   **Storage:** `localStorage` for persisting user preferences and settings.
--   **Server:** A simple Python HTTP Server (port 5000) is used to serve static files locally.
+-   **Server:** Node.js serve package on port 5000 for static file hosting.
+-   **Assets:** Custom favicon.png for browser tab icon (AI-generated soccer ball).
