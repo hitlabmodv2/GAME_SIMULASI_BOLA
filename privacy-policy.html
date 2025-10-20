@@ -111,10 +111,59 @@
         .btn-back:active {
             transform: translateY(0);
         }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .privacy-container {
+                padding: 20px 15px;
+            }
+
+            .privacy-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .privacy-header p {
+                font-size: 0.9rem;
+            }
+
+            .privacy-section {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+
+            .privacy-section h2 {
+                font-size: 1.4rem;
+            }
+
+            .privacy-section h3 {
+                font-size: 1.1rem;
+            }
+
+            .privacy-section p,
+            .privacy-section ul {
+                font-size: 0.95rem;
+            }
+
+            .btn-back {
+                padding: 10px 24px;
+                font-size: 0.95rem;
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .back-button-container {
+                margin-top: 30px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="privacy-container">
+        <!-- Tombol Kembali Atas -->
+        <div class="back-button-container" style="margin-top: 0; margin-bottom: 30px;">
+            <a href="index.html" class="btn-back">⬅️ Kembali ke Aplikasi</a>
+        </div>
+
         <div class="privacy-header">
             <h1>🔒 Privacy Policy & Terms of Use</h1>
             <p>Terakhir diperbarui: 20 Oktober 2025</p>
