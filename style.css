@@ -2884,11 +2884,14 @@ footer {
     
     /* Footer Mobile */
     footer {
-        padding: 10px 15px;
+        padding: 15px 10px;
     }
     
     .footer-content {
         font-size: 0.8rem;
+    }
+    
+    .footer-top {
         flex-direction: column;
         gap: 4px;
     }
@@ -2900,5 +2903,19 @@ footer {
     .visitor-counter {
         font-size: 0.75rem;
         padding: 3px 10px;
+    }
+    
+    .footer-link {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+    }
+    
+    .footer-copyright p {
+        font-size: 0.8rem;
+    }
+    
+    .footer-disclaimer p {
+        font-size: 0.75rem;
+        line-height: 1.5;
     }
 }
