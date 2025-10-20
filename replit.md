@@ -76,14 +76,19 @@ This application aims to provide an engaging and realistic soccer simulation exp
 -   **Input Validation:** Comprehensive validation prevents tournament matches from starting with null/undefined teams, with error logging for debugging.
 
 ## Recent Changes (October 2025)
-**Logo Tim Real-time Display (20 Oktober 2025):**
-- Logo tim ditampilkan secara real-time di semua mode (AI vs AI, Tournament Setup, Tournament Bracket, dan Champion)
-- **Tournament Setup Screen:** Logo tim berukuran 60x60px ditampilkan dalam lingkaran dengan shadow di atas nama tim, muncul otomatis saat tim dipilih atau nama diketik
+**Logo Tim dengan Button Toggle (20 Oktober 2025):**
+- Logo tim ditampilkan di semua mode dengan desain interaktif menggunakan button toggle
+- **Tournament Setup Screen:** 
+  - Button "🖼️ Lihat Logo Tim" di bawah input nama tim untuk toggle show/hide logo
+  - Button aktif/enabled jika tim memiliki logo, disabled jika tidak
+  - Logo berukuran 60x60px dalam lingkaran dengan shadow, muncul dengan smooth animation (opacity + scale transform)
+  - Logo hidden otomatis saat nama tim diubah, user harus klik button lagi untuk melihat logo tim baru
+  - Button text berubah jadi "❌ Sembunyikan Logo" saat logo ditampilkan
 - **Tournament Bracket:** Logo tim berukuran 24x24px ditampilkan di samping nama tim di setiap match card
 - **Champion Display:** Logo juara berukuran 80x80px ditampilkan dengan box shadow di tampilan juara
-- Mendukung 4, 8, dan 16 tim tournament dengan logo yang ditampilkan secara dinamis
+- Mendukung 4, 8, dan 16 tim tournament dengan button toggle yang ditampilkan secara dinamis
 - Semua 32 tim predefined memiliki logo lengkap yang tersimpan di folder `team-logos/`
-- Logo dimuat secara real-time dengan fungsi `updateTeamLogo()` yang dipanggil saat pemilihan tim atau perubahan input
+- Real-time update: button state dan logo langsung update saat tim dipilih atau nama diketik
 
 **Tournament 16 Tim - Bracket & Stats Improvements:**
 - Fixed bracket initialization for 16-team tournaments - Quarter Finals, Semi Finals, and Final now properly display "TBD" placeholders before teams are determined

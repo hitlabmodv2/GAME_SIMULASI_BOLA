@@ -100,12 +100,10 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeTeamLogos();
 });
 
-// Initialize team logos on page load
+// Initialize team logos and buttons on page load
 function initializeTeamLogos() {
-    const teamCountSelect = document.getElementById('teamCount');
-    const maxTeams = teamCountSelect ? parseInt(teamCountSelect.value) : 8;
-    
-    for (let i = 1; i <= maxTeams; i++) {
+    // Initialize for static teams in HTML (1-8)
+    for (let i = 1; i <= 8; i++) {
         updateTeamLogo(i);
     }
 }
@@ -132,7 +130,8 @@ function scrollToTop() {
 
 function populateTeamDropdowns() {
     // Populate all dropdowns with team options including country info
-    for (let i = 1; i <= 8; i++) {
+    // Support up to 16 teams
+    for (let i = 1; i <= 16; i++) {
         const selectElement = document.getElementById('tournamentTeamSelect' + i);
         if (selectElement && selectElement.options.length === 1) {
             predefinedTeams.forEach(team => {
@@ -275,13 +274,16 @@ function updateTeamInputs() {
         teamDiv.className = 'tournament-team-input';
         teamDiv.innerHTML = `
             <h3>Tim ${i}</h3>
-            <div id="teamLogo${i}" class="team-logo-display" style="width: 60px; height: 60px; margin: 10px auto; display: none; justify-content: center; align-items: center; border-radius: 50%; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.3); background: rgba(255,255,255,0.05);">
-                <img id="teamLogoImg${i}" src="" alt="" style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
             <select id="tournamentTeamSelect${i}" class="team-select" onchange="selectPredefinedTeam(${i})">
                 ${teamOptions}
             </select>
             <input type="text" id="tournamentTeam${i}" placeholder="Atau ketik nama tim manual" maxlength="20" value="" oninput="updateTeamLogo(${i})">
+            <button type="button" class="btn-show-logo" id="btnShowLogo${i}" onclick="toggleTeamLogo(${i})" style="margin: 8px auto; padding: 6px 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem; display: block; transition: all 0.3s; opacity: 0.5;" disabled>
+                🖼️ Lihat Logo Tim
+            </button>
+            <div id="teamLogo${i}" class="team-logo-display" style="width: 60px; height: 60px; margin: 10px auto 0; display: none; justify-content: center; align-items: center; border-radius: 50%; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.4); background: rgba(255,255,255,0.05); opacity: 0; transform: scale(0.8); transition: all 0.3s ease;">
+                <img id="teamLogoImg${i}" src="" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
             <div class="difficulty-selector">
                 <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
                 <div class="difficulty-slider-container">
@@ -301,9 +303,11 @@ function updateTeamInputs() {
         autoGenerateTeams();
     }
     
-    // Initialize logos after team inputs are created
+    // Initialize logos and buttons for dynamic teams
     setTimeout(() => {
-        initializeTeamLogos();
+        for (let i = 1; i <= teamCount; i++) {
+            updateTeamLogo(i);
+        }
     }, 100);
 }
 
@@ -330,26 +334,87 @@ function selectPredefinedTeam(teamNum) {
 
 function updateTeamLogo(teamNum) {
     const teamInput = document.getElementById('tournamentTeam' + teamNum);
-    const logoDisplay = document.getElementById('teamLogo' + teamNum);
     const logoImg = document.getElementById('teamLogoImg' + teamNum);
+    const logoDisplay = document.getElementById('teamLogo' + teamNum);
+    const button = document.getElementById('btnShowLogo' + teamNum);
     
-    if (!teamInput || !logoDisplay || !logoImg) {
+    if (!teamInput || !logoImg || !logoDisplay) {
         return;
     }
     
     const teamName = teamInput.value.trim();
     
+    // Always hide logo and reset button when team name changes
+    logoDisplay.style.display = 'none';
+    logoDisplay.style.opacity = '0';
+    logoDisplay.style.transform = 'scale(0.8)';
+    
     if (teamName) {
         const logo = getTeamLogo(teamName);
         if (logo) {
+            // Update logo source but keep it hidden
             logoImg.src = logo;
             logoImg.alt = teamName;
-            logoDisplay.style.display = 'flex';
+            if (button) {
+                button.disabled = false;
+                button.style.opacity = '1';
+                button.innerHTML = '🖼️ Lihat Logo Tim';
+            }
         } else {
-            logoDisplay.style.display = 'none';
+            // No logo found - disable button
+            logoImg.src = '';
+            if (button) {
+                button.disabled = true;
+                button.style.opacity = '0.5';
+                button.innerHTML = '🖼️ Lihat Logo Tim';
+            }
         }
     } else {
-        logoDisplay.style.display = 'none';
+        // No team name - disable button
+        logoImg.src = '';
+        if (button) {
+            button.disabled = true;
+            button.style.opacity = '0.5';
+            button.innerHTML = '🖼️ Lihat Logo Tim';
+        }
+    }
+}
+
+function toggleTeamLogo(teamNum) {
+    const logoDisplay = document.getElementById('teamLogo' + teamNum);
+    const button = document.getElementById('btnShowLogo' + teamNum);
+    const teamInput = document.getElementById('tournamentTeam' + teamNum);
+    
+    if (!logoDisplay || !button || !teamInput) return;
+    
+    const teamName = teamInput.value.trim();
+    if (!teamName) {
+        alert('Pilih tim terlebih dahulu!');
+        return;
+    }
+    
+    const logo = getTeamLogo(teamName);
+    if (!logo) {
+        alert('Logo tidak ditemukan untuk tim ini!');
+        return;
+    }
+    
+    const isVisible = logoDisplay.style.display === 'flex';
+    
+    if (isVisible) {
+        logoDisplay.style.opacity = '0';
+        logoDisplay.style.transform = 'scale(0.8)';
+        setTimeout(() => {
+            logoDisplay.style.display = 'none';
+        }, 300);
+        button.innerHTML = '🖼️ Lihat Logo Tim';
+    } else {
+        logoDisplay.style.display = 'flex';
+        setTimeout(() => {
+            logoDisplay.style.opacity = '1';
+            logoDisplay.style.transform = 'scale(1)';
+        }, 10);
+        button.innerHTML = '❌ Sembunyikan Logo';
     }
 }
 
