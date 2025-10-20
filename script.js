@@ -1516,6 +1516,14 @@ function createMatchCard(match, matchId) {
     const teamAPending = !match.teamA ? 'pending-team' : '';
     const teamBPending = !match.teamB ? 'pending-team' : '';
     
+    // Get team logos
+    const teamALogo = match.teamA ? getTeamLogo(match.teamA.name) : '';
+    const teamBLogo = match.teamB ? getTeamLogo(match.teamB.name) : '';
+    
+    // Create logo HTML
+    const teamALogoHTML = teamALogo ? `<img src="${teamALogo}" alt="${teamAName}" class="team-logo-small" style="width: 24px; height: 24px; margin-right: 6px; vertical-align: middle; border-radius: 50%; object-fit: cover;">` : '';
+    const teamBLogoHTML = teamBLogo ? `<img src="${teamBLogo}" alt="${teamBName}" class="team-logo-small" style="width: 24px; height: 24px; margin-right: 6px; vertical-align: middle; border-radius: 50%; object-fit: cover;">` : '';
+    
     const statusClass = match.status === 'playing' ? 'active' : match.status === 'completed' ? 'completed' : '';
     const teamAClass = match.winner && match.teamA && match.winner.name === match.teamA.name ? 'winner' : '';
     const teamBClass = match.winner && match.teamB && match.winner.name === match.teamB.name ? 'winner' : '';
@@ -1534,11 +1542,11 @@ function createMatchCard(match, matchId) {
     return `
         <div class="match-card ${statusClass}" id="${matchId}" data-match='${JSON.stringify(match).replace(/'/g, "&apos;")}'>
             <div class="match-team ${teamAClass} ${teamALosses} ${teamAPending}">
-                <span class="match-team-name">${teamAName}</span>
+                <span class="match-team-name">${teamALogoHTML}${teamAName}</span>
                 <span class="match-team-score">${scoreADisplay}</span>
             </div>
             <div class="match-team ${teamBClass} ${teamBLosses} ${teamBPending}">
-                <span class="match-team-name">${teamBName}</span>
+                <span class="match-team-name">${teamBLogoHTML}${teamBName}</span>
                 <span class="match-team-score">${scoreBDisplay}</span>
             </div>
             <div class="match-status">
@@ -1576,10 +1584,13 @@ function viewMatchStats(matchId) {
 function displayChampion() {
     const championDiv = document.getElementById('champion');
     const champion = tournamentData.final.winner;
+    const championLogo = getTeamLogo(champion.name);
+    const logoHTML = championLogo ? `<img src="${championLogo}" alt="${champion.name}" style="width: 80px; height: 80px; margin: 10px auto; display: block; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">` : '';
     
     championDiv.innerHTML = `
         <div class="champion-display has-winner">
             <div class="champion-trophy">🏆</div>
+            ${logoHTML}
             <div class="champion-name">${champion.name}</div>
             <div class="champion-label">JUARA TOURNAMENT!</div>
         </div>
