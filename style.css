@@ -2057,17 +2057,17 @@ body.night-bg {
 footer {
     width: 100%;
     background: transparent;
-    border-top: 2px solid rgba(255, 255, 255, 0.1);
-    padding: 25px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px 20px;
     margin-top: auto;
 }
 
 .footer-content {
-    max-width: 1200px;
+    max-width: 900px;
     margin: 0 auto;
     text-align: center;
     color: var(--text-secondary);
-    font-size: 0.95rem;
+    font-size: 0.85rem;
 }
 
 .footer-top {
@@ -2076,8 +2076,8 @@ footer {
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -2091,10 +2091,11 @@ footer {
     align-items: center;
     gap: 4px;
     background: rgba(37, 99, 235, 0.15);
-    padding: 4px 12px;
-    border-radius: 20px;
+    padding: 3px 10px;
+    border-radius: 16px;
     border: 1px solid rgba(37, 99, 235, 0.3);
     color: var(--text-color);
+    font-size: 0.85rem;
 }
 
 .visitor-counter #visitorCount {
@@ -2103,10 +2104,10 @@ footer {
 }
 
 .footer-links {
-    margin: 15px 0;
+    margin: 10px 0;
     display: flex;
     justify-content: center;
-    gap: 15px;
+    gap: 12px;
     flex-wrap: wrap;
 }
 
@@ -2114,12 +2115,13 @@ footer {
     color: var(--primary-color);
     text-decoration: none;
     font-weight: 600;
-    padding: 8px 16px;
+    padding: 6px 14px;
     border-radius: 6px;
     transition: all 0.3s ease;
     display: inline-block;
     background: rgba(37, 99, 235, 0.1);
     border: 1px solid rgba(37, 99, 235, 0.3);
+    font-size: 0.85rem;
 }
 
 .footer-link:hover {
@@ -2129,14 +2131,14 @@ footer {
 }
 
 .footer-copyright {
-    margin: 15px 0 10px 0;
+    margin: 10px 0 5px 0;
     font-weight: 600;
     color: var(--text-color);
 }
 
 .footer-copyright p {
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
 }
 
 /* Scrollbar */
