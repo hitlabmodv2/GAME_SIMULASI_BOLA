@@ -29,11 +29,13 @@ The application aims to deliver an engaging and realistic soccer simulation with
 **Technical Implementations & Feature Specifications:**
 
 1.  **AI vs AI Mode:**
+    *   **Team Selector with Logos:** Interactive team selection grid with 32 predefined teams, displaying team logos, names, and country badges. Users can click "🏆 Pilih Tim" button to browse and select teams visually.
     *   Customizable teams with adjustable difficulty (1-7).
     *   Real-time match logs with auto-scroll, clear, and download.
     *   Comprehensive statistics (possession, shots, passes, fouls, cards) and animated event highlights.
     *   Interactive commentary system with Indonesian lines.
     *   On-screen goal animations with scorer names.
+    *   **Mobile Optimized:** Team selector grid automatically adjusts for mobile screens with responsive layout.
 
 2.  **Tournament Mode:**
     *   **Flexible Team Count:** Supports 4, 8, or 16 teams with dynamic bracket generation.
