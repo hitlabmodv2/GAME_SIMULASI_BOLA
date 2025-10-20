@@ -76,6 +76,21 @@ This application aims to provide an engaging and realistic soccer simulation exp
 -   **Input Validation:** Comprehensive validation prevents tournament matches from starting with null/undefined teams, with error logging for debugging.
 
 ## Recent Changes (October 2025)
+**History Displays Enhancement & UX Cleanup (20 Oktober 2025):**
+- **Team Logos di Riwayat Random Tim Real:**
+  - Logo tim berukuran 32px muncul di setiap entry riwayat random
+  - Menggantikan emoji ⚽ dengan logo tim yang sebenarnya
+  - Fallback ke emoji jika logo tidak ditemukan
+  - Styling konsisten dengan border, background, dan box shadow
+- **Team Logos di Riwayat Perubahan Data Realtime:**
+  - Logo tim berukuran 32px muncul di setiap changelog entry
+  - Menggantikan emoji 📊📈📉 dengan logo tim yang sebenarnya
+  - Lebih informatif dan visual dengan logo tim asli
+- **Removed Setup Notification Animations:**
+  - Hapus animasi di tengah layar saat Manual Setup, Auto Setup, Random Tim, dan Update Data Realtime
+  - UX lebih bersih tanpa notifikasi yang mengganggu
+  - Setup flow tetap berfungsi normal tanpa popup animasi
+
 **Tournament Logo Size Optimization & Setup Notifications (20 Oktober 2025):**
 - **Logo Size Reduction di Tournament Mode:**
   - Logo tim di bracket tournament dikecilkan dari 20px (desktop) menjadi 14px untuk tampilan lebih compact
