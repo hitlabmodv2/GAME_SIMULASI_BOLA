@@ -74,8 +74,13 @@ const predefinedTeams = [
 
 // Helper function untuk mendapatkan logo tim
 function getTeamLogo(teamName) {
+    if (!teamName) return '';
     const teamInfo = teamsInfo[teamName];
-    return teamInfo ? teamInfo.logo : '';
+    if (!teamInfo || !teamInfo.logo) {
+        console.warn(`Logo not found for team: ${teamName}`);
+        return '';
+    }
+    return teamInfo.logo;
 }
 
 // Helper function untuk mendapatkan country tim
@@ -987,8 +992,19 @@ function playTournamentMatch(match) {
     updateTournamentStatus(`Sedang berlangsung: ${match.teamA.name} vs ${match.teamB.name}`);
     
     document.getElementById('liveMatchDisplay').style.display = 'block';
-    document.getElementById('liveTeamA').textContent = match.teamA.name;
-    document.getElementById('liveTeamB').textContent = match.teamB.name;
+    
+    const liveTeamAElement = document.getElementById('liveTeamA');
+    const liveTeamBElement = document.getElementById('liveTeamB');
+    
+    const logoA = getTeamLogo(match.teamA.name);
+    const logoB = getTeamLogo(match.teamB.name);
+    
+    const logoAHTML = logoA ? `<img src="${logoA}" alt="${match.teamA.name}" class="live-team-logo" onerror="this.style.display='none'">` : '';
+    const logoBHTML = logoB ? `<img src="${logoB}" alt="${match.teamB.name}" class="live-team-logo" onerror="this.style.display='none'">` : '';
+    
+    liveTeamAElement.innerHTML = `${logoAHTML}<span>${match.teamA.name}</span>`;
+    liveTeamBElement.innerHTML = `${logoBHTML}<span>${match.teamB.name}</span>`;
+    
     document.getElementById('liveScoreA').textContent = '0';
     document.getElementById('liveScoreB').textContent = '0';
     document.getElementById('liveMinute').textContent = "0'";
@@ -1211,6 +1227,8 @@ function finishTournamentMatch(match) {
     match.scoreB = matchData.teamB.score;
     match.stats = JSON.parse(JSON.stringify(matchData.stats));
     
+    renderBracket();
+    
     if (match.scoreA > match.scoreB) {
         match.winner = match.teamA;
         addTournamentLog(`🎉 ${match.teamA.name} menang ${match.scoreA}-${match.scoreB} melawan ${match.teamB.name}!`, 'match-end');
@@ -1337,9 +1355,19 @@ function simulatePenaltyShootout(match) {
 
 function proceedAfterMatch(match) {
     match.status = 'completed';
+    
+    if (!match.winner) {
+        console.error('Error: Match completed without a winner!', match);
+        return;
+    }
+    
     tournamentData.currentMatchIndex++;
     
-    document.getElementById('liveMatchDisplay').style.display = 'none';
+    const liveMatchDisplay = document.getElementById('liveMatchDisplay');
+    if (liveMatchDisplay) {
+        liveMatchDisplay.style.display = 'none';
+    }
+    
     displayMatchStats(match);
     renderBracket();
     updateTournamentStatus(`Pertandingan selesai! ${match.winner.name} lolos ke babak berikutnya.`);
@@ -1628,13 +1656,11 @@ function createMatchCard(match, matchId) {
     const teamAPending = !match.teamA ? 'pending-team' : '';
     const teamBPending = !match.teamB ? 'pending-team' : '';
     
-    // Get team logos
     const teamALogo = match.teamA ? getTeamLogo(match.teamA.name) : '';
     const teamBLogo = match.teamB ? getTeamLogo(match.teamB.name) : '';
     
-    // Create logo HTML
-    const teamALogoHTML = teamALogo ? `<img src="${teamALogo}" alt="${teamAName}" class="team-logo-small" style="width: 24px; height: 24px; margin-right: 6px; vertical-align: middle; border-radius: 50%; object-fit: cover;">` : '';
-    const teamBLogoHTML = teamBLogo ? `<img src="${teamBLogo}" alt="${teamBName}" class="team-logo-small" style="width: 24px; height: 24px; margin-right: 6px; vertical-align: middle; border-radius: 50%; object-fit: cover;">` : '';
+    const teamALogoHTML = teamALogo ? `<img src="${teamALogo}" alt="${teamAName}" class="team-logo-small" onerror="this.style.display='none'">` : '';
+    const teamBLogoHTML = teamBLogo ? `<img src="${teamBLogo}" alt="${teamBName}" class="team-logo-small" onerror="this.style.display='none'">` : '';
     
     const statusClass = match.status === 'playing' ? 'active' : match.status === 'completed' ? 'completed' : '';
     const teamAClass = match.winner && match.teamA && match.winner.name === match.teamA.name ? 'winner' : '';
@@ -1654,11 +1680,17 @@ function createMatchCard(match, matchId) {
     return `
         <div class="match-card ${statusClass}" id="${matchId}" data-match='${JSON.stringify(match).replace(/'/g, "&apos;")}'>
             <div class="match-team ${teamAClass} ${teamALosses} ${teamAPending}">
-                <span class="match-team-name">${teamALogoHTML}${teamAName}</span>
+                <div class="match-team-name">
+                    ${teamALogoHTML}
+                    <span class="team-name-text">${teamAName}</span>
+                </div>
                 <span class="match-team-score">${scoreADisplay}</span>
             </div>
             <div class="match-team ${teamBClass} ${teamBLosses} ${teamBPending}">
-                <span class="match-team-name">${teamBLogoHTML}${teamBName}</span>
+                <div class="match-team-name">
+                    ${teamBLogoHTML}
+                    <span class="team-name-text">${teamBName}</span>
+                </div>
                 <span class="match-team-score">${scoreBDisplay}</span>
             </div>
             <div class="match-status">

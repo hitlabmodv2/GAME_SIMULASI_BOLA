@@ -958,8 +958,8 @@ body {
 .match-card {
     background: var(--bg-color);
     border: 2px solid var(--border-color);
-    border-radius: 10px;
-    padding: 15px;
+    border-radius: 8px;
+    padding: 10px;
     transition: all 0.3s ease;
 }
 
@@ -969,17 +969,18 @@ body {
 }
 
 .match-card.completed {
-    opacity: 0.7;
+    opacity: 0.75;
 }
 
 .match-team {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px;
-    margin: 3px 0;
+    padding: 6px 8px;
+    margin: 2px 0;
     background: var(--surface-color);
     border-radius: 5px;
+    min-height: 32px;
 }
 
 .match-team.winner {
@@ -1001,13 +1002,34 @@ body {
 
 .match-team-name {
     flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow: hidden;
+}
+
+.team-name-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.9rem;
+}
+
+.team-logo-small {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .match-team-score {
     font-weight: bold;
-    font-size: 1.2rem;
-    min-width: 30px;
+    font-size: 1rem;
+    min-width: 35px;
     text-align: center;
+    flex-shrink: 0;
 }
 
 .match-status {
@@ -1315,13 +1337,23 @@ body {
 .live-team {
     display: flex;
     align-items: center;
-    gap: 15px;
-    font-size: 1.2rem;
+    gap: 10px;
+    font-size: 1.1rem;
     font-weight: bold;
 }
 
 .live-team:last-child {
     flex-direction: row-reverse;
+}
+
+.live-team-logo {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .live-score {
@@ -1833,15 +1865,26 @@ footer {
     }
     
     .match-card {
-        padding: 12px;
+        padding: 8px;
     }
     
-    .match-team-name {
-        font-size: 0.9rem;
+    .match-team {
+        padding: 5px 6px;
+        min-height: 28px;
+    }
+    
+    .team-logo-small {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .team-name-text {
+        font-size: 0.85rem;
     }
     
     .match-team-score {
-        font-size: 1rem;
+        font-size: 0.95rem;
+        min-width: 30px;
     }
     
     .match-status {
@@ -1886,8 +1929,13 @@ footer {
     }
     
     .live-team {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         gap: 8px;
+    }
+    
+    .live-team-logo {
+        width: 24px;
+        height: 24px;
     }
     
     .live-score {
@@ -2003,11 +2051,17 @@ footer {
     
     .live-team {
         justify-content: space-between;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        gap: 6px;
     }
     
     .live-team:last-child {
         flex-direction: row;
+    }
+    
+    .live-team-logo {
+        width: 20px;
+        height: 20px;
     }
     
     .live-score {
@@ -2032,20 +2086,31 @@ footer {
     
     /* Tournament Match Cards - Smaller */
     .match-card {
-        padding: 10px;
+        padding: 8px;
     }
     
-    .match-team-name {
-        font-size: 0.85rem;
+    .match-team {
+        padding: 4px 6px;
+        min-height: 26px;
+    }
+    
+    .team-logo-small {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .team-name-text {
+        font-size: 0.8rem;
     }
     
     .match-team-score {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        min-width: 28px;
     }
     
     .match-status {
         font-size: 0.7rem;
-        padding: 4px 8px;
+        padding: 4px 0;
     }
     
     .btn-view-stats {
