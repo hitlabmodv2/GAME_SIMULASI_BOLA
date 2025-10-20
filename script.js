@@ -1950,6 +1950,48 @@ function changeDifficulty(team, delta) {
     barElement.style.width = percentage + '%';
 }
 
+// Auto Randomize Match Settings
+function autoRandomizeMatch() {
+    // Random pilih 2 tim berbeda
+    const availableTeams = [...predefinedTeams];
+    
+    // Random Team A
+    const teamAIndex = Math.floor(Math.random() * availableTeams.length);
+    const teamA = availableTeams[teamAIndex];
+    
+    // Hapus Team A dari pilihan untuk Team B
+    availableTeams.splice(teamAIndex, 1);
+    
+    // Random Team B
+    const teamBIndex = Math.floor(Math.random() * availableTeams.length);
+    const teamB = availableTeams[teamBIndex];
+    
+    // Set nama tim
+    document.getElementById('teamAName').value = teamA.name;
+    document.getElementById('teamBName').value = teamB.name;
+    
+    // Random difficulty (1-7) berdasarkan kekuatan tim dengan sedikit variasi
+    const difficultyA = Math.max(1, Math.min(7, teamA.difficulty + Math.floor(Math.random() * 3) - 1));
+    const difficultyB = Math.max(1, Math.min(7, teamB.difficulty + Math.floor(Math.random() * 3) - 1));
+    
+    // Update difficulty display
+    document.getElementById('difficultyA').textContent = difficultyA;
+    document.getElementById('difficultyB').textContent = difficultyB;
+    
+    // Update difficulty bars
+    const percentageA = (difficultyA / 7) * 100;
+    const percentageB = (difficultyB / 7) * 100;
+    document.getElementById('difficultyBarA').style.width = percentageA + '%';
+    document.getElementById('difficultyBarB').style.width = percentageB + '%';
+    
+    // Efek visual: animasi button
+    const btn = event.target;
+    btn.style.transform = 'rotate(360deg)';
+    setTimeout(() => {
+        btn.style.transform = 'rotate(0deg)';
+    }, 300);
+}
+
 // Settings
 function saveSettings() {
     const duration = document.getElementById('matchDuration').value;

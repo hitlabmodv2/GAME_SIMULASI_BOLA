@@ -50,6 +50,7 @@ body {
 .header {
     text-align: center;
     margin-bottom: 40px;
+    position: relative;
 }
 
 .header h1 {
@@ -65,6 +66,34 @@ body {
     font-size: 2rem;
     margin-bottom: 10px;
     color: var(--text-color);
+}
+
+/* Auto Random Button */
+.btn-auto-random {
+    position: absolute;
+    top: 5px;
+    right: 0;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    white-space: nowrap;
+}
+
+.btn-auto-random:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5);
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.btn-auto-random:active {
+    transform: translateY(0);
 }
 
 .subtitle {
@@ -2036,13 +2065,41 @@ footer {
         padding: 10px;
     }
     
+    .header {
+        margin-bottom: 30px;
+    }
+    
+    .header h1 {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+    }
+    
+    .header h2 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+    
+    /* Auto Random Button Mobile */
+    .btn-auto-random {
+        position: static;
+        display: block;
+        width: auto;
+        max-width: 150px;
+        margin: 10px auto 0;
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+    
     .team-setup {
         grid-template-columns: 1fr;
+        gap: 15px;
     }
     
     .vs-divider {
-        transform: rotate(90deg);
-        margin: 10px 0;
+        transform: none;
+        margin: 5px 0;
+        font-size: 1.5rem;
+        padding: 8px 0;
     }
     
     .team-config {
@@ -2051,7 +2108,7 @@ footer {
     
     .team-config h3 {
         font-size: 1.1rem;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
     }
     
     .input-group {
@@ -2080,8 +2137,22 @@ footer {
     
     .difficulty-selector span {
         font-size: 1.3rem;
-        min-width: 45px;
-        padding: 6px 12px;
+    }
+    
+    .btn-toggle-teams {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .action-buttons .btn {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 0.95rem;
     }
     
     .difficulty-bar {
@@ -2646,16 +2717,6 @@ footer {
         height: 20px;
     }
     
-    /* Button Controls Mobile */
-    .log-controls {
-        gap: 6px;
-    }
-    
-    .btn-small {
-        padding: 5px 10px;
-        font-size: 0.7rem;
-    }
-    
     /* Action Buttons Mobile */
     .action-buttons {
         flex-direction: column;
@@ -2669,18 +2730,36 @@ footer {
     }
     
     /* Log Controls Mobile */
+    .log-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 15px;
+    }
+    
     .log-controls {
-        gap: 5px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        width: 100%;
     }
     
     .btn-log-action {
-        padding: 5px 8px;
+        padding: 6px 10px;
         font-size: 0.75rem;
+        white-space: nowrap;
     }
     
     .btn-auto-scroll {
-        padding: 5px 10px;
-        font-size: 0.7rem;
+        padding: 6px 10px;
+        font-size: 0.75rem;
+        grid-column: span 2;
+    }
+    
+    .btn-small {
+        grid-column: span 2;
+        padding: 6px 10px;
+        font-size: 0.8rem;
     }
     
     /* Event Animations Mobile */
