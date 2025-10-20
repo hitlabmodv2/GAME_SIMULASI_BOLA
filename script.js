@@ -103,6 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
     populateTeamDropdowns();
     initScrollToTop();
     initializeTeamLogos();
+    populateTeamSelectors();
 });
 
 // Initialize team logos and buttons on page load
@@ -150,6 +151,91 @@ function populateTeamDropdowns() {
             });
         }
     }
+}
+
+// Populate team selectors for AI vs AI mode
+function populateTeamSelectors() {
+    const selectorA = document.getElementById('teamSelectorA');
+    const selectorB = document.getElementById('teamSelectorB');
+    
+    if (!selectorA || !selectorB) return;
+    
+    // Clear existing content
+    selectorA.innerHTML = '';
+    selectorB.innerHTML = '';
+    
+    // Get all teams from teamsInfo
+    const teams = Object.keys(teamsInfo);
+    
+    teams.forEach(teamName => {
+        const teamInfo = teamsInfo[teamName];
+        
+        // Create team button for Team A
+        const teamBtnA = createTeamButton(teamName, teamInfo, 'A');
+        selectorA.appendChild(teamBtnA);
+        
+        // Create team button for Team B
+        const teamBtnB = createTeamButton(teamName, teamInfo, 'B');
+        selectorB.appendChild(teamBtnB);
+    });
+}
+
+// Create team button with logo
+function createTeamButton(teamName, teamInfo, side) {
+    const btn = document.createElement('button');
+    btn.className = 'team-option-btn';
+    btn.onclick = () => selectTeamFromGrid(teamName, side);
+    
+    // Create logo image
+    const logo = document.createElement('img');
+    logo.src = teamInfo.logo;
+    logo.alt = teamName;
+    logo.className = 'team-option-logo';
+    
+    // Create team name span
+    const name = document.createElement('span');
+    name.className = 'team-option-name';
+    name.textContent = teamName;
+    
+    // Create country badge
+    const country = document.createElement('span');
+    country.className = 'team-option-country';
+    country.textContent = teamInfo.country;
+    
+    btn.appendChild(logo);
+    btn.appendChild(name);
+    btn.appendChild(country);
+    
+    return btn;
+}
+
+// Toggle team selector visibility
+function toggleTeamSelector(side) {
+    const selector = document.getElementById('teamSelector' + side);
+    const button = document.getElementById('toggleTeams' + side);
+    
+    if (!selector || !button) return;
+    
+    if (selector.style.display === 'none') {
+        selector.style.display = 'grid';
+        button.textContent = '✕ Tutup';
+        button.classList.add('active');
+    } else {
+        selector.style.display = 'none';
+        button.textContent = '🏆 Pilih Tim';
+        button.classList.remove('active');
+    }
+}
+
+// Select team from grid
+function selectTeamFromGrid(teamName, side) {
+    const input = document.getElementById('team' + side + 'Name');
+    if (input) {
+        input.value = teamName;
+    }
+    
+    // Close the selector
+    toggleTeamSelector(side);
 }
 
 // Function untuk menampilkan logo tim di match header
