@@ -490,6 +490,9 @@ function randomizeTeams() {
         
         const selectElement = document.getElementById('tournamentTeamSelect' + i);
         if (selectElement) selectElement.value = '';
+        
+        // Update logo untuk tim yang baru di-random
+        updateTeamLogo(i);
     }
     
     tournamentData.randomizeHistory.push(historyEntry);
@@ -792,6 +795,9 @@ function autoGenerateTeams() {
         // Update bar
         const percentage = (team.difficulty / 7) * 100;
         document.getElementById('tournamentDiffBar' + i).style.width = percentage + '%';
+        
+        // Update logo untuk tim yang di-auto generate
+        updateTeamLogo(i);
     }
 }
 
