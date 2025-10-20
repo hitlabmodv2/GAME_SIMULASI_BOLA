@@ -123,16 +123,16 @@ body {
 
 .team-config {
     background: var(--surface-color);
-    padding: 25px;
-    border-radius: 15px;
+    padding: 20px;
+    border-radius: 12px;
     border: 2px solid var(--border-color);
 }
 
 .team-config h3 {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     color: var(--primary-color);
-    font-size: 1.5rem;
+    font-size: 1.3rem;
 }
 
 .vs-divider {
@@ -143,126 +143,76 @@ body {
 }
 
 .input-group {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 .input-group label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 600;
 }
 
 .input-group input {
     width: 100%;
-    padding: 12px;
+    padding: 10px 12px;
     background: var(--bg-color);
     border: 2px solid var(--border-color);
     border-radius: 8px;
     color: var(--text-color);
-    font-size: 1rem;
+    font-size: 0.95rem;
 }
 
 .difficulty-selector {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
     margin-bottom: 10px;
 }
 
-.difficulty-slider-container {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.difficulty-slider {
-    flex: 1;
-    -webkit-appearance: none;
-    appearance: none;
-    height: 8px;
-    background: var(--border-color);
-    border-radius: 5px;
-    outline: none;
-    cursor: pointer;
-}
-
-.difficulty-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4);
-    transition: all 0.3s ease;
-}
-
-.difficulty-slider::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
-    box-shadow: 0 3px 10px rgba(37, 99, 235, 0.6);
-}
-
-.difficulty-slider::-moz-range-thumb {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4);
-    transition: all 0.3s ease;
-}
-
-.difficulty-slider::-moz-range-thumb:hover {
-    transform: scale(1.2);
-    box-shadow: 0 3px 10px rgba(37, 99, 235, 0.6);
-}
-
-.difficulty-value {
-    font-size: 1.5rem;
-    font-weight: bold;
-    min-width: 40px;
-    text-align: center;
-    color: var(--primary-color);
-    padding: 5px 12px;
-    background: var(--bg-color);
-    border-radius: 8px;
-    border: 2px solid var(--primary-color);
-}
-
 .difficulty-selector button {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
     background: var(--primary-color);
-    border: none;
+    border: 2px solid var(--primary-color);
     color: white;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     cursor: pointer;
     transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
 }
 
 .difficulty-selector button:hover {
     background: var(--secondary-color);
-    transform: scale(1.1);
+    border-color: var(--secondary-color);
+    transform: scale(1.05);
 }
 
 .difficulty-selector span {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: bold;
-    min-width: 40px;
+    min-width: 50px;
     text-align: center;
     color: var(--primary-color);
+    background: var(--bg-color);
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 2px solid var(--primary-color);
 }
 
 .difficulty-bar {
     width: 100%;
-    height: 8px;
+    height: 10px;
     background: var(--border-color);
-    border-radius: 4px;
+    border-radius: 5px;
     overflow: hidden;
+    margin-top: 8px;
 }
 
 .difficulty-fill {
@@ -1873,6 +1823,49 @@ footer {
     .vs-divider {
         transform: rotate(90deg);
         margin: 10px 0;
+    }
+    
+    .team-config {
+        padding: 15px;
+    }
+    
+    .team-config h3 {
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+    }
+    
+    .input-group {
+        margin-bottom: 15px;
+    }
+    
+    .input-group label {
+        font-size: 0.8rem;
+        margin-bottom: 5px;
+    }
+    
+    .input-group input {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+    
+    .difficulty-selector {
+        gap: 10px;
+    }
+    
+    .difficulty-selector button {
+        width: 32px;
+        height: 32px;
+        font-size: 1.1rem;
+    }
+    
+    .difficulty-selector span {
+        font-size: 1.3rem;
+        min-width: 45px;
+        padding: 6px 12px;
+    }
+    
+    .difficulty-bar {
+        height: 8px;
     }
     
     .scoreboard {

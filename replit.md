@@ -76,6 +76,28 @@ This application aims to provide an engaging and realistic soccer simulation exp
 -   **Input Validation:** Comprehensive validation prevents tournament matches from starting with null/undefined teams, with error logging for debugging.
 
 ## Recent Changes (October 2025)
+**AI vs AI Mode UI Cleanup & Improvements (20 Oktober 2025):**
+- **Cleaner Difficulty Selector:**
+  - Horizontal layout (button - dan + di samping nilai) lebih compact dan rapi
+  - Button lebih kecil (36px x 36px di desktop, 32px x 32px di mobile)
+  - Border radius 8px untuk tampilan lebih modern (bukan bulat lagi)
+  - Nilai kesulitan dengan background dan border yang lebih jelas
+  - Spacing yang lebih tight dan konsisten
+- **Optimized Input & Layout:**
+  - Input field dengan padding yang lebih compact (10px 12px)
+  - Label font size lebih kecil (0.85rem) dengan font weight 600
+  - Margin dan spacing yang lebih konsisten dan rapi
+  - Team config padding dikurangi untuk tampilan yang lebih compact
+- **Mobile Optimization:**
+  - Team config padding 15px di mobile (dari 20px desktop)
+  - Difficulty button 32px di mobile untuk layar kecil
+  - Font size disesuaikan untuk readability optimal
+  - Spacing diperkecil untuk layout yang lebih efisien di mobile
+- **Visual Improvements:**
+  - Difficulty bar lebih tinggi (10px) untuk visibility yang lebih baik
+  - Hover effects pada button difficulty dengan transform scale
+  - Border dan background yang lebih jelas pada nilai kesulitan
+
 **Settings Page Enhancement & Stats UI Improvements (20 Oktober 2025):**
 - **Real-time Information Panel:**
   - Waktu saat ini yang update realtime setiap detik dengan format HH:MM:SS
