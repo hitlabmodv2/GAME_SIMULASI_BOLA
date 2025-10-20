@@ -97,7 +97,18 @@ document.addEventListener('DOMContentLoaded', function() {
     loadSettings();
     populateTeamDropdowns();
     initScrollToTop();
+    initializeTeamLogos();
 });
+
+// Initialize team logos on page load
+function initializeTeamLogos() {
+    const teamCountSelect = document.getElementById('teamCount');
+    const maxTeams = teamCountSelect ? parseInt(teamCountSelect.value) : 8;
+    
+    for (let i = 1; i <= maxTeams; i++) {
+        updateTeamLogo(i);
+    }
+}
 
 // Scroll to Top Functionality
 function initScrollToTop() {
@@ -264,10 +275,13 @@ function updateTeamInputs() {
         teamDiv.className = 'tournament-team-input';
         teamDiv.innerHTML = `
             <h3>Tim ${i}</h3>
+            <div id="teamLogo${i}" class="team-logo-display" style="width: 60px; height: 60px; margin: 10px auto; display: none; justify-content: center; align-items: center; border-radius: 50%; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.3); background: rgba(255,255,255,0.05);">
+                <img id="teamLogoImg${i}" src="" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
             <select id="tournamentTeamSelect${i}" class="team-select" onchange="selectPredefinedTeam(${i})">
                 ${teamOptions}
             </select>
-            <input type="text" id="tournamentTeam${i}" placeholder="Atau ketik nama tim manual" maxlength="20" value="">
+            <input type="text" id="tournamentTeam${i}" placeholder="Atau ketik nama tim manual" maxlength="20" value="" oninput="updateTeamLogo(${i})">
             <div class="difficulty-selector">
                 <label style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 5px;">Tingkat Kesulitan:</label>
                 <div class="difficulty-slider-container">
@@ -286,6 +300,11 @@ function updateTeamInputs() {
     if (tournamentData.setupMode === 'auto') {
         autoGenerateTeams();
     }
+    
+    // Initialize logos after team inputs are created
+    setTimeout(() => {
+        initializeTeamLogos();
+    }, 100);
 }
 
 function selectPredefinedTeam(teamNum) {
@@ -303,6 +322,34 @@ function selectPredefinedTeam(teamNum) {
             sliderElement.value = difficulty;
             updateTournamentSlider(teamNum);
         }
+        
+        // Update logo
+        updateTeamLogo(teamNum);
+    }
+}
+
+function updateTeamLogo(teamNum) {
+    const teamInput = document.getElementById('tournamentTeam' + teamNum);
+    const logoDisplay = document.getElementById('teamLogo' + teamNum);
+    const logoImg = document.getElementById('teamLogoImg' + teamNum);
+    
+    if (!teamInput || !logoDisplay || !logoImg) {
+        return;
+    }
+    
+    const teamName = teamInput.value.trim();
+    
+    if (teamName) {
+        const logo = getTeamLogo(teamName);
+        if (logo) {
+            logoImg.src = logo;
+            logoImg.alt = teamName;
+            logoDisplay.style.display = 'flex';
+        } else {
+            logoDisplay.style.display = 'none';
+        }
+    } else {
+        logoDisplay.style.display = 'none';
     }
 }
 

@@ -76,6 +76,15 @@ This application aims to provide an engaging and realistic soccer simulation exp
 -   **Input Validation:** Comprehensive validation prevents tournament matches from starting with null/undefined teams, with error logging for debugging.
 
 ## Recent Changes (October 2025)
+**Logo Tim Real-time Display (20 Oktober 2025):**
+- Logo tim ditampilkan secara real-time di semua mode (AI vs AI, Tournament Setup, Tournament Bracket, dan Champion)
+- **Tournament Setup Screen:** Logo tim berukuran 60x60px ditampilkan dalam lingkaran dengan shadow di atas nama tim, muncul otomatis saat tim dipilih atau nama diketik
+- **Tournament Bracket:** Logo tim berukuran 24x24px ditampilkan di samping nama tim di setiap match card
+- **Champion Display:** Logo juara berukuran 80x80px ditampilkan dengan box shadow di tampilan juara
+- Mendukung 4, 8, dan 16 tim tournament dengan logo yang ditampilkan secara dinamis
+- Semua 32 tim predefined memiliki logo lengkap yang tersimpan di folder `team-logos/`
+- Logo dimuat secara real-time dengan fungsi `updateTeamLogo()` yang dipanggil saat pemilihan tim atau perubahan input
+
 **Tournament 16 Tim - Bracket & Stats Improvements:**
 - Fixed bracket initialization for 16-team tournaments - Quarter Finals, Semi Finals, and Final now properly display "TBD" placeholders before teams are determined
 - Improved real-time bracket updates - winning teams immediately appear in the next round after match completion
