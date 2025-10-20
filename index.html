@@ -43,6 +43,14 @@
                         <label>Nama Tim:</label>
                         <input type="text" id="teamAName" value="Barcelona FC" maxlength="20">
                     </div>
+                    <div class="team-selector-container">
+                        <button class="btn-toggle-teams" id="toggleTeamsA" onclick="toggleTeamSelector('A')">
+                            🏆 Pilih Tim
+                        </button>
+                        <div class="team-selector-grid" id="teamSelectorA" style="display: none;">
+                            <!-- Teams will be loaded here dynamically -->
+                        </div>
+                    </div>
                     <div class="input-group">
                         <label>Tingkat Kesulitan:</label>
                         <div class="difficulty-selector">
@@ -61,6 +69,14 @@
                     <div class="input-group">
                         <label>Nama Tim:</label>
                         <input type="text" id="teamBName" value="Real Madrid" maxlength="20">
+                    </div>
+                    <div class="team-selector-container">
+                        <button class="btn-toggle-teams" id="toggleTeamsB" onclick="toggleTeamSelector('B')">
+                            🏆 Pilih Tim
+                        </button>
+                        <div class="team-selector-grid" id="teamSelectorB" style="display: none;">
+                            <!-- Teams will be loaded here dynamically -->
+                        </div>
                     </div>
                     <div class="input-group">
                         <label>Tingkat Kesulitan:</label>
