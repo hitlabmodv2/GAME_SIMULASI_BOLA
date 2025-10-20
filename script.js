@@ -995,7 +995,13 @@ function playTournamentMatch(match) {
     addCommentary(getRandomComment('matchStart'));
     updateTournamentStatus(`Sedang berlangsung: ${match.teamA.name} vs ${match.teamB.name}`);
     
-    document.getElementById('liveMatchDisplay').style.display = 'block';
+    const liveMatchDisplay = document.getElementById('liveMatchDisplay');
+    liveMatchDisplay.style.display = 'block';
+    
+    const liveEventsContainer = document.getElementById('liveEvents');
+    if (liveEventsContainer) {
+        liveEventsContainer.style.display = 'none';
+    }
     
     const liveTeamAElement = document.getElementById('liveTeamA');
     const liveTeamBElement = document.getElementById('liveTeamB');
@@ -1125,12 +1131,10 @@ function simulateTournamentAttack() {
                 matchData.stats[attackingTeam].assists++;
                 addTournamentLog(`⚽ GOOOL! ${scorer} mencetak gol untuk ${attackTeamName}! Assist dari ${assister}! Skor: ${matchData.teamA.score}-${matchData.teamB.score}`, 'goal');
                 addCommentary(getRandomComment('goal'));
-                addLiveEvent(`⚽ ${scorer} - Assist: ${assister}`, 'goal');
                 showEventAnimation(`⚽ GOOOL!<br>${scorer}<br><small>Assist: ${assister}</small>`, 'goal');
             } else {
                 addTournamentLog(`⚽ GOOOL! ${scorer} mencetak gol untuk ${attackTeamName}! Skor: ${matchData.teamA.score}-${matchData.teamB.score}`, 'goal');
                 addCommentary(getRandomComment('goal'));
-                addLiveEvent(`⚽ ${scorer} (${attackTeamName})`, 'goal');
                 showEventAnimation(`⚽ GOOOL!<br>${scorer}`, 'goal');
             }
         } else {
@@ -1138,7 +1142,6 @@ function simulateTournamentAttack() {
             const saveMessage = saveType[Math.floor(Math.random() * saveType.length)];
             addTournamentLog(`🧤 Tembakan ke gawang ${defendTeamName}! Kiper ${saveMessage}!`, 'save');
             addCommentary(getRandomComment('save'));
-            addLiveEvent(`🧤 Kiper ${defendTeamName} ${saveMessage}`);
         }
     } else {
         const missType = ['melebar', 'melambung tinggi', 'mengenai tiang', 'diblok'];
@@ -1146,7 +1149,6 @@ function simulateTournamentAttack() {
         addTournamentLog(`⚠️ Peluang ${attackTeamName}! Tembakan ${miss}!`, 'chance');
         if (miss === 'mengenai tiang') {
             addCommentary(getRandomComment('miss'));
-            addLiveEvent(`⚠️ ${attackTeamName} mengenai tiang!`, 'warning');
         }
     }
 }
@@ -1171,11 +1173,9 @@ function simulateTournamentFoul() {
     if (cardChance < 15) {
         matchData.stats[team].yellowCards++;
         addTournamentLog(`🟨 Kartu kuning untuk ${playerName} (${teamName})! Pelanggaran keras!`, 'yellow-card');
-        addLiveEvent(`🟨 ${playerName} (${teamName})`, 'warning');
     } else if (cardChance < 17) {
         matchData.stats[team].redCards++;
         addTournamentLog(`🟥 KARTU MERAH! ${playerName} (${teamName}) diusir! ${teamName} main dengan 10 pemain!`, 'red-card');
-        addLiveEvent(`🟥 ${playerName} diusir!`, 'red-card');
     } else {
         addTournamentLog(`⚽ Pelanggaran oleh ${playerName} (${teamName}). Tendangan bebas!`, 'foul');
     }
@@ -1187,7 +1187,6 @@ function simulateTournamentCorner() {
     
     matchData.stats[team].corners++;
     addTournamentLog(`⛳ Tendangan pojok untuk ${teamName}!`, 'corner');
-    addLiveEvent(`⛳ Corner ${teamName}`);
 }
 
 function simulateTournamentOffside() {
@@ -1207,7 +1206,6 @@ function simulateTournamentSubstitution() {
     
     matchData.stats[team].substitutions++;
     addTournamentLog(`🔄 Substitusi ${teamName}: ${playerOut} keluar, ${playerIn} masuk!`, 'substitution');
-    addLiveEvent(`🔄 ${teamName}: ${playerIn} masuk`);
 }
 
 function addLiveEvent(message, type = 'normal') {
@@ -1243,7 +1241,6 @@ function finishTournamentMatch(match) {
         proceedAfterMatch(match);
     } else {
         addTournamentLog(`⚖️ Pertandingan berakhir imbang ${match.scoreA}-${match.scoreB}! Adu penalti dimulai!`, 'match-end');
-        addLiveEvent('⚽ Adu Penalti!', 'goal');
         setTimeout(() => {
             simulatePenaltyShootout(match);
         }, 2000);
@@ -1298,11 +1295,9 @@ function simulatePenaltyShootout(match) {
             penaltyScoreA++;
             matchData.stats.teamA.penaltiesScored++;
             addTournamentLog(`${penaltyA.icon} ${match.teamA.name} - ${penaltyA.result}! Penalti ${roundLabel} ${penaltyA.message} (${penaltyScoreA}-${penaltyScoreB})`, penaltyA.type);
-            addLiveEvent(`⚽ ${match.teamA.name} skor!`, 'goal');
         } else {
             matchData.stats.teamA.penaltiesMissed++;
             addTournamentLog(`${penaltyA.icon} ${match.teamA.name} - ${penaltyA.result}! Penalti ${roundLabel} ${penaltyA.message}`, penaltyA.type);
-            addLiveEvent(`${penaltyA.icon} ${match.teamA.name} gagal!`, penaltyA.type);
         }
         
         document.getElementById('liveScoreA').textContent = `${match.scoreA} (${penaltyScoreA})`;
@@ -1314,11 +1309,9 @@ function simulatePenaltyShootout(match) {
                 penaltyScoreB++;
                 matchData.stats.teamB.penaltiesScored++;
                 addTournamentLog(`${penaltyB.icon} ${match.teamB.name} - ${penaltyB.result}! Penalti ${roundLabel} ${penaltyB.message} (${penaltyScoreA}-${penaltyScoreB})`, penaltyB.type);
-                addLiveEvent(`⚽ ${match.teamB.name} skor!`, 'goal');
             } else {
                 matchData.stats.teamB.penaltiesMissed++;
                 addTournamentLog(`${penaltyB.icon} ${match.teamB.name} - ${penaltyB.result}! Penalti ${roundLabel} ${penaltyB.message}`, penaltyB.type);
-                addLiveEvent(`${penaltyB.icon} ${match.teamB.name} gagal!`, penaltyB.type);
             }
             
             document.getElementById('liveScoreA').textContent = `${match.scoreA} (${penaltyScoreA})`;
@@ -1345,7 +1338,6 @@ function simulatePenaltyShootout(match) {
                 } else if (round === 5) {
                     suddenDeathMode = true;
                     addTournamentLog('⚡ Masih seri! Sudden Death dimulai!', 'important');
-                    addLiveEvent('⚡ Sudden Death!', 'goal');
                 }
             }
             

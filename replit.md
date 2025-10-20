@@ -76,6 +76,14 @@ This application aims to provide an engaging and realistic soccer simulation exp
 -   **Input Validation:** Comprehensive validation prevents tournament matches from starting with null/undefined teams, with error logging for debugging.
 
 ## Recent Changes (October 2025)
+**Tournament Log Simplification - Removed Duplicate Logs (20 Oktober 2025):**
+- **Fixed Duplicate Log Issue:** Di mode AI vs AI Tournament, sebelumnya ada 2 tempat yang menampilkan log event (Live Events + Tournament Log) yang membuat tampilan duplikat dan membingungkan
+- **Simplified Display:** Sekarang hanya ada 1 log yang akurat - **Tournament Log** yang lengkap dengan timestamp untuk semua event
+- **Live Events Hidden:** Bagian "Live Events" (yang menampilkan 8 event terbaru) sudah disembunyikan di tournament mode
+- **Skor Tetap Terlihat:** Skor pertandingan, waktu, dan nama tim tetap muncul di bagian atas dalam Live Match Display
+- **Clean Tournament Log:** Semua event (gol, kartu, substitusi, penalti) tercatat lengkap di Tournament Log dengan timestamp yang akurat
+- **Better UX:** Tampilan lebih bersih dan fokus dengan satu sumber log yang akurat
+
 **History Displays Enhancement & UX Cleanup (20 Oktober 2025):**
 - **Team Logos di Riwayat Random Tim Real:**
   - Logo tim berukuran 32px muncul di setiap entry riwayat random
