@@ -226,6 +226,16 @@ function updateDateTime() {
     
     const dateTimeString = `${day}, ${date} ${month} ${year} | ${hours}:${minutes}:${seconds}`;
     document.getElementById('currentDateTime').textContent = dateTimeString;
+    
+    // Update settings page time and date
+    const settingsTime = document.getElementById('settingsCurrentTime');
+    const settingsDate = document.getElementById('settingsCurrentDate');
+    if (settingsTime) {
+        settingsTime.textContent = `${hours}:${minutes}:${seconds}`;
+    }
+    if (settingsDate) {
+        settingsDate.textContent = `${day}, ${date} ${month} ${year}`;
+    }
 }
 
 // Screen Navigation

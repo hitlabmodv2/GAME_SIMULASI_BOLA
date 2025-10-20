@@ -547,6 +547,56 @@ body {
 }
 
 /* Settings */
+.settings-info-panel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.info-item {
+    background: var(--surface-color);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.info-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.info-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.info-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.info-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.info-value {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
 .settings-content {
     max-width: 600px;
     margin: 0 auto;
@@ -1458,13 +1508,23 @@ body {
 }
 
 .btn-collapse {
-    background: transparent;
-    border: none;
+    background: var(--border-color);
+    border: 1px solid var(--border-color);
     color: var(--text-color);
-    font-size: 1.2rem;
+    font-size: 0.9rem;
     cursor: pointer;
-    transition: transform 0.3s ease;
-    padding: 5px 10px;
+    transition: transform 0.3s ease, background 0.2s ease;
+    padding: 4px 8px;
+    border-radius: 6px;
+    min-width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-collapse:hover {
+    background: var(--primary-color);
 }
 
 .btn-collapse.rotated {
@@ -1890,6 +1950,45 @@ footer {
     
     .match-status {
         font-size: 0.75rem;
+    }
+    
+    /* Settings Info Panel Mobile */
+    .settings-info-panel {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .info-item {
+        padding: 12px;
+    }
+    
+    .info-icon {
+        font-size: 1.5rem;
+    }
+    
+    .info-label {
+        font-size: 0.7rem;
+    }
+    
+    .info-value {
+        font-size: 0.95rem;
+    }
+    
+    /* Stats Header Mobile */
+    .stats-header-collapsible {
+        padding: 10px 15px;
+    }
+    
+    .stats-header-collapsible h3 {
+        font-size: 0.95rem;
+    }
+    
+    .btn-collapse {
+        font-size: 0.8rem;
+        min-width: 28px;
+        height: 28px;
+        padding: 3px 6px;
     }
     
     /* Tournament Log Mobile */

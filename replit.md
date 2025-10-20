@@ -76,6 +76,24 @@ This application aims to provide an engaging and realistic soccer simulation exp
 -   **Input Validation:** Comprehensive validation prevents tournament matches from starting with null/undefined teams, with error logging for debugging.
 
 ## Recent Changes (October 2025)
+**Settings Page Enhancement & Stats UI Improvements (20 Oktober 2025):**
+- **Real-time Information Panel:**
+  - Waktu saat ini yang update realtime setiap detik dengan format HH:MM:SS
+  - Tanggal lengkap dalam bahasa Indonesia (Hari, Tanggal Bulan Tahun)
+  - Versi aplikasi (v2.0.1)
+  - Desain modern dengan icon dan grid layout responsif
+  - Hover effect untuk interaktivitas yang lebih baik
+- **Improved Stats Spoiler Button:**
+  - Button lebih kecil dan compact (32px x 32px di desktop, 28px x 28px di mobile)
+  - Desain simple dengan background dan border radius
+  - Hover effect dengan background color change
+  - Mobile optimized dengan ukuran yang pas untuk layar kecil
+  - Font size yang lebih kecil untuk desain yang lebih clean
+- **Mobile Optimization:**
+  - Info panel stack secara vertical di mobile untuk readability yang lebih baik
+  - Font size disesuaikan untuk mobile (icon 1.5rem, label 0.7rem, value 0.95rem)
+  - Stats header dan collapse button diperkecil untuk mobile experience yang lebih baik
+
 **Tournament Log Simplification - Removed Duplicate Logs (20 Oktober 2025):**
 - **Fixed Duplicate Log Issue:** Di mode AI vs AI Tournament, sebelumnya ada 2 tempat yang menampilkan log event (Live Events + Tournament Log) yang membuat tampilan duplikat dan membingungkan
 - **Simplified Display:** Sekarang hanya ada 1 log yang akurat - **Tournament Log** yang lengkap dengan timestamp untuk semua event
