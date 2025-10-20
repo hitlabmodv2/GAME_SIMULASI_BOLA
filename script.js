@@ -753,11 +753,26 @@ function setSetupMode(mode) {
         document.getElementById('manualModeBtn').classList.add('active');
         document.querySelector('.tournament-teams-setup').style.display = 'block';
         if (randomButtonContainer) randomButtonContainer.style.display = 'flex';
+        showEventAnimation('⚙️ Manual Setup<br><small>Atur tim secara manual</small>', 'info');
     } else {
         document.getElementById('autoModeBtn').classList.add('active');
         document.querySelector('.tournament-teams-setup').style.display = 'none';
         if (randomButtonContainer) randomButtonContainer.style.display = 'flex';
         autoGenerateTeams();
+        
+        // Get team logos for notification
+        const teamCount = parseInt(document.getElementById('teamCount').value);
+        const maxLogos = Math.min(4, teamCount); // Show max 4 logos
+        let logosHTML = '';
+        for (let i = 1; i <= maxLogos; i++) {
+            const teamName = document.getElementById('tournamentTeam' + i).value;
+            const logo = getTeamLogo(teamName);
+            if (logo) {
+                logosHTML += `<img src="${logo}" style="width: 24px; height: 24px; border-radius: 50%; margin: 0 2px; object-fit: cover; vertical-align: middle;" alt="${teamName}">`;
+            }
+        }
+        
+        showEventAnimation(`🤖 Auto Setup<br><small>Tim dipilih otomatis</small><br><div style="margin-top: 5px;">${logosHTML}</div>`, 'success');
     }
 }
 

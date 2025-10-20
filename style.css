@@ -1016,8 +1016,8 @@ body {
 }
 
 .team-logo-small {
-    width: 20px;
-    height: 20px;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
     object-fit: cover;
     flex-shrink: 0;
@@ -1874,8 +1874,8 @@ footer {
     }
     
     .team-logo-small {
-        width: 18px;
-        height: 18px;
+        width: 12px;
+        height: 12px;
     }
     
     .team-name-text {
@@ -2095,8 +2095,8 @@ footer {
     }
     
     .team-logo-small {
-        width: 16px;
-        height: 16px;
+        width: 12px;
+        height: 12px;
     }
     
     .team-name-text {
