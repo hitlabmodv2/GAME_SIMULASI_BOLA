@@ -283,10 +283,10 @@ function updateTeamInputs() {
                 ${teamOptions}
             </select>
             <input type="text" id="tournamentTeam${i}" placeholder="Atau ketik nama tim manual" maxlength="20" value="" oninput="updateTeamLogo(${i})">
-            <button type="button" class="btn-show-logo" id="btnShowLogo${i}" onclick="toggleTeamLogo(${i})" style="margin: 8px auto; padding: 6px 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem; display: block; transition: all 0.3s; opacity: 0.5;" disabled>
-                🖼️ Lihat Logo Tim
+            <button type="button" class="btn-show-logo" id="btnShowLogo${i}" onclick="toggleTeamLogo(${i})" style="margin: 6px auto; padding: 4px 12px; background: var(--primary-color); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.8rem; display: block; transition: all 0.3s; opacity: 0.5; font-weight: 500;" disabled>
+                👁️ Logo
             </button>
-            <div id="teamLogo${i}" class="team-logo-display" style="width: 60px; height: 60px; margin: 10px auto 0; display: none; justify-content: center; align-items: center; border-radius: 50%; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.4); background: rgba(255,255,255,0.05); opacity: 0; transform: scale(0.8); transition: all 0.3s ease;">
+            <div id="teamLogo${i}" class="team-logo-display" style="width: 32px; height: 32px; margin: 6px auto 0; display: none; justify-content: center; align-items: center; border-radius: 50%; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.3); background: rgba(255,255,255,0.05); opacity: 0; transform: scale(0.8); transition: all 0.3s ease;">
                 <img id="teamLogoImg${i}" src="" alt="" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
             <div class="difficulty-selector">
@@ -363,7 +363,7 @@ function updateTeamLogo(teamNum) {
             if (button) {
                 button.disabled = false;
                 button.style.opacity = '1';
-                button.innerHTML = '🖼️ Lihat Logo Tim';
+                button.innerHTML = '👁️ Logo';
             }
         } else {
             // No logo found - disable button
@@ -371,7 +371,7 @@ function updateTeamLogo(teamNum) {
             if (button) {
                 button.disabled = true;
                 button.style.opacity = '0.5';
-                button.innerHTML = '🖼️ Lihat Logo Tim';
+                button.innerHTML = '👁️ Logo';
             }
         }
     } else {
@@ -380,7 +380,7 @@ function updateTeamLogo(teamNum) {
         if (button) {
             button.disabled = true;
             button.style.opacity = '0.5';
-            button.innerHTML = '🖼️ Lihat Logo Tim';
+            button.innerHTML = '👁️ Logo';
         }
     }
 }
@@ -412,14 +412,14 @@ function toggleTeamLogo(teamNum) {
         setTimeout(() => {
             logoDisplay.style.display = 'none';
         }, 300);
-        button.innerHTML = '🖼️ Lihat Logo Tim';
+        button.innerHTML = '👁️ Logo';
     } else {
         logoDisplay.style.display = 'flex';
         setTimeout(() => {
             logoDisplay.style.opacity = '1';
             logoDisplay.style.transform = 'scale(1)';
         }, 10);
-        button.innerHTML = '❌ Sembunyikan Logo';
+        button.innerHTML = '✖️ Hide';
     }
 }
 
