@@ -2193,12 +2193,12 @@ footer {
     }
     
     .header {
-        margin-bottom: 30px;
+        margin-bottom: 20px;
     }
     
     .header h1 {
         font-size: 1.8rem;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
     
     .header h2 {
@@ -2462,18 +2462,18 @@ footer {
     }
     
     .setting-item {
-        padding: 12px;
-        margin-bottom: 10px;
-    }
-    
-    .setting-item label {
-        font-size: 0.85rem;
+        padding: 8px 10px;
         margin-bottom: 6px;
     }
     
+    .setting-item label {
+        font-size: 0.75rem;
+        margin-bottom: 4px;
+    }
+    
     .setting-item select {
-        padding: 10px 12px;
-        font-size: 0.85rem;
+        padding: 8px 10px;
+        font-size: 0.8rem;
     }
     
     /* Stats Header Mobile */
@@ -2863,12 +2863,13 @@ footer {
     /* Action Buttons Mobile */
     .action-buttons {
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
+        margin-top: 15px;
     }
     
     .btn {
-        padding: 12px 25px;
-        font-size: 1rem;
+        padding: 10px 20px;
+        font-size: 0.9rem;
         width: 100%;
     }
     
