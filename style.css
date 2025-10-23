@@ -2072,50 +2072,25 @@ footer {
 }
 
 .footer-greeting {
-    display: flex;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
-    padding: 12px 20px;
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(59, 130, 246, 0.1) 100%);
-    border-radius: 12px;
-    border: 1px solid rgba(37, 99, 235, 0.3);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-    animation: greetingPulse 3s ease-in-out infinite;
-}
-
-@keyframes greetingPulse {
-    0%, 100% {
-        transform: scale(1);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-    }
-    50% {
-        transform: scale(1.02);
-        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
-    }
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 8px 16px;
+    background: rgba(37, 99, 235, 0.1);
+    border-radius: 20px;
+    border: 1px solid rgba(37, 99, 235, 0.25);
 }
 
 .greeting-icon {
-    font-size: 1.8rem;
-    animation: iconFloat 2s ease-in-out infinite;
-}
-
-@keyframes iconFloat {
-    0%, 100% {
-        transform: translateY(0px);
-    }
-    50% {
-        transform: translateY(-5px);
-    }
+    font-size: 1.2rem;
 }
 
 .greeting-text {
-    font-size: 1.1rem;
-    font-weight: 700;
+    font-size: 0.9rem;
+    font-weight: 600;
     color: var(--text-color);
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    letter-spacing: 0.5px;
 }
 
 .footer-top {
@@ -2931,17 +2906,17 @@ footer {
     }
     
     .footer-greeting {
-        padding: 10px 15px;
-        margin-bottom: 12px;
-        gap: 8px;
+        padding: 6px 12px;
+        margin-bottom: 10px;
+        gap: 6px;
     }
     
     .greeting-icon {
-        font-size: 1.5rem;
+        font-size: 1rem;
     }
     
     .greeting-text {
-        font-size: 0.95rem;
+        font-size: 0.8rem;
     }
     
     .footer-top {
