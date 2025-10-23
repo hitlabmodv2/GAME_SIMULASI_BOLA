@@ -2799,26 +2799,33 @@ footer {
     
     /* Tournament Setup Mobile */
     .setup-mode-selector {
-        flex-direction: row;
+        flex-direction: row !important;
         gap: 8px;
         padding: 8px;
+        justify-content: center;
     }
     
     .mode-btn {
-        max-width: 100%;
-        padding: 12px 15px;
-        font-size: 0.8rem;
+        flex: 1;
+        max-width: 48%;
+        padding: 12px 10px;
+        font-size: 0.75rem;
+        white-space: nowrap;
     }
     
     .btn-random, .btn-update-realtime {
-        padding: 10px 15px;
-        font-size: 0.85rem;
+        flex: 1;
+        padding: 10px 12px;
+        font-size: 0.8rem;
+        white-space: nowrap;
     }
     
     .random-button-container {
-        flex-direction: row;
-        flex-wrap: wrap;
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap;
         gap: 8px;
+        justify-content: center;
     }
     
     .scroll-to-top {
@@ -2891,6 +2898,7 @@ footer {
     
     .difficulty-slider-container {
         gap: 6px;
+        padding: 5px 0;
     }
     
     .difficulty-value {
@@ -2898,18 +2906,21 @@ footer {
         padding: 3px 8px;
     }
     
-    .difficulty-slider {
-        height: 4px;
+    .tournament-team-input .difficulty-slider {
+        height: 8px;
+        padding: 8px 0;
     }
     
-    .difficulty-slider::-webkit-slider-thumb {
-        width: 16px;
-        height: 16px;
+    .tournament-team-input .difficulty-slider::-webkit-slider-thumb {
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
     }
     
-    .difficulty-slider::-moz-range-thumb {
-        width: 16px;
-        height: 16px;
+    .tournament-team-input .difficulty-slider::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
     }
     
     .tournament-team-input .difficulty-label {
