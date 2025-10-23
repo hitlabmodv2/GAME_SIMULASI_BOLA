@@ -2110,13 +2110,6 @@ function autoRandomizeMatch() {
     const percentageB = (difficultyB / 7) * 100;
     document.getElementById('difficultyBarA').style.width = percentageA + '%';
     document.getElementById('difficultyBarB').style.width = percentageB + '%';
-    
-    // Efek visual: animasi button
-    const btn = event.target;
-    btn.style.transform = 'rotate(360deg)';
-    setTimeout(() => {
-        btn.style.transform = 'rotate(0deg)';
-    }, 300);
 }
 
 // Settings
