@@ -2193,16 +2193,16 @@ footer {
     }
     
     .header {
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
     
     .header h1 {
-        font-size: 1.8rem;
-        margin-bottom: 10px;
+        font-size: 1.6rem;
+        margin-bottom: 8px;
     }
     
     .header h2 {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
         margin-bottom: 15px;
     }
     
@@ -2344,16 +2344,17 @@ footer {
     }
     
     .subtitle {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        margin-bottom: 8px;
     }
     
     .main-btn {
         font-size: 1rem;
-        padding: 18px 20px;
+        padding: 15px 18px;
     }
     
     .main-btn .icon {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
     }
     
     /* Tournament Bracket Mobile */
@@ -2720,14 +2721,19 @@ footer {
     }
     
     /* Buttons */
+    .menu-buttons {
+        gap: 10px;
+        max-width: 100%;
+    }
+    
     .main-btn {
-        padding: 15px 18px;
-        font-size: 0.95rem;
-        gap: 12px;
+        padding: 12px 15px;
+        font-size: 0.9rem;
+        gap: 10px;
     }
     
     .main-btn .icon {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
     }
     
     .btn, .btn-secondary {
