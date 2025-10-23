@@ -2079,6 +2079,28 @@ function changeDifficulty(team, delta) {
 
 // Auto Randomize Match Settings
 function autoRandomizeMatch() {
+    // Tutup dropdown jika sedang terbuka
+    const selectorA = document.getElementById('teamSelectorA');
+    const selectorB = document.getElementById('teamSelectorB');
+    const buttonA = document.getElementById('toggleTeamsA');
+    const buttonB = document.getElementById('toggleTeamsB');
+    
+    if (selectorA && selectorA.style.display !== 'none') {
+        selectorA.style.display = 'none';
+        if (buttonA) {
+            buttonA.textContent = '🏆 Pilih Tim';
+            buttonA.classList.remove('active');
+        }
+    }
+    
+    if (selectorB && selectorB.style.display !== 'none') {
+        selectorB.style.display = 'none';
+        if (buttonB) {
+            buttonB.textContent = '🏆 Pilih Tim';
+            buttonB.classList.remove('active');
+        }
+    }
+    
     // Random pilih 2 tim berbeda
     const availableTeams = [...predefinedTeams];
     
@@ -2110,6 +2132,20 @@ function autoRandomizeMatch() {
     const percentageB = (difficultyB / 7) * 100;
     document.getElementById('difficultyBarA').style.width = percentageA + '%';
     document.getElementById('difficultyBarB').style.width = percentageB + '%';
+    
+    // Efek visual highlight untuk menunjukkan tim yang dipilih
+    const teamConfigA = document.getElementById('teamConfigA');
+    const teamConfigB = document.getElementById('teamConfigB');
+    
+    // Tambahkan class highlight
+    teamConfigA.classList.add('highlight');
+    teamConfigB.classList.add('highlight');
+    
+    // Hapus class highlight setelah 1.5 detik
+    setTimeout(() => {
+        teamConfigA.classList.remove('highlight');
+        teamConfigB.classList.remove('highlight');
+    }, 1500);
 }
 
 // Settings

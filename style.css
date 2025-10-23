@@ -188,6 +188,14 @@ body.night-bg {
     padding: 20px;
     border-radius: 12px;
     border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.team-config.highlight {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+    border-color: var(--success-color);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+    transform: scale(1.02);
 }
 
 .team-config h3 {
@@ -195,6 +203,11 @@ body.night-bg {
     margin-bottom: 18px;
     color: var(--primary-color);
     font-size: 1.3rem;
+    transition: color 0.3s ease;
+}
+
+.team-config.highlight h3 {
+    color: var(--success-color);
 }
 
 .vs-divider {
@@ -2855,42 +2868,57 @@ footer {
     }
     
     .teams-grid {
-        grid-template-columns: 1fr;
-        gap: 10px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
     }
     
     .tournament-team-input {
-        padding: 12px;
+        padding: 10px;
     }
     
     .tournament-team-input h3 {
-        font-size: 0.9rem;
-        margin-bottom: 10px;
+        font-size: 0.75rem;
+        margin-bottom: 8px;
     }
     
     .tournament-team-input input {
-        padding: 8px 10px;
-        font-size: 0.85rem;
-        margin-bottom: 10px;
+        padding: 6px 8px;
+        font-size: 0.75rem;
+        margin-bottom: 8px;
     }
     
     .difficulty-slider-container {
-        gap: 10px;
+        gap: 6px;
     }
     
     .difficulty-value {
-        font-size: 1.2rem;
-        padding: 4px 10px;
+        font-size: 0.9rem;
+        padding: 3px 8px;
+    }
+    
+    .difficulty-slider {
+        height: 4px;
     }
     
     .difficulty-slider::-webkit-slider-thumb {
-        width: 20px;
-        height: 20px;
+        width: 16px;
+        height: 16px;
     }
     
     .difficulty-slider::-moz-range-thumb {
-        width: 20px;
-        height: 20px;
+        width: 16px;
+        height: 16px;
+    }
+    
+    .tournament-team-input .difficulty-label {
+        font-size: 0.65rem;
+        margin-top: 4px;
+    }
+    
+    .tournament-team-input select {
+        padding: 6px 8px;
+        font-size: 0.7rem;
+        margin-bottom: 8px;
     }
     
     /* Action Buttons Mobile */
