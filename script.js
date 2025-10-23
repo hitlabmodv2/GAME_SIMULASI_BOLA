@@ -1,5 +1,14 @@
 // Global Variables
 let currentScreen = 'mainMenu';
+
+// Web Worker untuk timer agar game tetap berjalan saat tab tidak aktif
+let gameTimerWorker = null;
+try {
+    gameTimerWorker = new Worker('timer-worker.js');
+} catch (e) {
+    console.error('Web Worker tidak tersedia:', e);
+}
+
 let matchData = {
     teamA: { name: 'Barcelona FC', difficulty: 5, score: 0, formation: '4-4-2' },
     teamB: { name: 'Real Madrid', difficulty: 5, score: 0, formation: '4-3-3' },
@@ -1191,7 +1200,8 @@ function simulateTournamentMatch(match) {
     const simulationSpeed = 400;
     const halfTime = Math.floor(duration / 2);
     
-    const interval = setInterval(() => {
+    // Fungsi untuk menangani setiap tick tournament
+    const handleTournamentTick = () => {
         matchData.currentMinute++;
         let displayText = matchData.currentMinute + "'";
         
@@ -1225,10 +1235,28 @@ function simulateTournamentMatch(match) {
         }
         
         if (matchData.currentMinute >= duration + matchData.injuryTime.firstHalf + matchData.injuryTime.secondHalf) {
-            clearInterval(interval);
+            if (gameTimerWorker) {
+                gameTimerWorker.postMessage({ action: 'stop' });
+            }
+            if (matchData.interval) {
+                clearInterval(matchData.interval);
+            }
             finishTournamentMatch(match);
         }
-    }, simulationSpeed);
+    };
+    
+    // Setup Web Worker untuk tournament
+    if (gameTimerWorker) {
+        gameTimerWorker.onmessage = function(e) {
+            if (e.data.type === 'tick') {
+                handleTournamentTick();
+            }
+        };
+        gameTimerWorker.postMessage({ action: 'start', data: { speed: simulationSpeed } });
+    } else {
+        // Fallback ke setInterval
+        matchData.interval = setInterval(handleTournamentTick, simulationSpeed);
+    }
 }
 
 function simulateTournamentMinute() {
@@ -1983,6 +2011,13 @@ function updateTournamentStatus(message) {
 function backToMenuFromTournament() {
     if (tournamentData.isRunning) {
         if (confirm('Tournament masih berlangsung. Yakin ingin kembali ke menu?')) {
+            // Stop Web Worker timer
+            if (gameTimerWorker) {
+                gameTimerWorker.postMessage({ action: 'stop' });
+            }
+            if (matchData.interval) {
+                clearInterval(matchData.interval);
+            }
             tournamentData.isRunning = false;
             clearEventAnimations();
             showScreen('mainMenu');
@@ -2136,18 +2171,40 @@ function runMatch() {
     addLog(0, 'Pertandingan dimulai! Wasit meniup peluit pembuka.', 'important');
     addMatchCommentary(getRandomComment('matchStart'));
     
-    matchData.interval = setInterval(() => {
-        matchData.currentMinute++;
-        document.getElementById('matchTime').textContent = matchData.currentMinute + "'";
+    // Setup Web Worker message handler
+    if (gameTimerWorker) {
+        gameTimerWorker.onmessage = function(e) {
+            if (e.data.type === 'tick' && matchData.isRunning) {
+                matchData.currentMinute++;
+                document.getElementById('matchTime').textContent = matchData.currentMinute + "'";
+                
+                // Simulate events
+                simulateMinute();
+                
+                // Check if match ended
+                if (matchData.currentMinute >= matchData.duration) {
+                    endMatch();
+                }
+            }
+        };
         
-        // Simulate events
-        simulateMinute();
-        
-        // Check if match ended
-        if (matchData.currentMinute >= matchData.duration) {
-            endMatch();
-        }
-    }, matchData.speed);
+        // Start the worker timer
+        gameTimerWorker.postMessage({ action: 'start', data: { speed: matchData.speed } });
+    } else {
+        // Fallback ke setInterval jika Web Worker tidak tersedia
+        matchData.interval = setInterval(() => {
+            matchData.currentMinute++;
+            document.getElementById('matchTime').textContent = matchData.currentMinute + "'";
+            
+            // Simulate events
+            simulateMinute();
+            
+            // Check if match ended
+            if (matchData.currentMinute >= matchData.duration) {
+                endMatch();
+            }
+        }, matchData.speed);
+    }
 }
 
 function simulateMinute() {
@@ -2344,6 +2401,10 @@ function updateScore() {
 }
 
 function endMatch() {
+    // Stop Web Worker timer
+    if (gameTimerWorker) {
+        gameTimerWorker.postMessage({ action: 'stop' });
+    }
     clearInterval(matchData.interval);
     matchData.isRunning = false;
     
@@ -2639,6 +2700,10 @@ function getStatPercentage(valueA, valueB, team) {
 function backToMenu() {
     if (matchData.isRunning) {
         if (confirm('Pertandingan masih berlangsung. Yakin ingin kembali ke menu?')) {
+            // Stop Web Worker timer
+            if (gameTimerWorker) {
+                gameTimerWorker.postMessage({ action: 'stop' });
+            }
             clearInterval(matchData.interval);
             matchData.isRunning = false;
             clearEventAnimations();
