@@ -120,18 +120,27 @@ The application aims to deliver an engaging and realistic soccer simulation with
    - Automatic fallback to setInterval for browsers without Web Worker support
    - Properly stops worker on match end, menu navigation, and tournament completion
 
-2. **Dynamic Anime Background System:**
+2. **Mobile UI/UX Improvements (October 23, 2025):**
+   - Changed mobile layout from vertical stacking to horizontal (2-column) grid for better space utilization
+   - Applies to both AI vs AI match setup and Tournament setup screens
+   - Optimized font sizes, padding, and spacing for mobile readability
+   - Removed spinning animation from Auto Random button for cleaner UX
+   - Added visual highlight effect (green glow + scale) when Auto Random is clicked to show selected teams
+   - Auto-close team selector dropdowns when Auto Random button is clicked
+   - All changes maintain functionality while improving mobile user experience
+
+3. **Dynamic Anime Background System:**
    - Added 4 AI-generated anime-style backgrounds inspired by "Kimi no Nawa"
    - Automatic background switching based on time of day
    - Smooth transition effects between backgrounds
    
-3. **Enhanced Footer:**
+4. **Enhanced Footer:**
    - Added visitor counter with session tracking
    - Added Privacy Policy page with comprehensive legal information
    - Added copyright and disclaimer notices
    - Improved mobile responsiveness
    
-4. **Privacy Policy Page:**
+5. **Privacy Policy Page:**
    - New standalone page (`privacy-policy.html`)
    - Detailed sections on data collection, copyright, licensing, and disclaimers
    - Scroll to top button and back button for easy navigation
