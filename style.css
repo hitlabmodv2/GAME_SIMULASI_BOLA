@@ -2219,31 +2219,32 @@ footer {
     
     .team-setup {
         grid-template-columns: 1fr;
-        gap: 15px;
+        gap: 10px;
+        margin-bottom: 15px;
     }
     
     .vs-divider {
         transform: none;
-        margin: 5px 0;
-        font-size: 1.5rem;
-        padding: 8px 0;
+        margin: 3px 0;
+        font-size: 1.3rem;
+        padding: 5px 0;
     }
     
     .team-config {
-        padding: 15px;
+        padding: 12px;
     }
     
     .team-config h3 {
-        font-size: 1.1rem;
-        margin-bottom: 12px;
+        font-size: 1rem;
+        margin-bottom: 10px;
     }
     
     .input-group {
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
     
     .input-group label {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         margin-bottom: 5px;
     }
     
@@ -2253,22 +2254,36 @@ footer {
     }
     
     .difficulty-selector {
-        gap: 10px;
+        gap: 8px;
+        margin-bottom: 8px;
     }
     
     .difficulty-selector button {
-        width: 32px;
-        height: 32px;
-        font-size: 1.1rem;
+        width: 28px;
+        height: 28px;
+        font-size: 1rem;
     }
     
     .difficulty-selector span {
-        font-size: 1.3rem;
+        font-size: 1.1rem;
+        padding: 6px 12px;
     }
     
     .btn-toggle-teams {
-        padding: 8px 12px;
-        font-size: 0.85rem;
+        padding: 7px 10px;
+        font-size: 0.8rem;
+    }
+    
+    .btn-show-logo {
+        padding: 6px 12px !important;
+        font-size: 0.75rem !important;
+        margin: 6px auto !important;
+    }
+    
+    .team-logo-display {
+        width: 60px;
+        height: 60px;
+        margin: 8px auto 0;
     }
     
     .action-buttons {
@@ -2283,14 +2298,24 @@ footer {
     }
     
     .difficulty-bar {
-        height: 8px;
+        height: 6px;
+        margin-top: 5px;
+    }
+    
+    .difficulty-label {
+        font-size: 0.75rem;
+        margin-top: 4px;
     }
     
     .team-selector-grid {
         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
         gap: 8px;
         padding: 10px;
-        max-height: 300px;
+        max-height: 250px;
+    }
+    
+    .team-selector-container {
+        margin: 10px 0;
     }
     
     .team-option-btn {
@@ -2826,25 +2851,27 @@ footer {
     }
     
     .tournament-teams-setup {
-        padding: 15px;
+        padding: 10px 5px;
     }
     
     .teams-grid {
         grid-template-columns: 1fr;
-        gap: 15px;
+        gap: 10px;
     }
     
     .tournament-team-input {
-        padding: 15px;
+        padding: 12px;
     }
     
     .tournament-team-input h3 {
-        font-size: 1rem;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
     }
     
     .tournament-team-input input {
-        padding: 10px;
-        font-size: 0.9rem;
+        padding: 8px 10px;
+        font-size: 0.85rem;
+        margin-bottom: 10px;
     }
     
     .difficulty-slider-container {
