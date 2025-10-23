@@ -90,6 +90,7 @@ The application aims to deliver an engaging and realistic soccer simulation with
 -   **Frontend:** Pure HTML5, CSS3, and Vanilla JavaScript for a lightweight and performant web application.
 -   **State Management:** The `tournamentData` object centrally manages all tournament-related states.
 -   **Asynchronous Operations:** Utilizes `setTimeout` for non-blocking simulations and smooth transitions.
+-   **Web Worker Timer:** Dedicated background thread (timer-worker.js) ensures game continues running when browser tab is inactive, preventing freeze/stutter issues.
 -   **DOM Manipulation:** Direct and efficient DOM updates for real-time display.
 -   **Responsive Design:** Optimized for mobile viewing.
 -   **Tournament Flow:** Managed by a sequential and recursive flow of functions.
@@ -105,23 +106,32 @@ The application aims to deliver an engaging and realistic soccer simulation with
 ## External Dependencies
 -   **Storage:** `localStorage` for persisting user preferences, settings, and visitor count.
 -   **Server:** Node.js serve package on port 5000 for static file hosting.
+-   **Web Workers:** Browser Web Worker API for background timer thread (timer-worker.js).
 -   **Assets:** 
     - Custom favicon.png for browser tab icon (AI-generated soccer ball).
     - Dynamic anime backgrounds (4 images) in `anime-backgrounds/` folder.
+    - timer-worker.js for background match timer.
 
 ## Recent Updates (October 2025)
-1. **Dynamic Anime Background System:**
+1. **Web Worker Background Timer (October 23, 2025):**
+   - Implemented dedicated Web Worker (timer-worker.js) for game timer
+   - Game now continues running accurately when browser tab is inactive/in background
+   - Prevents freezing/stuttering when switching tabs during matches
+   - Automatic fallback to setInterval for browsers without Web Worker support
+   - Properly stops worker on match end, menu navigation, and tournament completion
+
+2. **Dynamic Anime Background System:**
    - Added 4 AI-generated anime-style backgrounds inspired by "Kimi no Nawa"
    - Automatic background switching based on time of day
    - Smooth transition effects between backgrounds
    
-2. **Enhanced Footer:**
+3. **Enhanced Footer:**
    - Added visitor counter with session tracking
    - Added Privacy Policy page with comprehensive legal information
    - Added copyright and disclaimer notices
    - Improved mobile responsiveness
    
-3. **Privacy Policy Page:**
+4. **Privacy Policy Page:**
    - New standalone page (`privacy-policy.html`)
    - Detailed sections on data collection, copyright, licensing, and disclaimers
    - Scroll to top button and back button for easy navigation
