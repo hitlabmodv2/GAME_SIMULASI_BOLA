@@ -2396,68 +2396,84 @@ footer {
     
     /* Settings Info Panel Mobile */
     .settings-info-panel {
-        grid-template-columns: 1fr;
-        gap: 10px;
-        margin-bottom: 20px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        margin-bottom: 12px;
+        padding: 0 5px;
     }
     
     .info-item {
-        padding: 12px;
+        padding: 8px 6px;
+        gap: 4px;
+        flex-direction: column;
+        text-align: center;
     }
     
     .info-icon {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
     }
     
     .info-label {
-        font-size: 0.7rem;
+        font-size: 0.6rem;
+        line-height: 1.2;
     }
     
     .info-value {
-        font-size: 0.95rem;
+        font-size: 0.75rem;
     }
     
     /* Settings Stats Panel Mobile */
     .settings-stats-panel {
-        grid-template-columns: 1fr;
-        gap: 15px;
-        margin: 20px 10px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        margin: 12px 5px;
     }
     
     .stats-card {
-        padding: 15px;
+        padding: 10px 6px;
+        gap: 6px;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
     }
     
     .stats-icon {
-        font-size: 2rem;
-        width: 50px;
-        height: 50px;
+        font-size: 1.5rem;
+        width: auto;
+        height: auto;
+    }
+    
+    .stats-info {
+        flex: 1;
+        text-align: center;
     }
     
     .stats-label {
-        font-size: 0.75rem;
+        font-size: 0.65rem;
+        line-height: 1.2;
     }
     
     .stats-value {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
     }
     
     .settings-content {
-        padding: 0 10px;
+        padding: 0 5px;
     }
     
     .setting-item {
-        padding: 15px;
-        margin-bottom: 15px;
+        padding: 12px;
+        margin-bottom: 10px;
     }
     
     .setting-item label {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        margin-bottom: 6px;
     }
     
     .setting-item select {
-        padding: 10px;
-        font-size: 0.9rem;
+        padding: 10px 12px;
+        font-size: 0.85rem;
     }
     
     /* Stats Header Mobile */
