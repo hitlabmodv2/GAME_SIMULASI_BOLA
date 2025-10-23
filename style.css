@@ -2799,24 +2799,26 @@ footer {
     
     /* Tournament Setup Mobile */
     .setup-mode-selector {
-        flex-direction: column;
-        gap: 10px;
+        flex-direction: row;
+        gap: 8px;
         padding: 8px;
     }
     
     .mode-btn {
         max-width: 100%;
-        padding: 15px 25px;
-        font-size: 1rem;
+        padding: 12px 15px;
+        font-size: 0.8rem;
     }
     
     .btn-random, .btn-update-realtime {
-        padding: 12px 30px;
-        font-size: 1rem;
+        padding: 10px 15px;
+        font-size: 0.85rem;
     }
     
     .random-button-container {
-        gap: 10px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px;
     }
     
     .scroll-to-top {
