@@ -2240,50 +2240,50 @@ footer {
     }
     
     .input-group {
-        margin-bottom: 10px;
-    }
-    
-    .input-group label {
-        font-size: 0.75rem;
-        margin-bottom: 5px;
-    }
-    
-    .input-group input {
-        padding: 8px 10px;
-        font-size: 0.9rem;
-    }
-    
-    .difficulty-selector {
-        gap: 8px;
         margin-bottom: 8px;
     }
     
-    .difficulty-selector button {
-        width: 28px;
-        height: 28px;
-        font-size: 1rem;
+    .input-group label {
+        font-size: 0.65rem;
+        margin-bottom: 4px;
     }
     
-    .difficulty-selector span {
-        font-size: 1.1rem;
-        padding: 6px 12px;
-    }
-    
-    .btn-toggle-teams {
-        padding: 7px 10px;
+    .input-group input {
+        padding: 6px 8px;
         font-size: 0.8rem;
     }
     
+    .difficulty-selector {
+        gap: 6px;
+        margin-bottom: 6px;
+    }
+    
+    .difficulty-selector button {
+        width: 24px;
+        height: 24px;
+        font-size: 0.9rem;
+    }
+    
+    .difficulty-selector span {
+        font-size: 0.95rem;
+        padding: 4px 10px;
+    }
+    
+    .btn-toggle-teams {
+        padding: 6px 8px;
+        font-size: 0.7rem;
+    }
+    
     .btn-show-logo {
-        padding: 6px 12px !important;
-        font-size: 0.75rem !important;
-        margin: 6px auto !important;
+        padding: 5px 10px !important;
+        font-size: 0.65rem !important;
+        margin: 5px auto !important;
     }
     
     .team-logo-display {
-        width: 60px;
-        height: 60px;
-        margin: 8px auto 0;
+        width: 50px;
+        height: 50px;
+        margin: 6px auto 0;
     }
     
     .action-buttons {
@@ -2298,13 +2298,13 @@ footer {
     }
     
     .difficulty-bar {
-        height: 6px;
-        margin-top: 5px;
+        height: 5px;
+        margin-top: 4px;
     }
     
     .difficulty-label {
-        font-size: 0.75rem;
-        margin-top: 4px;
+        font-size: 0.65rem;
+        margin-top: 3px;
     }
     
     .team-selector-grid {
