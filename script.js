@@ -163,6 +163,8 @@ function updateVisitorCount() {
 document.addEventListener('DOMContentLoaded', function() {
     updateDateTime();
     setInterval(updateDateTime, 1000);
+    updateGreeting();
+    setInterval(updateGreeting, 60000); // Update setiap menit
     updateBackgroundByTime();
     setInterval(updateBackgroundByTime, 60000); // Update setiap menit
     updateVisitorCount();
@@ -388,6 +390,38 @@ function updateDateTime() {
     }
     if (settingsDate) {
         settingsDate.textContent = `${day}, ${date} ${month} ${year}`;
+    }
+}
+
+// Update Greeting based on Time
+function updateGreeting() {
+    const now = new Date();
+    const hours = now.getHours();
+    const greetingIcon = document.getElementById('greetingIcon');
+    const greetingText = document.getElementById('greetingText');
+    
+    let greeting = '';
+    let icon = '';
+    
+    if (hours >= 5 && hours < 11) {
+        greeting = 'Selamat Pagi';
+        icon = '🌅';
+    } else if (hours >= 11 && hours < 15) {
+        greeting = 'Selamat Siang';
+        icon = '☀️';
+    } else if (hours >= 15 && hours < 18) {
+        greeting = 'Selamat Sore';
+        icon = '🌆';
+    } else {
+        greeting = 'Selamat Malam';
+        icon = '🌙';
+    }
+    
+    if (greetingIcon) {
+        greetingIcon.textContent = icon;
+    }
+    if (greetingText) {
+        greetingText.textContent = greeting;
     }
 }
 
