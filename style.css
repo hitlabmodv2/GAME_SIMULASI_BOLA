@@ -1240,6 +1240,285 @@ body.night-bg {
     min-width: 1px;
 }
 
+/* =============================================
+   LIGA MODE
+   ============================================= */
+
+/* Progress bar */
+.liga-progress-wrap {
+    height: 8px;
+    background: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 8px 0 4px;
+}
+.liga-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), #10b981);
+    border-radius: 4px;
+    transition: width 0.4s ease;
+}
+.liga-progress-label {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+}
+
+/* Layout 2-column */
+.liga-layout {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+/* Standings side */
+.liga-standings-section {
+    min-width: 340px;
+    max-width: 480px;
+    flex: 1.4;
+}
+.liga-standings-section h3 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+/* Standings table */
+.liga-standings-table {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.liga-standings-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+}
+.liga-standings-table th {
+    background: var(--surface-color);
+    color: var(--text-secondary);
+    padding: 6px 8px;
+    text-align: center;
+    font-weight: 600;
+    border-bottom: 2px solid var(--border-color);
+    white-space: nowrap;
+}
+.liga-standings-table th:first-child,
+.liga-standings-table th:nth-child(2) {
+    text-align: left;
+}
+.liga-standings-table td {
+    padding: 6px 8px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+    white-space: nowrap;
+}
+.liga-standings-table td:first-child,
+.liga-standings-table td:nth-child(2) {
+    text-align: left;
+}
+.liga-standings-table tr:nth-child(even) {
+    background: rgba(255,255,255,0.02);
+}
+.liga-standings-table tr:hover {
+    background: rgba(37,99,235,0.08);
+}
+.liga-standings-table tr.liga-leader td {
+    background: rgba(255,215,0,0.06);
+    font-weight: 700;
+}
+.liga-standings-table .pts-col {
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 0.9rem;
+}
+.liga-standings-table .pos-col {
+    font-weight: 700;
+    color: var(--text-secondary);
+    width: 28px;
+}
+.liga-team-logo-xs {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    object-fit: cover;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+.liga-gd-pos { color: #10b981; }
+.liga-gd-neg { color: #ef4444; }
+
+/* Right side */
+.liga-right {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Live match card */
+.liga-live-match {
+    background: var(--surface-color);
+    border: 2px solid var(--primary-color);
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 0 16px rgba(37,99,235,0.2);
+}
+.liga-live-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.liga-live-team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+}
+.liga-live-name {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+}
+.liga-live-score {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--text-color);
+    letter-spacing: 2px;
+}
+.liga-live-vs {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+/* Log */
+.liga-log-section {
+    background: var(--surface-color);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    flex: 1;
+}
+.liga-log-header {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.liga-log-header h3 {
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+.liga-log {
+    height: 260px;
+    overflow-y: auto;
+    padding: 8px 0;
+}
+.liga-log-entry {
+    padding: 5px 14px;
+    font-size: 0.78rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-color);
+}
+.liga-log-entry.win-a { border-left: 3px solid var(--success-color); }
+.liga-log-entry.win-b { border-left: 3px solid var(--danger-color); }
+.liga-log-entry.draw  { border-left: 3px solid var(--warning-color); }
+.liga-log-entry .match-num {
+    font-size: 0.68rem;
+    color: var(--text-secondary);
+    min-width: 28px;
+}
+
+/* Top scorers */
+.liga-top-scorers {
+    margin: 16px 0;
+    background: var(--surface-color);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    padding: 16px;
+}
+.liga-top-scorers h3 {
+    color: var(--warning-color);
+    margin-bottom: 12px;
+    font-size: 1rem;
+}
+.liga-scorer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.82rem;
+}
+.liga-scorer-row:last-child { border-bottom: none; }
+.liga-scorer-rank { color: var(--text-secondary); min-width: 24px; font-weight: 700; }
+.liga-scorer-name { flex: 1; color: var(--text-color); }
+.liga-scorer-team { color: var(--text-secondary); font-size: 0.73rem; margin-right: 8px; }
+.liga-scorer-goals {
+    background: var(--primary-color);
+    color: #fff;
+    border-radius: 12px;
+    padding: 1px 10px;
+    font-weight: 700;
+    font-size: 0.82rem;
+}
+
+/* Champion banner */
+.liga-champion-banner {
+    text-align: center;
+    padding: 24px;
+    background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,140,0,0.08));
+    border: 2px solid rgba(255,215,0,0.4);
+    border-radius: 16px;
+    margin: 16px 0;
+    animation: fadeIn 0.5s ease;
+}
+.liga-champion-name {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #ffd700;
+    margin: 8px 0;
+}
+.liga-champion-stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+.liga-champion-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+.liga-champion-stat .val {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text-color);
+}
+.liga-champion-stat .lbl {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+}
+
 /* Desktop: sembunyikan scroll hint, wrapper tidak ubah layout */
 .bracket-scroll-wrapper {
     width: 100%;
@@ -3083,6 +3362,24 @@ footer {
     
     .visitor-separator {
         display: none;
+    }
+
+    /* Liga mobile */
+    .liga-layout {
+        flex-direction: column;
+    }
+    .liga-standings-section {
+        min-width: unset;
+        max-width: unset;
+        width: 100%;
+    }
+    .liga-standings-table th,
+    .liga-standings-table td {
+        padding: 5px 4px;
+        font-size: 0.72rem;
+    }
+    .liga-right {
+        width: 100%;
     }
     
     .visitor-counter {

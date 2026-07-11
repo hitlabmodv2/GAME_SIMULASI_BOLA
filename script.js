@@ -3117,3 +3117,343 @@ function clearEventAnimations() {
         liveEvents.innerHTML = '';
     }
 }
+
+// =============================================
+//  MODE LIGA — Round-Robin League
+// =============================================
+
+const ligaData = {
+    teams: [],
+    matches: [],           // { teamA, teamB, goalsA, goalsB, played, scorers }
+    standings: {},         // keyed by team name
+    scorers: {},           // { playerName: { goals, team } }
+    currentMatchIndex: 0,
+    totalMatches: 0,
+    isRunning: false,
+    turboMode: false,
+    teamCount: 8,
+    champion: null,
+    interval: null
+};
+
+function toggleLigaTurbo() {
+    ligaData.turboMode = !ligaData.turboMode;
+    const btn = document.getElementById('ligaTurboBtn');
+    if (ligaData.turboMode) {
+        btn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+        btn.style.color = '#000';
+        btn.style.border = '2px solid #f59e0b';
+        btn.textContent = '⚡ Turbo: ON';
+    } else {
+        btn.style.background = 'linear-gradient(135deg, #4a4a4a, #2a2a2a)';
+        btn.style.color = '#aaa';
+        btn.style.border = '2px solid #555';
+        btn.textContent = '⚡ Turbo: OFF';
+    }
+}
+
+function startLiga() {
+    const teamCount = parseInt(document.getElementById('ligaTeamCount').value);
+    ligaData.teamCount = teamCount;
+
+    // Reset
+    clearInterval(ligaData.interval);
+    ligaData.isRunning = false;
+    ligaData.currentMatchIndex = 0;
+    ligaData.champion = null;
+    ligaData.scorers = {};
+
+    // Pick teams
+    const shuffled = [...predefinedTeams].sort(() => Math.random() - 0.5);
+    ligaData.teams = shuffled.slice(0, teamCount);
+
+    // Init standings
+    ligaData.standings = {};
+    ligaData.teams.forEach(t => {
+        ligaData.standings[t.name] = { mp:0, w:0, d:0, l:0, gf:0, ga:0, gd:0, pts:0, team: t };
+    });
+
+    // Generate schedule (round-robin, shuffled)
+    ligaData.matches = generateRoundRobinSchedule(ligaData.teams);
+    ligaData.totalMatches = ligaData.matches.length;
+
+    // Go to liga screen
+    showScreen('liga');
+
+    // Reset UI
+    document.getElementById('ligaChampion').style.display = 'none';
+    document.getElementById('ligaTopScorers').style.display = 'none';
+    document.getElementById('ligaRestartBtn').style.display = 'none';
+    document.getElementById('ligaLiveMatch').style.display = 'none';
+    document.getElementById('ligaLog').innerHTML = '';
+    document.getElementById('ligaProgressBar').style.width = '0%';
+    document.getElementById('ligaProgressLabel').textContent = `Pertandingan 0 / ${ligaData.totalMatches}`;
+    document.getElementById('ligaStatusText').textContent = 'Liga dimulai!';
+
+    renderLigaStandings();
+
+    // Start playing
+    ligaData.isRunning = true;
+    const delay = ligaData.turboMode ? 80 : 600;
+    ligaData.interval = setTimeout(() => playNextLigaMatch(), delay);
+}
+
+function generateRoundRobinSchedule(teams) {
+    const schedule = [];
+    for (let i = 0; i < teams.length; i++) {
+        for (let j = i + 1; j < teams.length; j++) {
+            schedule.push({ teamA: teams[i], teamB: teams[j], goalsA: 0, goalsB: 0, played: false, scorers: [] });
+        }
+    }
+    // Shuffle for variety
+    return schedule.sort(() => Math.random() - 0.5);
+}
+
+function poissonGoals(lambda) {
+    // Knuth's algorithm — realistic goal distribution
+    const L = Math.exp(-lambda);
+    let k = 0, p = 1;
+    do { k++; p *= Math.random(); } while (p > L);
+    return k - 1;
+}
+
+function simulateLigaMatchInstant(teamA, teamB) {
+    const diffA = teamA.difficulty; // 1–7
+    const diffB = teamB.difficulty;
+    // Expected goals: base 1.2, adjusted by difficulty gap
+    const lambdaA = Math.max(0.2, 1.2 + (diffA - diffB) * 0.22);
+    const lambdaB = Math.max(0.2, 1.2 + (diffB - diffA) * 0.22);
+
+    const goalsA = poissonGoals(lambdaA);
+    const goalsB = poissonGoals(lambdaB);
+
+    const scorers = [];
+    for (let i = 0; i < goalsA; i++) {
+        const name = generatePlayerName();
+        scorers.push({ name, team: teamA.name });
+        ligaData.scorers[name] = ligaData.scorers[name]
+            ? { goals: ligaData.scorers[name].goals + 1, team: teamA.name }
+            : { goals: 1, team: teamA.name };
+    }
+    for (let i = 0; i < goalsB; i++) {
+        const name = generatePlayerName();
+        scorers.push({ name, team: teamB.name });
+        ligaData.scorers[name] = ligaData.scorers[name]
+            ? { goals: ligaData.scorers[name].goals + 1, team: teamB.name }
+            : { goals: 1, team: teamB.name };
+    }
+    return { goalsA, goalsB, scorers };
+}
+
+function updateLigaStandings(teamA, teamB, goalsA, goalsB) {
+    const sA = ligaData.standings[teamA.name];
+    const sB = ligaData.standings[teamB.name];
+    sA.mp++; sB.mp++;
+    sA.gf += goalsA; sA.ga += goalsB;
+    sB.gf += goalsB; sB.ga += goalsA;
+    sA.gd = sA.gf - sA.ga;
+    sB.gd = sB.gf - sB.ga;
+
+    if (goalsA > goalsB)      { sA.w++; sA.pts += 3; sB.l++; }
+    else if (goalsB > goalsA) { sB.w++; sB.pts += 3; sA.l++; }
+    else                       { sA.d++; sB.d++; sA.pts++; sB.pts++; }
+}
+
+function getSortedStandings() {
+    return Object.values(ligaData.standings).sort((a, b) => {
+        if (b.pts !== a.pts) return b.pts - a.pts;
+        if (b.gd  !== a.gd)  return b.gd  - a.gd;
+        if (b.gf  !== a.gf)  return b.gf  - a.gf;
+        return a.team.name.localeCompare(b.team.name);
+    });
+}
+
+function renderLigaStandings() {
+    const sorted = getSortedStandings();
+    const container = document.getElementById('ligaStandingsTable');
+
+    let html = `<table>
+        <thead><tr>
+            <th class="pos-col">#</th>
+            <th>Tim</th>
+            <th title="Main">M</th>
+            <th title="Menang" style="color:#10b981">W</th>
+            <th title="Seri" style="color:#f59e0b">S</th>
+            <th title="Kalah" style="color:#ef4444">K</th>
+            <th title="Gol Masuk">GF</th>
+            <th title="Gol Kemasukan">GA</th>
+            <th title="Selisih Gol">SG</th>
+            <th class="pts-col" title="Poin">P</th>
+        </tr></thead><tbody>`;
+
+    sorted.forEach((s, i) => {
+        const logo = getTeamLogo(s.team.name);
+        const logoHtml = logo ? `<img src="${logo}" class="liga-team-logo-xs" alt="">` : '';
+        const gdStr = s.gd > 0 ? `<span class="liga-gd-pos">+${s.gd}</span>` :
+                      s.gd < 0 ? `<span class="liga-gd-neg">${s.gd}</span>` : `0`;
+        const leaderClass = i === 0 && s.pts > 0 ? 'liga-leader' : '';
+        html += `<tr class="${leaderClass}">
+            <td class="pos-col">${i === 0 && s.pts > 0 ? '🥇' : i + 1}</td>
+            <td>${logoHtml}${s.team.name}</td>
+            <td>${s.mp}</td>
+            <td>${s.w}</td>
+            <td>${s.d}</td>
+            <td>${s.l}</td>
+            <td>${s.gf}</td>
+            <td>${s.ga}</td>
+            <td>${gdStr}</td>
+            <td class="pts-col">${s.pts}</td>
+        </tr>`;
+    });
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
+
+function addLigaLog(matchNum, teamA, teamB, goalsA, goalsB) {
+    const log = document.getElementById('ligaLog');
+    const entry = document.createElement('div');
+    let resultClass = 'draw';
+    let resultEmoji = '🤝';
+    if (goalsA > goalsB) { resultClass = 'win-a'; resultEmoji = '✅'; }
+    if (goalsB > goalsA) { resultClass = 'win-b'; resultEmoji = '✅'; }
+
+    // Scoreline colour
+    const logoA = getTeamLogo(teamA.name);
+    const logoB = getTeamLogo(teamB.name);
+    const imgA = logoA ? `<img src="${logoA}" class="liga-team-logo-xs" alt="">` : '';
+    const imgB = logoB ? `<img src="${logoB}" class="liga-team-logo-xs" alt="">` : '';
+
+    entry.className = `liga-log-entry ${resultClass}`;
+    entry.innerHTML = `
+        <span class="match-num">#${matchNum}</span>
+        ${imgA}<span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${teamA.name}</span>
+        <strong style="margin:0 6px;white-space:nowrap">${goalsA} - ${goalsB}</strong>
+        ${imgB}<span style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right">${teamB.name}</span>
+    `;
+    log.insertBefore(entry, log.firstChild); // newest on top
+}
+
+function showLigaLiveMatch(teamA, teamB, goalsA, goalsB) {
+    const el = document.getElementById('ligaLiveMatch');
+    const inner = document.getElementById('ligaLiveInner');
+    el.style.display = 'block';
+    const logoA = getTeamLogo(teamA.name);
+    const logoB = getTeamLogo(teamB.name);
+    const imgA = logoA ? `<img src="${logoA}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;" alt="">` : '⚽';
+    const imgB = logoB ? `<img src="${logoB}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;" alt="">` : '⚽';
+    inner.innerHTML = `
+        <div class="liga-live-team">${imgA}<span class="liga-live-name">${teamA.name}</span></div>
+        <div class="liga-live-score">${goalsA} - ${goalsB}</div>
+        <div class="liga-live-team">${imgB}<span class="liga-live-name">${teamB.name}</span></div>
+    `;
+}
+
+function playNextLigaMatch() {
+    if (!ligaData.isRunning) return;
+    if (ligaData.currentMatchIndex >= ligaData.totalMatches) {
+        finishLiga();
+        return;
+    }
+
+    const match = ligaData.matches[ligaData.currentMatchIndex];
+    const { goalsA, goalsB, scorers } = simulateLigaMatchInstant(match.teamA, match.teamB);
+
+    match.goalsA = goalsA;
+    match.goalsB = goalsB;
+    match.scorers = scorers;
+    match.played = true;
+
+    updateLigaStandings(match.teamA, match.teamB, goalsA, goalsB);
+
+    const matchNum = ligaData.currentMatchIndex + 1;
+
+    // Update UI
+    showLigaLiveMatch(match.teamA, match.teamB, goalsA, goalsB);
+    addLigaLog(matchNum, match.teamA, match.teamB, goalsA, goalsB);
+    renderLigaStandings();
+
+    // Progress
+    const pct = Math.round((matchNum / ligaData.totalMatches) * 100);
+    document.getElementById('ligaProgressBar').style.width = pct + '%';
+    document.getElementById('ligaProgressLabel').textContent = `Pertandingan ${matchNum} / ${ligaData.totalMatches}`;
+    document.getElementById('ligaStatusText').textContent =
+        `${match.teamA.name} ${goalsA} - ${goalsB} ${match.teamB.name}`;
+
+    ligaData.currentMatchIndex++;
+
+    const delay = ligaData.turboMode ? 60 : 700;
+    ligaData.interval = setTimeout(() => playNextLigaMatch(), delay);
+}
+
+function finishLiga() {
+    ligaData.isRunning = false;
+    document.getElementById('ligaLiveMatch').style.display = 'none';
+    document.getElementById('ligaRestartBtn').style.display = 'inline-block';
+
+    const sorted = getSortedStandings();
+    const champion = sorted[0];
+    ligaData.champion = champion;
+
+    document.getElementById('ligaStatusText').textContent = `🏆 Liga selesai! Juara: ${champion.team.name}`;
+    document.getElementById('ligaProgressBar').style.width = '100%';
+
+    // Champion banner
+    const logo = getTeamLogo(champion.team.name);
+    const logoHtml = logo ? `<img src="${logo}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;margin:8px auto;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.4);">` : '🏆';
+    document.getElementById('ligaChampionInner').innerHTML = `
+        <div style="font-size:1.1rem;color:#ffd700;margin-bottom:4px;">🏆 JUARA LIGA!</div>
+        ${logoHtml}
+        <div class="liga-champion-name">${champion.team.name}</div>
+        <div class="liga-champion-stats">
+            <div class="liga-champion-stat"><span class="val">${champion.pts}</span><span class="lbl">Poin</span></div>
+            <div class="liga-champion-stat"><span class="val">${champion.w}</span><span class="lbl">Menang</span></div>
+            <div class="liga-champion-stat"><span class="val">${champion.d}</span><span class="lbl">Seri</span></div>
+            <div class="liga-champion-stat"><span class="val">${champion.l}</span><span class="lbl">Kalah</span></div>
+            <div class="liga-champion-stat"><span class="val">${champion.gf}</span><span class="lbl">Gol Masuk</span></div>
+            <div class="liga-champion-stat"><span class="val">${champion.gd > 0 ? '+' : ''}${champion.gd}</span><span class="lbl">Selisih Gol</span></div>
+        </div>
+    `;
+    document.getElementById('ligaChampion').style.display = 'block';
+
+    // Top scorers
+    renderLigaTopScorers();
+
+    // Save to history
+    saveLigaHistory(champion.team.name, ligaData.teamCount);
+}
+
+function renderLigaTopScorers() {
+    const scorersList = Object.entries(ligaData.scorers)
+        .map(([name, data]) => ({ name, goals: data.goals, team: data.team }))
+        .sort((a, b) => b.goals - a.goals)
+        .slice(0, 10);
+
+    if (scorersList.length === 0) return;
+
+    const medals = ['🥇','🥈','🥉'];
+    let html = scorersList.map((s, i) => `
+        <div class="liga-scorer-row">
+            <span class="liga-scorer-rank">${medals[i] || (i + 1)}</span>
+            <span class="liga-scorer-name">${s.name}</span>
+            <span class="liga-scorer-team">${s.team}</span>
+            <span class="liga-scorer-goals">⚽ ${s.goals}</span>
+        </div>
+    `).join('');
+
+    document.getElementById('ligaScorersTable').innerHTML = html;
+    document.getElementById('ligaTopScorers').style.display = 'block';
+}
+
+function saveLigaHistory(champion, teamCount) {
+    try {
+        const history = JSON.parse(localStorage.getItem('ligaHistory') || '[]');
+        history.unshift({
+            date: new Date().toLocaleDateString('id-ID'),
+            champion,
+            teamCount,
+            turbo: ligaData.turboMode
+        });
+        localStorage.setItem('ligaHistory', JSON.stringify(history.slice(0, 30)));
+    } catch(e) {}
+}
+

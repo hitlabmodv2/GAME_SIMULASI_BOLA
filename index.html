@@ -24,6 +24,10 @@
                     <span class="icon">🏆</span>
                     <span class="text">Tournament</span>
                 </button>
+                <button class="main-btn" onclick="showScreen('ligaSetup')">
+                    <span class="icon">📊</span>
+                    <span class="text">Liga</span>
+                </button>
                 <button class="main-btn" onclick="showScreen('settings')">
                     <span class="icon">⚙️</span>
                     <span class="text">Pengaturan</span>
@@ -618,6 +622,83 @@
         </div>
     </div>
 
+        <!-- Liga Setup -->
+        <div id="ligaSetup" class="screen">
+            <div class="header">
+                <h2>📊 Mode Liga</h2>
+                <p class="subtitle">Kompetisi round-robin — semua tim lawan semua tim!</p>
+            </div>
+            <div class="match-setup">
+                <div class="setup-section">
+                    <label>Jumlah Tim:</label>
+                    <select id="ligaTeamCount" class="team-select">
+                        <option value="4">4 Tim — 6 pertandingan</option>
+                        <option value="8" selected>8 Tim — 28 pertandingan</option>
+                        <option value="12">12 Tim — 66 pertandingan</option>
+                        <option value="16">16 Tim — 120 pertandingan</option>
+                    </select>
+                </div>
+                <div class="setup-section" style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
+                    <button id="ligaTurboBtn" onclick="toggleLigaTurbo()" style="background:linear-gradient(135deg,#4a4a4a,#2a2a2a);color:#aaa;border:2px solid #555;padding:10px 22px;border-radius:8px;cursor:pointer;font-size:0.95rem;font-weight:bold;transition:all 0.3s;">⚡ Turbo: OFF</button>
+                </div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:10px;">
+                    <button class="btn btn-primary" onclick="startLiga()" style="padding:12px 30px;font-size:1rem;">⚽ Mulai Liga!</button>
+                    <button class="btn btn-secondary" onclick="showScreen('mainMenu')">← Kembali</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Liga Running -->
+        <div id="liga" class="screen">
+            <div class="header">
+                <h2>📊 Liga Berlangsung</h2>
+                <p class="subtitle" id="ligaStatusText">Memulai simulasi...</p>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="liga-progress-wrap">
+                <div class="liga-progress-bar" id="ligaProgressBar" style="width:0%"></div>
+            </div>
+            <div class="liga-progress-label" id="ligaProgressLabel">Pertandingan 0 / 0</div>
+
+            <div class="liga-layout">
+                <!-- Klasemen -->
+                <div class="liga-standings-section">
+                    <h3>📋 Klasemen</h3>
+                    <div id="ligaStandingsTable" class="liga-standings-table"></div>
+                </div>
+
+                <!-- Kanan: current match + log -->
+                <div class="liga-right">
+                    <div class="liga-live-match" id="ligaLiveMatch" style="display:none;">
+                        <div class="liga-live-inner" id="ligaLiveInner"></div>
+                    </div>
+                    <div class="liga-log-section">
+                        <div class="liga-log-header">
+                            <h3>📜 Hasil Pertandingan</h3>
+                        </div>
+                        <div id="ligaLog" class="liga-log"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Skor (muncul setelah selesai) -->
+            <div id="ligaTopScorers" style="display:none;" class="liga-top-scorers">
+                <h3>🥇 Top Skor</h3>
+                <div id="ligaScorersTable"></div>
+            </div>
+
+            <!-- Juara liga -->
+            <div id="ligaChampion" style="display:none;" class="liga-champion-banner">
+                <div id="ligaChampionInner"></div>
+            </div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:20px;">
+                <button class="btn btn-primary" onclick="startLiga()" id="ligaRestartBtn" style="display:none;">🔄 Ulangi Liga</button>
+                <button class="btn btn-secondary" onclick="showScreen('mainMenu')">← Menu Utama</button>
+            </div>
+        </div>
+
     <!-- Event Animations Container -->
     <div id="eventAnimations" class="event-animations-container"></div>
 
@@ -650,9 +731,9 @@
         </div>
     </footer>
 
-    <script src="players-data/teams-info.js?v=5"></script>
-    <script src="players-data/squads.js?v=5"></script>
-    <script src="players-data/substitutions.js?v=5"></script>
-    <script src="script.js?v=5"></script>
+    <script src="players-data/teams-info.js?v=6"></script>
+    <script src="players-data/squads.js?v=6"></script>
+    <script src="players-data/substitutions.js?v=6"></script>
+    <script src="script.js?v=6"></script>
 </body>
 </html>
