@@ -3233,9 +3233,25 @@ function generateRoundRobinSchedule(teams) {
         list.splice(1, 0, list.pop());
     }
 
-    const schedule = [];
-    rounds.forEach(round => schedule.push(...round));
-    return schedule;
+    // First leg (putaran pertama)
+    const firstLeg = [];
+    rounds.forEach(round => firstLeg.push(...round));
+
+    // Second leg (putaran kedua / kandang-tandang): mirror the exact same
+    // fixtures with home and away reversed, just like real official leagues
+    // (Premier League, La Liga, etc.) where every team meets each opponent
+    // twice — once at home, once away. This keeps the same round structure,
+    // so M still increases evenly for every team each matchday.
+    const secondLeg = firstLeg.map(m => ({
+        teamA: m.teamB,
+        teamB: m.teamA,
+        goalsA: 0,
+        goalsB: 0,
+        played: false,
+        scorers: []
+    }));
+
+    return firstLeg.concat(secondLeg);
 }
 
 function poissonGoals(lambda) {
