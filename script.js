@@ -2537,10 +2537,14 @@ function simulateAttack() {
     const defendingTeam = attackingTeam === 'teamA' ? 'teamB' : 'teamA';
     const attackTeamName = matchData[attackingTeam].name;
     const defendTeamName = matchData[defendingTeam].name;
-    const difficulty = matchData[attackingTeam].difficulty;
-    
-    // Calculate shot chance based on difficulty (1-7)
-    const shotAccuracy = 20 + (difficulty * 8); // 28% to 76%
+    const diffA = matchData[attackingTeam].difficulty;
+    const diffB = matchData[defendingTeam].difficulty;
+    const diffGap = diffA - diffB; // -6 to +6, accounts for opponent's defense
+
+    // Calculate shot accuracy relative to the opponent's strength, not attacker alone.
+    // Symmetric baseline (~45%) is calibrated so evenly-matched teams average ~2.5-2.8
+    // total goals per match, in line with real football statistics.
+    const shotAccuracy = Math.min(80, Math.max(15, 45 + diffGap * 4));
     const shootChance = Math.random() * 100;
     
     matchData.stats[attackingTeam].shots++;
@@ -2549,8 +2553,8 @@ function simulateAttack() {
         // Shot on target
         matchData.stats[attackingTeam].shotsOnTarget++;
         
-        // Calculate goal chance (higher difficulty = more goals)
-        const goalChance = 15 + (difficulty * 5); // 20% to 50% of shots on target
+        // Calculate goal conversion, also relative to the opponent (goalkeeper/defense quality)
+        const goalChance = Math.min(65, Math.max(15, 43 + diffGap * 3));
         const goalRoll = Math.random() * 100;
         
         if (goalRoll < goalChance) {
