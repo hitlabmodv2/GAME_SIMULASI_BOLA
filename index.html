@@ -267,7 +267,14 @@
                         <option value="4">4 Tim (Semi Finals)</option>
                         <option value="8" selected>8 Tim (Quarter Finals)</option>
                         <option value="16">16 Tim (Round of 16)</option>
+                        <option value="32">32 Tim (Round of 32) ⭐ Resmi</option>
                     </select>
+                </div>
+                <div class="setting-item">
+                    <label>⚡ Mode Turbo (Semua Pertandingan Otomatis Cepat):</label>
+                    <button id="turboModeBtn" onclick="toggleTurboMode()" class="btn-turbo" style="background: linear-gradient(135deg, #4a4a4a, #2a2a2a); color: #aaa; border: 2px solid #555; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: bold; transition: all 0.3s;">
+                        ⚡ OFF — Aktifkan Turbo
+                    </button>
                 </div>
             </div>
             
@@ -527,6 +534,10 @@
             </div>
             
             <div class="tournament-bracket" id="tournamentBracket">
+                <div class="bracket-column" id="round32Column" style="display: none;">
+                    <h3>Round of 32</h3>
+                    <div id="roundOf32" class="matches"></div>
+                </div>
                 <div class="bracket-column" id="round16Column" style="display: none;">
                     <h3>Round of 16</h3>
                     <div id="roundOf16" class="matches"></div>
@@ -634,9 +645,9 @@
         </div>
     </footer>
 
-    <script src="players-data/teams-info.js?v=2"></script>
-    <script src="players-data/squads.js?v=2"></script>
-    <script src="players-data/substitutions.js?v=2"></script>
-    <script src="script.js?v=2"></script>
+    <script src="players-data/teams-info.js?v=3"></script>
+    <script src="players-data/squads.js?v=3"></script>
+    <script src="players-data/substitutions.js?v=3"></script>
+    <script src="script.js?v=3"></script>
 </body>
 </html>

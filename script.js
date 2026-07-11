@@ -28,6 +28,7 @@ let matchData = {
 
 let tournamentData = {
     teams: [],
+    roundOf32: [],
     roundOf16: [],
     quarterFinals: [],
     semiFinals: [],
@@ -43,7 +44,8 @@ let tournamentData = {
     teamCount: 8,
     autoScrollEnabled: true,
     statsCollapsed: true,
-    randomizeHistory: []
+    randomizeHistory: [],
+    turboMode: false
 };
 
 const predefinedTeams = [
@@ -205,8 +207,8 @@ function scrollToTop() {
 
 function populateTeamDropdowns() {
     // Populate all dropdowns with team options including country info
-    // Support up to 16 teams
-    for (let i = 1; i <= 16; i++) {
+    // Support up to 32 teams
+    for (let i = 1; i <= 32; i++) {
         const selectElement = document.getElementById('tournamentTeamSelect' + i);
         if (selectElement && selectElement.options.length === 1) {
             predefinedTeams.forEach(team => {
@@ -1007,6 +1009,37 @@ function changeTournamentDifficulty(teamNum, delta) {
     barElement.style.width = percentage + '%';
 }
 
+function toggleTurboMode() {
+    tournamentData.turboMode = !tournamentData.turboMode;
+    const btn = document.getElementById('turboModeBtn');
+    if (tournamentData.turboMode) {
+        btn.style.background = 'linear-gradient(135deg, #f7971e, #ffd200)';
+        btn.style.color = '#000';
+        btn.style.border = '2px solid #ffd200';
+        btn.textContent = '⚡ ON — Turbo Aktif!';
+    } else {
+        btn.style.background = 'linear-gradient(135deg, #4a4a4a, #2a2a2a)';
+        btn.style.color = '#aaa';
+        btn.style.border = '2px solid #555';
+        btn.textContent = '⚡ OFF — Aktifkan Turbo';
+    }
+}
+
+function saveTournamentHistory(champion, teamCount) {
+    try {
+        const history = JSON.parse(localStorage.getItem('tournamentHistory') || '[]');
+        const entry = {
+            date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+            champion: champion.name,
+            teamCount: teamCount,
+            turbo: tournamentData.turboMode
+        };
+        history.unshift(entry);
+        if (history.length > 50) history.splice(50);
+        localStorage.setItem('tournamentHistory', JSON.stringify(history));
+    } catch(e) {}
+}
+
 function initializeTournament() {
     const teamCount = parseInt(document.getElementById('teamCount').value);
     tournamentData.teams = [];
@@ -1019,6 +1052,7 @@ function initializeTournament() {
         tournamentData.teams.push({ name: teamName, difficulty: difficulty });
     }
     
+    tournamentData.roundOf32 = [];
     tournamentData.roundOf16 = [];
     tournamentData.quarterFinals = [];
     tournamentData.semiFinals = [];
@@ -1032,21 +1066,15 @@ function initializeTournament() {
     document.getElementById('tournamentLog').innerHTML = '';
     
     showScreen('tournament');
-    
-    if (teamCount === 16) {
-        tournamentData.quarterFinals = [
-            { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' },
-            { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' },
-            { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' },
-            { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' }
-        ];
+
+    // Setup placeholder arrays sesuai jumlah tim
+    if (teamCount === 32) {
+        tournamentData.roundOf16 = Array.from({length: 8}, () => ({ teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' }));
+        tournamentData.quarterFinals = Array.from({length: 4}, () => ({ teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' }));
+    } else if (teamCount === 16) {
+        tournamentData.quarterFinals = Array.from({length: 4}, () => ({ teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' }));
     } else if (teamCount === 8) {
-        tournamentData.quarterFinals = [
-            { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' },
-            { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' },
-            { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' },
-            { teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' }
-        ];
+        tournamentData.quarterFinals = Array.from({length: 4}, () => ({ teamA: null, teamB: null, scoreA: null, scoreB: null, winner: null, status: 'pending' }));
     }
     
     tournamentData.semiFinals = [
@@ -1070,13 +1098,46 @@ function initializeTournament() {
         setupRoundOf16();
         document.getElementById('tournamentRoundTitle').textContent = 'Babak 1: Round of 16';
         addTournamentLog('🏆 Tournament dimulai! 16 tim siap berkompetisi untuk menjadi juara!', 'round-change');
+    } else if (teamCount === 32) {
+        tournamentData.currentRound = 'round32';
+        setupRoundOf32();
+        document.getElementById('tournamentRoundTitle').textContent = 'Babak 1: Round of 32';
+        addTournamentLog('🏆 Tournament RESMI dimulai! 32 tim terbaik siap bersaing meraih gelar juara!', 'round-change');
     }
     
     renderBracket();
     
+    const startDelay = tournamentData.turboMode ? 500 : 2000;
     setTimeout(() => {
         playNextMatch();
-    }, 2000);
+    }, startDelay);
+}
+
+function setupRoundOf32() {
+    const t = tournamentData.teams;
+    tournamentData.roundOf32 = [];
+    for (let i = 0; i < 32; i += 2) {
+        tournamentData.roundOf32.push({ teamA: t[i], teamB: t[i+1], scoreA: null, scoreB: null, winner: null, status: 'pending' });
+    }
+    tournamentData.currentRound = 'round32';
+    tournamentData.matchQueue = [...tournamentData.roundOf32];
+    tournamentData.currentMatchIndex = 0;
+    renderBracket();
+}
+
+function setupRoundOf16FromR32() {
+    // Ambil 16 pemenang dari Round of 32
+    const winners = tournamentData.roundOf32.map(m => m.winner);
+    tournamentData.roundOf16 = [];
+    for (let i = 0; i < 16; i += 2) {
+        tournamentData.roundOf16.push({ teamA: winners[i], teamB: winners[i+1], scoreA: null, scoreB: null, winner: null, status: 'pending' });
+    }
+    tournamentData.currentRound = 'round16';
+    tournamentData.matchQueue = [...tournamentData.roundOf16];
+    tournamentData.currentMatchIndex = 0;
+    addTournamentLog('⚔️ Round of 16 dimulai! 16 tim lolos dari Round of 32!', 'round-change');
+    showEventAnimation('⚔️ Round of 16!<br>16 Tim Tersisa', 'goal');
+    renderBracket();
 }
 
 function setupRoundOf16() {
@@ -1103,9 +1164,8 @@ function setupQuarterFinals() {
         tournamentData.quarterFinals[1] = { teamA: tournamentData.teams[2], teamB: tournamentData.teams[3], scoreA: null, scoreB: null, winner: null, status: 'pending' };
         tournamentData.quarterFinals[2] = { teamA: tournamentData.teams[4], teamB: tournamentData.teams[5], scoreA: null, scoreB: null, winner: null, status: 'pending' };
         tournamentData.quarterFinals[3] = { teamA: tournamentData.teams[6], teamB: tournamentData.teams[7], scoreA: null, scoreB: null, winner: null, status: 'pending' };
-    } else if (tournamentData.teamCount === 16) {
-        // Dari Round of 16 winners untuk 16 tim - update placeholder yang sudah ada
-        // Validasi: pastikan semua winners ada sebelum update
+    } else if (tournamentData.teamCount === 16 || tournamentData.teamCount === 32) {
+        // Dari Round of 16 winners untuk 16/32 tim
         const allWinnersExist = tournamentData.roundOf16.every(match => match.winner);
         if (allWinnersExist) {
             tournamentData.quarterFinals[0].teamA = tournamentData.roundOf16[0].winner;
@@ -1128,35 +1188,48 @@ function setupQuarterFinals() {
 }
 
 function playNextMatch() {
+    const delay = tournamentData.turboMode ? 300 : 2000;
+    
     if (tournamentData.currentMatchIndex < tournamentData.matchQueue.length) {
         const match = tournamentData.matchQueue[tournamentData.currentMatchIndex];
         playTournamentMatch(match);
     } else {
-        if (tournamentData.currentRound === 'round16') {
+        if (tournamentData.currentRound === 'round32') {
+            addTournamentLog('✅ Round of 32 selesai! Mempersiapkan Round of 16...', 'round-change');
+            const babak = tournamentData.teamCount === 32 ? 'Babak 2: Round of 16' : 'Babak 1: Round of 16';
+            document.getElementById('tournamentRoundTitle').textContent = babak;
+            setTimeout(() => {
+                setupRoundOf16FromR32();
+                setTimeout(() => playNextMatch(), delay);
+            }, delay);
+        } else if (tournamentData.currentRound === 'round16') {
             addTournamentLog('✅ Round of 16 selesai! Mempersiapkan Quarter Finals...', 'round-change');
-            document.getElementById('tournamentRoundTitle').textContent = 'Babak 2: Quarter Finals';
+            const babakQF = tournamentData.teamCount === 32 ? 'Babak 3: Quarter Finals' : 'Babak 2: Quarter Finals';
+            document.getElementById('tournamentRoundTitle').textContent = babakQF;
             setTimeout(() => {
                 setupQuarterFinals();
                 addTournamentLog('🔥 Quarter Finals dimulai! 8 tim tersisa!', 'round-change');
-                setTimeout(() => playNextMatch(), 2000);
-            }, 2000);
+                setTimeout(() => playNextMatch(), delay);
+            }, delay);
         } else if (tournamentData.currentRound === 'quarter') {
             addTournamentLog('✅ Quarter Finals selesai! Mempersiapkan Semi Finals...', 'round-change');
-            const nextTitle = tournamentData.teamCount === 16 ? 'Babak 3: Semi Finals' : 'Babak 2: Semi Finals';
-            document.getElementById('tournamentRoundTitle').textContent = nextTitle;
+            const sfBabak = tournamentData.teamCount === 32 ? 'Babak 4: Semi Finals' : 
+                            tournamentData.teamCount === 16 ? 'Babak 3: Semi Finals' : 'Babak 2: Semi Finals';
+            document.getElementById('tournamentRoundTitle').textContent = sfBabak;
             setTimeout(() => {
                 setupSemiFinals();
-                setTimeout(() => playNextMatch(), 2000);
-            }, 2000);
+                setTimeout(() => playNextMatch(), delay);
+            }, delay);
         } else if (tournamentData.currentRound === 'semi') {
-            const roundLabel = tournamentData.teamCount === 16 ? 'Babak 4: Final' : 
-                              tournamentData.teamCount === 8 ? 'Babak 2: Final' : 'Final';
+            const finalBabak = tournamentData.teamCount === 32 ? 'Babak 5: Final' :
+                               tournamentData.teamCount === 16 ? 'Babak 4: Final' : 
+                               tournamentData.teamCount === 8 ? 'Babak 2: Final' : 'Final';
             addTournamentLog('🎯 Semi Finals selesai! Memulai Final!', 'round-change');
-            document.getElementById('tournamentRoundTitle').textContent = roundLabel;
+            document.getElementById('tournamentRoundTitle').textContent = finalBabak;
             setTimeout(() => {
                 setupFinal();
-                setTimeout(() => playNextMatch(), 2000);
-            }, 2000);
+                setTimeout(() => playNextMatch(), delay);
+            }, delay);
         } else if (tournamentData.currentRound === 'final') {
             addTournamentLog('🏆 Tournament selesai! Juara telah ditentukan!', 'round-change');
             displayChampion();
@@ -1226,7 +1299,38 @@ function playTournamentMatch(match) {
     };
     matchData.injuryTime = { firstHalf: 0, secondHalf: 0, currentHalf: 1 };
     
-    simulateTournamentMatch(match);
+    if (tournamentData.turboMode) {
+        simulateTournamentMatchTurbo(match);
+    } else {
+        simulateTournamentMatch(match);
+    }
+}
+
+function simulateTournamentMatchTurbo(match) {
+    // Turbo: hitung semua menit instan tanpa delay
+    const duration = matchData.duration;
+    const halfTime = Math.floor(duration / 2);
+    const injuryFirst = Math.floor(Math.random() * 4) + 1;
+    const injurySecond = Math.floor(Math.random() * 5) + 2;
+    matchData.injuryTime.firstHalf = injuryFirst;
+    matchData.injuryTime.secondHalf = injurySecond;
+    
+    addTournamentLog(`⏸️ Turun minum! Babak pertama selesai. Waktu tambahan: ${injuryFirst} menit.`, 'halftime');
+    
+    const totalMinutes = duration + injuryFirst + injurySecond;
+    for (let min = 1; min <= totalMinutes; min++) {
+        matchData.currentMinute = min;
+        simulateTournamentMinute();
+    }
+    
+    addTournamentLog(`⏱️ Waktu tambahan babak kedua: ${injurySecond} menit`, 'important');
+    
+    // Update tampilan skor
+    document.getElementById('liveScoreA').textContent = matchData.teamA.score;
+    document.getElementById('liveScoreB').textContent = matchData.teamB.score;
+    document.getElementById('liveMinute').textContent = `${duration}'`;
+    
+    finishTournamentMatch(match);
 }
 
 function simulateTournamentMatch(match) {
@@ -1454,10 +1558,59 @@ function finishTournamentMatch(match) {
         proceedAfterMatch(match);
     } else {
         addTournamentLog(`⚖️ Pertandingan berakhir imbang ${match.scoreA}-${match.scoreB}! Adu penalti dimulai!`, 'match-end');
-        setTimeout(() => {
-            simulatePenaltyShootout(match);
-        }, 2000);
+        if (tournamentData.turboMode) {
+            simulatePenaltyShootoutTurbo(match);
+        } else {
+            setTimeout(() => {
+                simulatePenaltyShootout(match);
+            }, 2000);
+        }
     }
+}
+
+function simulatePenaltyShootoutTurbo(match) {
+    // Hitung adu penalti instan tanpa delay
+    addTournamentLog('🎯 Adu Penalti dimulai! (Turbo)', 'important');
+    
+    function executePenaltyT(team, oppDiff) {
+        const rand = Math.random() * 100;
+        const diff = team.difficulty;
+        const base = 76 + (diff - 4) * 1.0 - Math.max(0, (oppDiff - 4)) * 0.8;
+        const rem = 100 - base;
+        const sw = 1.8 + (oppDiff * 0.15);
+        const mw = 0.8 + Math.max(0, (4 - diff) * 0.15);
+        const tw = sw + mw + 0.2;
+        const saveChance = base + (rem * sw / tw);
+        return rand < base ? { scored: true } : { scored: false };
+    }
+    
+    let pA = 0, pB = 0;
+    let round = 1;
+    let sd = false;
+    
+    while (true) {
+        const rA = executePenaltyT(match.teamA, match.teamB.difficulty);
+        const rB = executePenaltyT(match.teamB, match.teamA.difficulty);
+        if (rA.scored) { pA++; matchData.stats.teamA.penaltiesScored++; } else matchData.stats.teamA.penaltiesMissed++;
+        if (rB.scored) { pB++; matchData.stats.teamB.penaltiesScored++; } else matchData.stats.teamB.penaltiesMissed++;
+        
+        const remaining = sd ? 0 : Math.max(0, 5 - round);
+        const diff = Math.abs(pA - pB);
+        
+        if (sd || (round >= 5 && diff > remaining)) {
+            if (pA > pB) { match.winner = match.teamA; match.penaltyScoreA = pA; match.penaltyScoreB = pB; break; }
+            if (pB > pA) { match.winner = match.teamB; match.penaltyScoreA = pA; match.penaltyScoreB = pB; break; }
+        }
+        
+        if (round >= 5 && !sd && pA === pB) { sd = true; }
+        round++;
+        if (round > 50) { match.winner = Math.random() > 0.5 ? match.teamA : match.teamB; match.penaltyScoreA = pA; match.penaltyScoreB = pB; break; }
+    }
+    
+    addTournamentLog(`🏆 ${match.winner.name} menang adu penalti ${match.penaltyScoreA}-${match.penaltyScoreB}!`, 'match-end');
+    document.getElementById('liveScoreA').textContent = `${match.scoreA} (${match.penaltyScoreA})`;
+    document.getElementById('liveScoreB').textContent = `${match.scoreB} (${match.penaltyScoreB})`;
+    proceedAfterMatch(match);
 }
 
 function simulatePenaltyShootout(match) {
@@ -1581,9 +1734,10 @@ function proceedAfterMatch(match) {
     renderBracket();
     updateTournamentStatus(`Pertandingan selesai! ${match.winner.name} lolos ke babak berikutnya.`);
     
+    const nextDelay = tournamentData.turboMode ? 200 : 5000;
     setTimeout(() => {
         playNextMatch();
-    }, 5000);
+    }, nextDelay);
 }
 
 function displayMatchStats(match) {
@@ -1793,6 +1947,7 @@ function setupFinal() {
 
 function renderBracket() {
     // Atur visibilitas kolom berdasarkan jumlah tim
+    const round32Column = document.getElementById('round32Column');
     const round16Column = document.getElementById('round16Column');
     const quarterColumn = document.getElementById('quarterColumn');
     const semiColumn = document.getElementById('semiColumn');
@@ -1802,21 +1957,40 @@ function renderBracket() {
         return;
     }
     
-    if (tournamentData.teamCount === 16) {
+    if (tournamentData.teamCount === 32) {
+        if (round32Column) round32Column.style.display = 'flex';
+        round16Column.style.display = 'flex';
+        quarterColumn.style.display = 'flex';
+        semiColumn.style.display = 'flex';
+    } else if (tournamentData.teamCount === 16) {
+        if (round32Column) round32Column.style.display = 'none';
         round16Column.style.display = 'flex';
         quarterColumn.style.display = 'flex';
         semiColumn.style.display = 'flex';
     } else if (tournamentData.teamCount === 8) {
+        if (round32Column) round32Column.style.display = 'none';
         round16Column.style.display = 'none';
         quarterColumn.style.display = 'flex';
         semiColumn.style.display = 'flex';
     } else if (tournamentData.teamCount === 4) {
+        if (round32Column) round32Column.style.display = 'none';
         round16Column.style.display = 'none';
         quarterColumn.style.display = 'none';
         semiColumn.style.display = 'flex';
     }
+
+    // Render Round of 32 (untuk 32 tim)
+    const roundOf32Div = document.getElementById('roundOf32');
+    if (roundOf32Div) {
+        roundOf32Div.innerHTML = '';
+        if (tournamentData.roundOf32 && tournamentData.roundOf32.length > 0) {
+            tournamentData.roundOf32.forEach((match, index) => {
+                roundOf32Div.innerHTML += createMatchCard(match, `R32-${index + 1}`);
+            });
+        }
+    }
     
-    // Render Round of 16 (untuk 16 tim)
+    // Render Round of 16 (untuk 16 dan 32 tim)
     const roundOf16Div = document.getElementById('roundOf16');
     if (roundOf16Div) {
         roundOf16Div.innerHTML = '';
@@ -1946,11 +2120,15 @@ function displayChampion() {
             ${logoHTML}
             <div class="champion-name">${champion.name}</div>
             <div class="champion-label">JUARA TOURNAMENT!</div>
+            <div style="font-size:0.8rem;opacity:0.7;margin-top:6px;">${tournamentData.teamCount} Tim · ${tournamentData.turboMode ? '⚡ Turbo' : 'Normal'}</div>
         </div>
     `;
     
     updateTournamentStatus(`🎉 ${champion.name} adalah Juara Tournament! Selamat!`);
     showEventAnimation(`🏆 ${champion.name}<br>JUARA TOURNAMENT!`, 'goal');
+    
+    // Simpan history turnamen ke localStorage
+    saveTournamentHistory(champion, tournamentData.teamCount);
 }
 
 // Komentator Commentary System
