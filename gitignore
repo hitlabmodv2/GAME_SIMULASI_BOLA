@@ -1,0 +1,42 @@
+dist
+.DS_Store
+server/public
+vite.config.ts.*
+*.tar.gz
+.upm
+tmp/
+bin/
+replit.md
+.local
+.cache
+.cache/
+.config
+data
+index.d.ts
+
+# Force-include .replit
+!.replit
+
+# File tidak perlu di-push
+test_preview.pdf
+zipFile.zip
+*.zip
+*.pdf
+
+
+# Sessions — auth credentials, jangan pernah di-commit
+sessions/
+
+# Jadibot runtime data — jangan di-commit
+data_jadibot/
+
+.token
+.token.secret
+.repo.last
+
+# node_modules — exclude semua (install ulang via npm install)
+node_modules/
+
+# PM2 logs — jangan di-push ke git
+logs/*.log
+!logs/.gitkeep
