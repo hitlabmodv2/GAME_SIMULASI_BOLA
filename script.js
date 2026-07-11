@@ -3203,14 +3203,39 @@ function startLiga() {
 }
 
 function generateRoundRobinSchedule(teams) {
-    const schedule = [];
-    for (let i = 0; i < teams.length; i++) {
-        for (let j = i + 1; j < teams.length; j++) {
-            schedule.push({ teamA: teams[i], teamB: teams[j], goalsA: 0, goalsB: 0, played: false, scorers: [] });
+    // Circle method: builds real "matchday" rounds where every team plays exactly
+    // once per round (like official Western leagues), so the M (matches played)
+    // column stays accurate and even across all teams as the league progresses —
+    // instead of a fully random pairing order where some teams could play many
+    // matches before others play any.
+    let list = [...teams];
+    const hasBye = list.length % 2 !== 0;
+    if (hasBye) list.push(null); // bye placeholder for odd team counts
+
+    const n = list.length;
+    const roundsCount = n - 1;
+    const rounds = [];
+
+    for (let r = 0; r < roundsCount; r++) {
+        const round = [];
+        for (let i = 0; i < n / 2; i++) {
+            const home = list[i];
+            const away = list[n - 1 - i];
+            if (home && away) {
+                round.push({ teamA: home, teamB: away, goalsA: 0, goalsB: 0, played: false, scorers: [] });
+            }
         }
+        // Shuffle order of matches within this round only (variety without breaking round integrity)
+        round.sort(() => Math.random() - 0.5);
+        rounds.push(round);
+
+        // Rotate all teams except the first, standard circle-method rotation
+        list.splice(1, 0, list.pop());
     }
-    // Shuffle for variety
-    return schedule.sort(() => Math.random() - 0.5);
+
+    const schedule = [];
+    rounds.forEach(round => schedule.push(...round));
+    return schedule;
 }
 
 function poissonGoals(lambda) {
