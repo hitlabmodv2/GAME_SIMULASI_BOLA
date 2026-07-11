@@ -1885,10 +1885,12 @@ function displayMatchStats(match) {
         collapseBtn.textContent = '▼';
     }
     
-    // Scroll ke stats section untuk mobile
-    setTimeout(() => {
-        statsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }, 100);
+    // Scroll ke stats section untuk mobile (skip di turbo mode)
+    if (!tournamentData.turboMode) {
+        setTimeout(() => {
+            statsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+    }
 }
 
 function setupSemiFinals() {
@@ -2105,7 +2107,9 @@ function viewMatchStats(matchId) {
     }
     
     const statsSection = document.getElementById('tournamentStatsSection');
-    statsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (!tournamentData.turboMode) {
+        statsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
 }
 
 function displayChampion() {
@@ -2179,7 +2183,7 @@ function addTournamentLog(message, type = 'normal') {
     
     logContainer.appendChild(logEntry);
     
-    if (tournamentData.autoScrollEnabled) {
+    if (tournamentData.autoScrollEnabled && !tournamentData.turboMode) {
         logContainer.scrollTop = logContainer.scrollHeight;
     }
     
@@ -2202,6 +2206,8 @@ function toggleAutoScroll() {
 }
 
 function addCommentary(message) {
+    // Skip komentar komentator saat turbo mode (terlalu banyak dan tidak perlu)
+    if (tournamentData.turboMode) return;
     const logContainer = document.getElementById('tournamentLog');
     const commentEntry = document.createElement('div');
     commentEntry.className = 'tournament-log-entry commentary';
@@ -2211,7 +2217,7 @@ function addCommentary(message) {
     
     logContainer.appendChild(commentEntry);
     
-    if (tournamentData.autoScrollEnabled) {
+    if (tournamentData.autoScrollEnabled && !tournamentData.turboMode) {
         logContainer.scrollTop = logContainer.scrollHeight;
     }
 }
@@ -3053,9 +3059,13 @@ function toggleTournamentStatsCollapse() {
 }
 
 function showEventAnimation(message, type = 'goal') {
-    // JANGAN TAMPILKAN ANIMASI kalau di menu atau settings!
+    // JANGAN TAMPILKAN ANIMASI kalau di menu, settings, atau turbo mode
     if (currentScreen === 'mainMenu' || currentScreen === 'settings') {
-        return; // Langsung keluar, jangan buat animasi
+        return;
+    }
+    // Skip animasi goal/save saat turbo — hanya tampilkan animasi babak & juara
+    if (tournamentData.turboMode && !message.includes('JUARA') && !message.includes('Final') && !message.includes('Tim Tersisa')) {
+        return;
     }
     
     const container = document.getElementById('eventAnimations');
