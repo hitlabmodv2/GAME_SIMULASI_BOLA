@@ -1519,6 +1519,101 @@ body.night-bg {
     color: var(--text-secondary);
 }
 
+/* Mode Eliminated — bagan gugur vertikal, dirancang mobile-first */
+.eliminated-bracket {
+    max-width: 640px;
+    margin: 18px auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.eliminated-round {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 12px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+.eliminated-round.current {
+    border-color: rgba(239,68,68,0.5);
+    box-shadow: 0 0 0 1px rgba(239,68,68,0.2), 0 4px 16px rgba(239,68,68,0.12);
+}
+.eliminated-round-title {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #f59e0b;
+    margin-bottom: 10px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+.eliminated-match-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border-left: 3px solid transparent;
+}
+.eliminated-match-card:last-child { margin-bottom: 0; }
+.eliminated-match-card.pending { opacity: 0.6; }
+.eliminated-match-card.done { border-left-color: var(--success-color, #10b981); }
+.eliminated-team {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+    font-size: 0.82rem;
+    color: var(--text-color);
+}
+.eliminated-team.loser {
+    opacity: 0.45;
+    text-decoration: line-through;
+}
+.eliminated-team.winner {
+    font-weight: 800;
+    color: #10b981;
+}
+.eliminated-team-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.eliminated-team-logo {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+.eliminated-score {
+    font-weight: 800;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    padding: 0 6px;
+    text-align: center;
+    min-width: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--text-color);
+}
+.eliminated-pen-note-inline {
+    display: block;
+    font-size: 0.62rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+.eliminated-pen-note {
+    font-size: 0.68rem;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: 2px;
+}
+
 /* Desktop: sembunyikan scroll hint, wrapper tidak ubah layout */
 .bracket-scroll-wrapper {
     width: 100%;
@@ -3381,7 +3476,32 @@ footer {
     .liga-right {
         width: 100%;
     }
-    
+
+    /* Eliminated mobile */
+    .eliminated-bracket {
+        max-width: 100%;
+        padding: 0 2px;
+    }
+    .eliminated-match-card {
+        padding: 8px 10px;
+        gap: 6px;
+    }
+    .eliminated-team {
+        font-size: 0.76rem;
+        gap: 5px;
+    }
+    .eliminated-team-logo {
+        width: 18px;
+        height: 18px;
+    }
+    .eliminated-score {
+        font-size: 0.82rem;
+        min-width: 46px;
+    }
+    .eliminated-round-title {
+        font-size: 0.78rem;
+    }
+
     .visitor-counter {
         font-size: 0.75rem;
         padding: 3px 10px;

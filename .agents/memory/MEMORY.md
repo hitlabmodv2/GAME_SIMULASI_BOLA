@@ -1,0 +1,1 @@
+- [Simulasi Sepak Bola AI: JS cache-busting](simulasi-bola-cache-busting.md) — script.js is loaded via `?v=N` query params in index.html; must bump N on every script.js edit or the browser serves a stale cached copy (304) and "fixes" silently don't take effect.

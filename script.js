@@ -3502,3 +3502,355 @@ function saveLigaHistory(champion, teamCount) {
     } catch(e) {}
 }
 
+/* =========================================================
+   MODE ELIMINATED — sistem gugur otomatis (kalah = tersingkir)
+   Tim & bracket diacak otomatis dari daftar tim (seperti Liga),
+   simulasi hasil pakai model gol yang sama akuratnya, dan hasil
+   seri di knockout diselesaikan lewat adu penalti (tidak pernah
+   berakhir seri, sesuai aturan gugur beneran).
+   ========================================================= */
+
+let eliminatedData = {
+    teamCount: 8,
+    teams: [],
+    rounds: [],          // [{ name, matches: [{teamA, teamB, goalsA, goalsB, played, scorers, penalties, winner}] }]
+    currentRoundIndex: 0,
+    currentMatchIndex: 0,
+    matchesPlayed: 0,
+    totalMatches: 0,
+    champion: null,
+    scorers: {},
+    turboMode: false,
+    isRunning: false,
+    interval: null
+};
+
+function toggleEliminatedTurbo() {
+    eliminatedData.turboMode = !eliminatedData.turboMode;
+    const btn = document.getElementById('eliminatedTurboBtn');
+    if (eliminatedData.turboMode) {
+        btn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+        btn.style.color = '#000';
+        btn.style.border = '2px solid #f59e0b';
+        btn.textContent = '⚡ Turbo: ON';
+    } else {
+        btn.style.background = 'linear-gradient(135deg, #4a4a4a, #2a2a2a)';
+        btn.style.color = '#aaa';
+        btn.style.border = '2px solid #555';
+        btn.textContent = '⚡ Turbo: OFF';
+    }
+}
+
+function getEliminatedRoundName(teamsInRound) {
+    switch (teamsInRound) {
+        case 2:  return 'Final';
+        case 4:  return 'Semifinal';
+        case 8:  return 'Perempat Final';
+        case 16: return 'Babak 16 Besar';
+        case 32: return 'Babak 32 Besar';
+        default: return `Babak ${teamsInRound} Besar`;
+    }
+}
+
+function startEliminated() {
+    const teamCount = parseInt(document.getElementById('eliminatedTeamCount').value);
+    eliminatedData.teamCount = teamCount;
+
+    clearTimeout(eliminatedData.interval);
+    eliminatedData.isRunning = false;
+    eliminatedData.currentRoundIndex = 0;
+    eliminatedData.currentMatchIndex = 0;
+    eliminatedData.matchesPlayed = 0;
+    eliminatedData.totalMatches = teamCount - 1;
+    eliminatedData.champion = null;
+    eliminatedData.scorers = {};
+
+    // Pick teams at random — bebas, tanpa setting manual satu-satu
+    const shuffled = [...predefinedTeams].sort(() => Math.random() - 0.5);
+    eliminatedData.teams = shuffled.slice(0, teamCount);
+
+    const firstMatches = [];
+    for (let i = 0; i < eliminatedData.teams.length; i += 2) {
+        firstMatches.push({
+            teamA: eliminatedData.teams[i],
+            teamB: eliminatedData.teams[i + 1],
+            goalsA: 0, goalsB: 0,
+            played: false, scorers: [], penalties: null, winner: null
+        });
+    }
+    eliminatedData.rounds = [{ name: getEliminatedRoundName(teamCount), matches: firstMatches }];
+
+    showScreen('eliminated');
+
+    document.getElementById('eliminatedChampion').style.display = 'none';
+    document.getElementById('eliminatedTopScorers').style.display = 'none';
+    document.getElementById('eliminatedRestartBtn').style.display = 'none';
+    document.getElementById('eliminatedLiveMatch').style.display = 'none';
+    document.getElementById('eliminatedBracket').innerHTML = '';
+    document.getElementById('eliminatedProgressBar').style.width = '0%';
+    document.getElementById('eliminatedProgressLabel').textContent = `Pertandingan 0 / ${eliminatedData.totalMatches}`;
+    document.getElementById('eliminatedStatusText').textContent = 'Eliminated dimulai!';
+
+    renderEliminatedBracket();
+
+    eliminatedData.isRunning = true;
+    const delay = eliminatedData.turboMode ? 80 : 600;
+    eliminatedData.interval = setTimeout(() => playNextEliminatedMatch(), delay);
+}
+
+function simulatePenaltyShootout(teamA, teamB) {
+    // Best-of-5 lalu sudden death, peluang cetak gol sedikit dipengaruhi
+    // kekuatan tim tapi tetap penuh ketegangan/acak seperti adu penalti asli.
+    const chanceA = Math.min(0.92, 0.66 + teamA.difficulty * 0.025);
+    const chanceB = Math.min(0.92, 0.66 + teamB.difficulty * 0.025);
+    let scoreA = 0, scoreB = 0;
+
+    for (let round = 1; round <= 5; round++) {
+        if (Math.random() < chanceA) scoreA++;
+        if (Math.random() < chanceB) scoreB++;
+        const remaining = 5 - round;
+        // Berhenti lebih awal kalau hasil sudah tidak mungkin berubah
+        if (scoreA > scoreB + remaining || scoreB > scoreA + remaining) break;
+    }
+
+    // Sudden death — dibatasi supaya pasti berakhir (tidak ada bug infinite loop)
+    let suddenDeathRounds = 0;
+    while (scoreA === scoreB && suddenDeathRounds < 20) {
+        if (Math.random() < chanceA) scoreA++;
+        if (Math.random() < chanceB) scoreB++;
+        suddenDeathRounds++;
+    }
+    if (scoreA === scoreB) {
+        if (Math.random() < 0.5) scoreA++; else scoreB++;
+    }
+
+    return { scoreA, scoreB, winner: scoreA > scoreB ? teamA : teamB };
+}
+
+function simulateEliminatedMatch(teamA, teamB) {
+    const diffA = teamA.difficulty;
+    const diffB = teamB.difficulty;
+    // Model gol sama seperti mode Liga (Poisson, disesuaikan selisih kekuatan)
+    const lambdaA = Math.max(0.2, 1.2 + (diffA - diffB) * 0.22);
+    const lambdaB = Math.max(0.2, 1.2 + (diffB - diffA) * 0.22);
+
+    const goalsA = poissonGoals(lambdaA);
+    const goalsB = poissonGoals(lambdaB);
+
+    const scorers = [];
+    for (let i = 0; i < goalsA; i++) {
+        const name = generatePlayerName();
+        scorers.push({ name, team: teamA.name });
+        eliminatedData.scorers[name] = eliminatedData.scorers[name]
+            ? { goals: eliminatedData.scorers[name].goals + 1, team: teamA.name }
+            : { goals: 1, team: teamA.name };
+    }
+    for (let i = 0; i < goalsB; i++) {
+        const name = generatePlayerName();
+        scorers.push({ name, team: teamB.name });
+        eliminatedData.scorers[name] = eliminatedData.scorers[name]
+            ? { goals: eliminatedData.scorers[name].goals + 1, team: teamB.name }
+            : { goals: 1, team: teamB.name };
+    }
+
+    let winner, penalties = null;
+    if (goalsA > goalsB) {
+        winner = teamA;
+    } else if (goalsB > goalsA) {
+        winner = teamB;
+    } else {
+        // Sistem gugur tidak boleh seri — lanjut adu penalti
+        penalties = simulatePenaltyShootout(teamA, teamB);
+        winner = penalties.winner;
+    }
+
+    return { goalsA, goalsB, scorers, winner, penalties };
+}
+
+function showEliminatedLiveMatch(match) {
+    const el = document.getElementById('eliminatedLiveMatch');
+    const inner = document.getElementById('eliminatedLiveInner');
+    el.style.display = 'block';
+    const logoA = getTeamLogo(match.teamA.name);
+    const logoB = getTeamLogo(match.teamB.name);
+    const imgA = logoA ? `<img src="${logoA}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;" alt="">` : '⚽';
+    const imgB = logoB ? `<img src="${logoB}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;" alt="">` : '⚽';
+    const penNote = match.penalties
+        ? `<div class="eliminated-pen-note">Adu Penalti ${match.penalties.scoreA} - ${match.penalties.scoreB}</div>` : '';
+    inner.innerHTML = `
+        <div class="liga-live-team">${imgA}<span class="liga-live-name">${match.teamA.name}</span></div>
+        <div>
+            <div class="liga-live-score">${match.goalsA} - ${match.goalsB}</div>
+            ${penNote}
+        </div>
+        <div class="liga-live-team">${imgB}<span class="liga-live-name">${match.teamB.name}</span></div>
+    `;
+}
+
+function renderEliminatedBracket() {
+    const container = document.getElementById('eliminatedBracket');
+    let html = '';
+    eliminatedData.rounds.forEach((round, ri) => {
+        const isCurrentRound = ri === eliminatedData.currentRoundIndex && eliminatedData.isRunning;
+        html += `<div class="eliminated-round ${isCurrentRound ? 'current' : ''}">
+            <div class="eliminated-round-title">${round.name}</div>`;
+        round.matches.forEach(m => {
+            const played = m.played;
+            const logoA = getTeamLogo(m.teamA.name);
+            const logoB = getTeamLogo(m.teamB.name);
+            const imgA = logoA ? `<img src="${logoA}" class="eliminated-team-logo" alt="">` : '';
+            const imgB = logoB ? `<img src="${logoB}" class="eliminated-team-logo" alt="">` : '';
+            const aLoser = played && m.winner.name !== m.teamA.name;
+            const bLoser = played && m.winner.name !== m.teamB.name;
+            const scoreStr = played
+                ? `${m.goalsA} - ${m.goalsB}${m.penalties ? `<span class="eliminated-pen-note-inline">(pen ${m.penalties.scoreA}-${m.penalties.scoreB})</span>` : ''}`
+                : 'vs';
+            html += `<div class="eliminated-match-card ${played ? 'done' : 'pending'}">
+                <div class="eliminated-team ${aLoser ? 'loser' : ''} ${played && !aLoser ? 'winner' : ''}">${imgA}<span class="eliminated-team-name">${m.teamA.name}</span></div>
+                <div class="eliminated-score">${scoreStr}</div>
+                <div class="eliminated-team ${bLoser ? 'loser' : ''} ${played && !bLoser ? 'winner' : ''}" style="flex-direction:row-reverse;text-align:right;">${imgB}<span class="eliminated-team-name">${m.teamB.name}</span></div>
+            </div>`;
+        });
+        html += `</div>`;
+    });
+    container.innerHTML = html;
+}
+
+function playNextEliminatedMatch() {
+    if (!eliminatedData.isRunning) return;
+    const round = eliminatedData.rounds[eliminatedData.currentRoundIndex];
+
+    if (eliminatedData.currentMatchIndex >= round.matches.length) {
+        // Ronde selesai — cek juara atau lanjut ke ronde berikutnya
+        const winners = round.matches.map(m => m.winner);
+        if (winners.length === 1) {
+            finishEliminated(winners[0]);
+            return;
+        }
+        const nextMatches = [];
+        for (let i = 0; i < winners.length; i += 2) {
+            nextMatches.push({
+                teamA: winners[i], teamB: winners[i + 1],
+                goalsA: 0, goalsB: 0, played: false, scorers: [], penalties: null, winner: null
+            });
+        }
+        eliminatedData.rounds.push({ name: getEliminatedRoundName(winners.length), matches: nextMatches });
+        eliminatedData.currentRoundIndex++;
+        eliminatedData.currentMatchIndex = 0;
+        document.getElementById('eliminatedStatusText').textContent =
+            `Babak berikutnya: ${getEliminatedRoundName(winners.length)}`;
+        renderEliminatedBracket();
+
+        const delay = eliminatedData.turboMode ? 250 : 1300;
+        eliminatedData.interval = setTimeout(() => playNextEliminatedMatch(), delay);
+        return;
+    }
+
+    const match = round.matches[eliminatedData.currentMatchIndex];
+    const result = simulateEliminatedMatch(match.teamA, match.teamB);
+    match.goalsA = result.goalsA;
+    match.goalsB = result.goalsB;
+    match.scorers = result.scorers;
+    match.penalties = result.penalties;
+    match.winner = result.winner;
+    match.played = true;
+
+    eliminatedData.matchesPlayed++;
+
+    showEliminatedLiveMatch(match);
+    renderEliminatedBracket();
+
+    const pct = Math.round((eliminatedData.matchesPlayed / eliminatedData.totalMatches) * 100);
+    document.getElementById('eliminatedProgressBar').style.width = pct + '%';
+    document.getElementById('eliminatedProgressLabel').textContent =
+        `Pertandingan ${eliminatedData.matchesPlayed} / ${eliminatedData.totalMatches}`;
+    document.getElementById('eliminatedStatusText').textContent =
+        `${round.name}: ${match.teamA.name} ${result.goalsA} - ${result.goalsB} ${match.teamB.name}` +
+        (result.penalties ? ` (pen ${result.penalties.scoreA}-${result.penalties.scoreB})` : '');
+
+    eliminatedData.currentMatchIndex++;
+
+    const delay = eliminatedData.turboMode ? 80 : 900;
+    eliminatedData.interval = setTimeout(() => playNextEliminatedMatch(), delay);
+}
+
+function finishEliminated(champion) {
+    eliminatedData.isRunning = false;
+    eliminatedData.champion = champion;
+
+    document.getElementById('eliminatedLiveMatch').style.display = 'none';
+    document.getElementById('eliminatedRestartBtn').style.display = 'inline-block';
+    document.getElementById('eliminatedProgressBar').style.width = '100%';
+    document.getElementById('eliminatedStatusText').textContent = `🏆 Eliminated selesai! Juara: ${champion.name}`;
+
+    let goalsFor = 0, goalsAgainst = 0, wins = 0, penWins = 0;
+    eliminatedData.rounds.forEach(r => {
+        r.matches.forEach(m => {
+            const isA = m.teamA.name === champion.name;
+            const isB = m.teamB.name === champion.name;
+            if (isA || isB) {
+                goalsFor += isA ? m.goalsA : m.goalsB;
+                goalsAgainst += isA ? m.goalsB : m.goalsA;
+                wins++;
+                if (m.penalties) penWins++;
+            }
+        });
+    });
+
+    const logo = getTeamLogo(champion.name);
+    const logoHtml = logo
+        ? `<img src="${logo}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;margin:8px auto;display:block;box-shadow:0 4px 12px rgba(0,0,0,0.4);">`
+        : '🏆';
+    document.getElementById('eliminatedChampionInner').innerHTML = `
+        <div style="font-size:1.1rem;color:#ffd700;margin-bottom:4px;">🔥 JUARA ELIMINATED!</div>
+        ${logoHtml}
+        <div class="liga-champion-name">${champion.name}</div>
+        <div class="liga-champion-stats">
+            <div class="liga-champion-stat"><span class="val">${wins}</span><span class="lbl">Menang</span></div>
+            <div class="liga-champion-stat"><span class="val">${goalsFor}</span><span class="lbl">Gol Masuk</span></div>
+            <div class="liga-champion-stat"><span class="val">${goalsAgainst}</span><span class="lbl">Gol Kemasukan</span></div>
+            <div class="liga-champion-stat"><span class="val">${penWins}</span><span class="lbl">Menang Penalti</span></div>
+        </div>
+    `;
+    document.getElementById('eliminatedChampion').style.display = 'block';
+
+    renderEliminatedTopScorers();
+    renderEliminatedBracket();
+    saveEliminatedHistory(champion.name, eliminatedData.teamCount);
+}
+
+function renderEliminatedTopScorers() {
+    const scorersList = Object.entries(eliminatedData.scorers)
+        .map(([name, data]) => ({ name, goals: data.goals, team: data.team }))
+        .sort((a, b) => b.goals - a.goals)
+        .slice(0, 10);
+
+    if (scorersList.length === 0) return;
+
+    const medals = ['🥇','🥈','🥉'];
+    let html = scorersList.map((s, i) => `
+        <div class="liga-scorer-row">
+            <span class="liga-scorer-rank">${medals[i] || (i + 1)}</span>
+            <span class="liga-scorer-name">${s.name}</span>
+            <span class="liga-scorer-team">${s.team}</span>
+            <span class="liga-scorer-goals">⚽ ${s.goals}</span>
+        </div>
+    `).join('');
+
+    document.getElementById('eliminatedScorersTable').innerHTML = html;
+    document.getElementById('eliminatedTopScorers').style.display = 'block';
+}
+
+function saveEliminatedHistory(champion, teamCount) {
+    try {
+        const history = JSON.parse(localStorage.getItem('eliminatedHistory') || '[]');
+        history.unshift({
+            date: new Date().toLocaleDateString('id-ID'),
+            champion,
+            teamCount,
+            turbo: eliminatedData.turboMode
+        });
+        localStorage.setItem('eliminatedHistory', JSON.stringify(history.slice(0, 30)));
+    } catch(e) {}
+}
+

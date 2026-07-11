@@ -28,6 +28,10 @@
                     <span class="icon">📊</span>
                     <span class="text">Liga</span>
                 </button>
+                <button class="main-btn" onclick="showScreen('eliminatedSetup')">
+                    <span class="icon">🔥</span>
+                    <span class="text">Eliminated</span>
+                </button>
                 <button class="main-btn" onclick="showScreen('settings')">
                     <span class="icon">⚙️</span>
                     <span class="text">Pengaturan</span>
@@ -700,6 +704,68 @@
             </div>
         </div>
 
+        <!-- Eliminated Setup -->
+        <div id="eliminatedSetup" class="screen">
+            <div class="header">
+                <h2>🔥 Mode Eliminated</h2>
+                <p class="subtitle">Sistem gugur — kalah langsung tersingkir, tim &amp; bagan diacak otomatis!</p>
+            </div>
+            <div class="match-setup">
+                <div class="setup-section">
+                    <label>Jumlah Tim:</label>
+                    <select id="eliminatedTeamCount" class="team-select">
+                        <option value="4">4 Tim — 3 pertandingan</option>
+                        <option value="8" selected>8 Tim — 7 pertandingan</option>
+                        <option value="16">16 Tim — 15 pertandingan</option>
+                        <option value="32">32 Tim — 31 pertandingan</option>
+                    </select>
+                </div>
+                <div class="setup-section" style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
+                    <button id="eliminatedTurboBtn" onclick="toggleEliminatedTurbo()" style="background:linear-gradient(135deg,#4a4a4a,#2a2a2a);color:#aaa;border:2px solid #555;padding:10px 22px;border-radius:8px;cursor:pointer;font-size:0.95rem;font-weight:bold;transition:all 0.3s;">⚡ Turbo: OFF</button>
+                </div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:10px;">
+                    <button class="btn btn-primary" onclick="startEliminated()" style="padding:12px 30px;font-size:1rem;">🔥 Mulai Eliminated!</button>
+                    <button class="btn btn-secondary" onclick="showScreen('mainMenu')">← Kembali</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Eliminated Running -->
+        <div id="eliminated" class="screen">
+            <div class="header">
+                <h2>🔥 Eliminated Berlangsung</h2>
+                <p class="subtitle" id="eliminatedStatusText">Memulai simulasi...</p>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="liga-progress-wrap">
+                <div class="liga-progress-bar" id="eliminatedProgressBar" style="width:0%"></div>
+            </div>
+            <div class="liga-progress-label" id="eliminatedProgressLabel">Pertandingan 0 / 0</div>
+
+            <div class="liga-live-match" id="eliminatedLiveMatch" style="display:none;">
+                <div class="liga-live-inner" id="eliminatedLiveInner"></div>
+            </div>
+
+            <div class="eliminated-bracket" id="eliminatedBracket"></div>
+
+            <!-- Top Skor (muncul setelah selesai) -->
+            <div id="eliminatedTopScorers" style="display:none;" class="liga-top-scorers">
+                <h3>🥇 Top Skor</h3>
+                <div id="eliminatedScorersTable"></div>
+            </div>
+
+            <!-- Juara -->
+            <div id="eliminatedChampion" style="display:none;" class="liga-champion-banner">
+                <div id="eliminatedChampionInner"></div>
+            </div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:20px;">
+                <button class="btn btn-primary" onclick="startEliminated()" id="eliminatedRestartBtn" style="display:none;">🔄 Ulangi Eliminated</button>
+                <button class="btn btn-secondary" onclick="showScreen('mainMenu')">← Menu Utama</button>
+            </div>
+        </div>
+
     <!-- Event Animations Container -->
     <div id="eventAnimations" class="event-animations-container"></div>
 
@@ -732,9 +798,9 @@
         </div>
     </footer>
 
-    <script src="players-data/teams-info.js?v=8"></script>
-    <script src="players-data/squads.js?v=8"></script>
-    <script src="players-data/substitutions.js?v=8"></script>
-    <script src="script.js?v=8"></script>
+    <script src="players-data/teams-info.js?v=9"></script>
+    <script src="players-data/squads.js?v=9"></script>
+    <script src="players-data/substitutions.js?v=9"></script>
+    <script src="script.js?v=9"></script>
 </body>
 </html>
