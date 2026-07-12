@@ -192,18 +192,33 @@ function toggleLigaScheduleMode() {
     updateLigaEstimate();
 }
 
+// Hard sanity bounds for the manual "laga/tim" input — generous enough to
+// cover any realistic season length (more than a full double round-robin
+// even at 32 teams), but finite so a mistyped huge number can't schedule an
+// absurd number of matches.
+const LIGA_MANUAL_MIN_ROUNDS = 1;
+const LIGA_MANUAL_MAX_ROUNDS = 99;
+
 // Compute the number of "matchday" rounds (laga/tim) that will actually be
 // scheduled, given the current Otomatis/Manual selection. Shared by the
 // live estimate hint and startLiga() so they can never disagree.
+//
+// Whenever the manual value is out of range, this ALSO writes the corrected
+// number straight back into the input field. That guarantees what the user
+// sees typed always matches exactly what gets simulated — no silent
+// clamping that could make the schedule look "wrong" compared to what was
+// typed.
 function getLigaRoundsPerTeam(teamCount) {
     const modeEl = document.getElementById('ligaScheduleMode');
     const isManual = modeEl && modeEl.value === 'manual';
     if (isManual) {
         const manualEl = document.getElementById('ligaManualMatches');
         let manual = parseInt(manualEl ? manualEl.value : NaN);
-        if (!Number.isFinite(manual) || manual < 1) manual = 1;
-        const maxRounds = (teamCount - 1) * 4; // sane cap so it can't run away forever
-        if (manual > maxRounds) manual = maxRounds;
+        if (!Number.isFinite(manual) || manual < LIGA_MANUAL_MIN_ROUNDS) manual = LIGA_MANUAL_MIN_ROUNDS;
+        if (manual > LIGA_MANUAL_MAX_ROUNDS) manual = LIGA_MANUAL_MAX_ROUNDS;
+        if (manualEl && parseInt(manualEl.value) !== manual) {
+            manualEl.value = manual;
+        }
         return manual;
     }
     const formatEl = document.getElementById('ligaFormat');
