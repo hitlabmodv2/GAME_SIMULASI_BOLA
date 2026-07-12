@@ -635,14 +635,22 @@
             <div class="match-setup">
                 <div class="setup-section">
                     <label>Jumlah Tim:</label>
-                    <select id="ligaTeamCount" class="team-select">
-                        <option value="4">4 Tim — 12 pertandingan (6 laga/tim, kandang-tandang)</option>
-                        <option value="8" selected>8 Tim — 56 pertandingan (14 laga/tim, kandang-tandang)</option>
-                        <option value="12">12 Tim — 132 pertandingan (22 laga/tim, kandang-tandang)</option>
-                        <option value="16">16 Tim — 240 pertandingan (30 laga/tim, kandang-tandang)</option>
-                        <option value="32">32 Tim — 992 pertandingan (62 laga/tim, kandang-tandang)</option>
+                    <select id="ligaTeamCount" class="team-select" onchange="updateLigaEstimate()">
+                        <option value="4">4 Tim</option>
+                        <option value="8" selected>8 Tim</option>
+                        <option value="12">12 Tim</option>
+                        <option value="16">16 Tim</option>
+                        <option value="32">32 Tim</option>
                     </select>
                 </div>
+                <div class="setup-section">
+                    <label>Format Pertandingan:</label>
+                    <select id="ligaFormat" class="team-select" onchange="updateLigaEstimate()">
+                        <option value="single">Sekali Main (tiap tim ketemu 1x)</option>
+                        <option value="double" selected>Kandang-Tandang (tiap tim ketemu 2x, standar liga asli)</option>
+                    </select>
+                </div>
+                <p id="ligaEstimateHint" style="text-align:center;color:#9aa0b4;font-size:0.9rem;margin:4px 0 0;"></p>
                 <div class="setup-section" style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
                     <button id="ligaTurboBtn" onclick="toggleLigaTurbo()" style="background:linear-gradient(135deg,#4a4a4a,#2a2a2a);color:#aaa;border:2px solid #555;padding:10px 22px;border-radius:8px;cursor:pointer;font-size:0.95rem;font-weight:bold;transition:all 0.3s;">⚡ Turbo: OFF</button>
                 </div>
@@ -798,9 +806,9 @@
         </div>
     </footer>
 
-    <script src="players-data/teams-info.js?v=9"></script>
-    <script src="players-data/squads.js?v=9"></script>
-    <script src="players-data/substitutions.js?v=9"></script>
-    <script src="script.js?v=9"></script>
+    <script src="players-data/teams-info.js?v=10"></script>
+    <script src="players-data/squads.js?v=10"></script>
+    <script src="players-data/substitutions.js?v=10"></script>
+    <script src="script.js?v=10"></script>
 </body>
 </html>

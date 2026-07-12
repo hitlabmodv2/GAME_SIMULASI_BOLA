@@ -175,7 +175,23 @@ document.addEventListener('DOMContentLoaded', function() {
     initScrollToTop();
     initializeTeamLogos();
     populateTeamSelectors();
+    updateLigaEstimate();
 });
+
+// Recompute and show the total matches / matches-per-team estimate for the
+// currently selected team count + format, so the number shown is always
+// accurate and never goes stale when either dropdown changes.
+function updateLigaEstimate() {
+    const hint = document.getElementById('ligaEstimateHint');
+    const teamCountEl = document.getElementById('ligaTeamCount');
+    const formatEl = document.getElementById('ligaFormat');
+    if (!hint || !teamCountEl || !formatEl) return;
+    const teamCount = parseInt(teamCountEl.value);
+    const legs = formatEl.value === 'double' ? 2 : 1;
+    const perTeam = (teamCount - 1) * legs;
+    const total = Math.floor(teamCount / 2) * (teamCount - 1) * legs;
+    hint.textContent = `${total} pertandingan total (${perTeam} laga/tim)`;
+}
 
 // Initialize team logos and buttons on page load
 function initializeTeamLogos() {
@@ -3158,7 +3174,9 @@ function toggleLigaTurbo() {
 
 function startLiga() {
     const teamCount = parseInt(document.getElementById('ligaTeamCount').value);
+    const legs = document.getElementById('ligaFormat').value === 'double' ? 2 : 1;
     ligaData.teamCount = teamCount;
+    ligaData.legs = legs;
 
     // Reset
     clearInterval(ligaData.interval);
@@ -3178,7 +3196,7 @@ function startLiga() {
     });
 
     // Generate schedule (round-robin, shuffled)
-    ligaData.matches = generateRoundRobinSchedule(ligaData.teams);
+    ligaData.matches = generateRoundRobinSchedule(ligaData.teams, legs);
     ligaData.totalMatches = ligaData.matches.length;
 
     // Go to liga screen
@@ -3202,7 +3220,7 @@ function startLiga() {
     ligaData.interval = setTimeout(() => playNextLigaMatch(), delay);
 }
 
-function generateRoundRobinSchedule(teams) {
+function generateRoundRobinSchedule(teams, legs = 2) {
     // Circle method: builds real "matchday" rounds where every team plays exactly
     // once per round (like official Western leagues), so the M (matches played)
     // column stays accurate and even across all teams as the league progresses —
@@ -3233,9 +3251,13 @@ function generateRoundRobinSchedule(teams) {
         list.splice(1, 0, list.pop());
     }
 
-    // First leg (putaran pertama)
+    // First leg (putaran pertama) — always played, this is the "Sekali Main" format
     const firstLeg = [];
     rounds.forEach(round => firstLeg.push(...round));
+
+    if (legs === 1) {
+        return firstLeg;
+    }
 
     // Second leg (putaran kedua / kandang-tandang): mirror the exact same
     // fixtures with home and away reversed, just like real official leagues
