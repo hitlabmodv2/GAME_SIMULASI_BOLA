@@ -254,6 +254,15 @@
                         <option value="disabled">Sembunyikan</option>
                     </select>
                 </div>
+                <div class="setting-item">
+                    <label>Tingkat Kesulitan Bot:</label>
+                    <select id="botDifficultyMode">
+                        <option value="original" selected>Otomatis (Rating Asli Tim — Real Madrid dkk tetap kuat)</option>
+                        <option value="equal">Seimbang (Semua Tim Sama Kuat, hasil murni acak)</option>
+                        <option value="random">Acak Tiap Sesi (Kekuatan tim diacak ulang setiap mulai)</option>
+                    </select>
+                    <p style="color:#9aa0b4;font-size:0.85rem;margin:6px 0 0;">Berlaku untuk Liga, Eliminated, dan Tournament — biar tim besar tidak selalu unggul kalau kamu pilih Seimbang/Acak.</p>
+                </div>
             </div>
             <div class="action-buttons">
                 <button class="btn btn-secondary" onclick="showScreen('mainMenu')">Kembali</button>
@@ -825,9 +834,9 @@
         </div>
     </footer>
 
-    <script src="players-data/teams-info.js?v=12"></script>
-    <script src="players-data/squads.js?v=12"></script>
-    <script src="players-data/substitutions.js?v=12"></script>
-    <script src="script.js?v=12"></script>
+    <script src="players-data/teams-info.js?v=13"></script>
+    <script src="players-data/squads.js?v=13"></script>
+    <script src="players-data/substitutions.js?v=13"></script>
+    <script src="script.js?v=13"></script>
 </body>
 </html>

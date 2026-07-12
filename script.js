@@ -683,7 +683,7 @@ function updateTournamentSlider(teamNum) {
 
 function randomizeTeams() {
     const teamCount = parseInt(document.getElementById('teamCount').value);
-    const availableTeams = [...predefinedTeams];
+    const availableTeams = applyBotDifficultyMode([...predefinedTeams]);
     const selectedTeams = [];
     
     for (let i = 0; i < teamCount; i++) {
@@ -1004,7 +1004,7 @@ function setSetupMode(mode) {
 
 function autoGenerateTeams() {
     const teamCount = parseInt(document.getElementById('teamCount').value);
-    const shuffled = [...predefinedTeams].sort(() => Math.random() - 0.5);
+    const shuffled = applyBotDifficultyMode([...predefinedTeams].sort(() => Math.random() - 0.5));
     
     for (let i = 1; i <= teamCount; i++) {
         const team = shuffled[i - 1];
@@ -2333,7 +2333,7 @@ function autoRandomizeMatch() {
     }
     
     // Random pilih 2 tim berbeda
-    const availableTeams = [...predefinedTeams];
+    const availableTeams = applyBotDifficultyMode([...predefinedTeams]);
     
     // Random Team A
     const teamAIndex = Math.floor(Math.random() * availableTeams.length);
@@ -2386,12 +2386,14 @@ function saveSettings() {
     const displayMode = document.getElementById('displayMode').value;
     const autoScroll = document.getElementById('autoScrollSetting').value;
     const showStats = document.getElementById('showStatsSetting').value;
+    const botDifficultyMode = document.getElementById('botDifficultyMode').value;
     
     localStorage.setItem('matchDuration', duration);
     localStorage.setItem('simulationSpeed', speed);
     localStorage.setItem('displayMode', displayMode);
     localStorage.setItem('autoScrollSetting', autoScroll);
     localStorage.setItem('showStatsSetting', showStats);
+    localStorage.setItem('botDifficultyMode', botDifficultyMode);
     
     matchData.duration = parseInt(duration);
     matchData.speed = parseInt(speed);
@@ -2406,16 +2408,38 @@ function loadSettings() {
     const displayMode = localStorage.getItem('displayMode') || 'dark';
     const autoScroll = localStorage.getItem('autoScrollSetting') || 'enabled';
     const showStats = localStorage.getItem('showStatsSetting') || 'enabled';
+    const botDifficultyMode = localStorage.getItem('botDifficultyMode') || 'original';
     
     document.getElementById('matchDuration').value = duration;
     document.getElementById('simulationSpeed').value = speed;
     document.getElementById('displayMode').value = displayMode;
     document.getElementById('autoScrollSetting').value = autoScroll;
     document.getElementById('showStatsSetting').value = showStats;
+    document.getElementById('botDifficultyMode').value = botDifficultyMode;
     
     matchData.duration = parseInt(duration);
     matchData.speed = parseInt(speed);
     matchData.autoScrollEnabled = (autoScroll === 'enabled');
+}
+
+// Applies the "Tingkat Kesulitan Bot" setting to a list of teams, always
+// returning fresh cloned team objects so predefinedTeams (the shared master
+// list used everywhere for logos/dropdowns/labels) is never mutated.
+//   - 'original' (default): keep each team's real rating (Real Madrid, Man
+//     City, Bayern etc. stay strong) — unchanged legacy behavior.
+//   - 'equal': every team gets the same difficulty (5), so no team has a
+//     structural edge and results are decided purely by the match RNG.
+//   - 'random': every team gets a freshly randomized difficulty (1-7) each
+//     time a simulation starts, independent of real-world reputation.
+function applyBotDifficultyMode(teams) {
+    const mode = localStorage.getItem('botDifficultyMode') || 'original';
+    if (mode === 'equal') {
+        return teams.map(t => ({ ...t, difficulty: 5 }));
+    }
+    if (mode === 'random') {
+        return teams.map(t => ({ ...t, difficulty: 1 + Math.floor(Math.random() * 7) }));
+    }
+    return teams.map(t => ({ ...t }));
 }
 
 // Match Setup
@@ -3218,7 +3242,7 @@ function startLiga() {
 
     // Pick teams
     const shuffled = [...predefinedTeams].sort(() => Math.random() - 0.5);
-    ligaData.teams = shuffled.slice(0, teamCount);
+    ligaData.teams = applyBotDifficultyMode(shuffled.slice(0, teamCount));
 
     // Init standings
     ligaData.standings = {};
@@ -3653,7 +3677,7 @@ function startEliminated() {
 
     // Pick teams at random — bebas, tanpa setting manual satu-satu
     const shuffled = [...predefinedTeams].sort(() => Math.random() - 0.5);
-    eliminatedData.teams = shuffled.slice(0, teamCount);
+    eliminatedData.teams = applyBotDifficultyMode(shuffled.slice(0, teamCount));
 
     const firstTies = [];
     for (let i = 0; i < eliminatedData.teams.length; i += 2) {
