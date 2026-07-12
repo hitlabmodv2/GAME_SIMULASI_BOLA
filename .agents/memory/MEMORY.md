@@ -1,1 +1,2 @@
 - [Simulasi Sepak Bola AI: JS cache-busting](simulasi-bola-cache-busting.md) — script.js is loaded via `?v=N` query params in index.html; must bump N on every script.js edit or the browser serves a stale cached copy (304) and "fixes" silently don't take effect.
+- [Simulasi Sepak Bola AI: round-robin schedule design](simulasi-bola-schedule-design.md) — Liga schedule cycles fixed circle-method rounds to support any manual match count while keeping every team's match count equal.

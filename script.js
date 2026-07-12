@@ -179,18 +179,48 @@ document.addEventListener('DOMContentLoaded', function() {
     updateEliminatedEstimate();
 });
 
+// Show/hide the "Otomatis" (format dropdown) vs "Manual" (typed matches/tim)
+// sections for Liga's match-count setup, then refresh the live estimate.
+function toggleLigaScheduleMode() {
+    const modeEl = document.getElementById('ligaScheduleMode');
+    const formatSection = document.getElementById('ligaFormatSection');
+    const manualSection = document.getElementById('ligaManualSection');
+    if (!modeEl || !formatSection || !manualSection) return;
+    const isManual = modeEl.value === 'manual';
+    formatSection.style.display = isManual ? 'none' : '';
+    manualSection.style.display = isManual ? '' : 'none';
+    updateLigaEstimate();
+}
+
+// Compute the number of "matchday" rounds (laga/tim) that will actually be
+// scheduled, given the current Otomatis/Manual selection. Shared by the
+// live estimate hint and startLiga() so they can never disagree.
+function getLigaRoundsPerTeam(teamCount) {
+    const modeEl = document.getElementById('ligaScheduleMode');
+    const isManual = modeEl && modeEl.value === 'manual';
+    if (isManual) {
+        const manualEl = document.getElementById('ligaManualMatches');
+        let manual = parseInt(manualEl ? manualEl.value : NaN);
+        if (!Number.isFinite(manual) || manual < 1) manual = 1;
+        const maxRounds = (teamCount - 1) * 4; // sane cap so it can't run away forever
+        if (manual > maxRounds) manual = maxRounds;
+        return manual;
+    }
+    const formatEl = document.getElementById('ligaFormat');
+    const legs = formatEl && formatEl.value === 'double' ? 2 : 1;
+    return (teamCount - 1) * legs;
+}
+
 // Recompute and show the total matches / matches-per-team estimate for the
-// currently selected team count + format, so the number shown is always
-// accurate and never goes stale when either dropdown changes.
+// currently selected team count + schedule mode, so the number shown is
+// always accurate and never goes stale when any control changes.
 function updateLigaEstimate() {
     const hint = document.getElementById('ligaEstimateHint');
     const teamCountEl = document.getElementById('ligaTeamCount');
-    const formatEl = document.getElementById('ligaFormat');
-    if (!hint || !teamCountEl || !formatEl) return;
+    if (!hint || !teamCountEl) return;
     const teamCount = parseInt(teamCountEl.value);
-    const legs = formatEl.value === 'double' ? 2 : 1;
-    const perTeam = (teamCount - 1) * legs;
-    const total = Math.floor(teamCount / 2) * (teamCount - 1) * legs;
+    const perTeam = getLigaRoundsPerTeam(teamCount);
+    const total = Math.floor(teamCount / 2) * perTeam;
     hint.textContent = `${total} pertandingan total (${perTeam} laga/tim)`;
 }
 
@@ -3175,9 +3205,9 @@ function toggleLigaTurbo() {
 
 function startLiga() {
     const teamCount = parseInt(document.getElementById('ligaTeamCount').value);
-    const legs = document.getElementById('ligaFormat').value === 'double' ? 2 : 1;
+    const roundsPerTeam = getLigaRoundsPerTeam(teamCount);
     ligaData.teamCount = teamCount;
-    ligaData.legs = legs;
+    ligaData.roundsPerTeam = roundsPerTeam;
 
     // Reset
     clearInterval(ligaData.interval);
@@ -3197,7 +3227,7 @@ function startLiga() {
     });
 
     // Generate schedule (round-robin, shuffled)
-    ligaData.matches = generateRoundRobinSchedule(ligaData.teams, legs);
+    ligaData.matches = generateRoundRobinSchedule(ligaData.teams, roundsPerTeam);
     ligaData.totalMatches = ligaData.matches.length;
 
     // Go to liga screen
@@ -3221,60 +3251,64 @@ function startLiga() {
     ligaData.interval = setTimeout(() => playNextLigaMatch(), delay);
 }
 
-function generateRoundRobinSchedule(teams, legs = 2) {
+function generateRoundRobinSchedule(teams, roundsRequested) {
     // Circle method: builds real "matchday" rounds where every team plays exactly
     // once per round (like official Western leagues), so the M (matches played)
     // column stays accurate and even across all teams as the league progresses —
     // instead of a fully random pairing order where some teams could play many
     // matches before others play any.
+    //
+    // `roundsRequested` is how many matchdays (laga/tim) to schedule — either
+    // derived automatically from the format (single = teamCount-1, double =
+    // 2*(teamCount-1)) or typed manually by the user. Whatever the number, the
+    // circle-method base cycle (teamCount-1 rounds) is replayed as many times
+    // as needed, reversing home/away on every other full cycle for realism —
+    // this keeps every team's match count exactly equal to roundsRequested,
+    // no matter what number was chosen.
     let list = [...teams];
     const hasBye = list.length % 2 !== 0;
     if (hasBye) list.push(null); // bye placeholder for odd team counts
 
     const n = list.length;
-    const roundsCount = n - 1;
-    const rounds = [];
+    const baseRoundsCount = n - 1;
+    const baseRounds = [];
 
-    for (let r = 0; r < roundsCount; r++) {
+    for (let r = 0; r < baseRoundsCount; r++) {
         const round = [];
         for (let i = 0; i < n / 2; i++) {
             const home = list[i];
             const away = list[n - 1 - i];
             if (home && away) {
-                round.push({ teamA: home, teamB: away, goalsA: 0, goalsB: 0, played: false, scorers: [] });
+                round.push({ teamA: home, teamB: away });
             }
         }
         // Shuffle order of matches within this round only (variety without breaking round integrity)
         round.sort(() => Math.random() - 0.5);
-        rounds.push(round);
+        baseRounds.push(round);
 
         // Rotate all teams except the first, standard circle-method rotation
         list.splice(1, 0, list.pop());
     }
 
-    // First leg (putaran pertama) — always played, this is the "Sekali Main" format
-    const firstLeg = [];
-    rounds.forEach(round => firstLeg.push(...round));
-
-    if (legs === 1) {
-        return firstLeg;
+    const totalRounds = Math.max(1, Math.round(roundsRequested) || baseRoundsCount);
+    const matches = [];
+    for (let round = 0; round < totalRounds; round++) {
+        const baseIndex = round % baseRoundsCount;
+        const cycleNumber = Math.floor(round / baseRoundsCount);
+        const reversed = cycleNumber % 2 === 1; // flip home/away every other full cycle
+        baseRounds[baseIndex].forEach(m => {
+            matches.push({
+                teamA: reversed ? m.teamB : m.teamA,
+                teamB: reversed ? m.teamA : m.teamB,
+                goalsA: 0,
+                goalsB: 0,
+                played: false,
+                scorers: []
+            });
+        });
     }
 
-    // Second leg (putaran kedua / kandang-tandang): mirror the exact same
-    // fixtures with home and away reversed, just like real official leagues
-    // (Premier League, La Liga, etc.) where every team meets each opponent
-    // twice — once at home, once away. This keeps the same round structure,
-    // so M still increases evenly for every team each matchday.
-    const secondLeg = firstLeg.map(m => ({
-        teamA: m.teamB,
-        teamB: m.teamA,
-        goalsA: 0,
-        goalsB: 0,
-        played: false,
-        scorers: []
-    }));
-
-    return firstLeg.concat(secondLeg);
+    return matches;
 }
 
 function poissonGoals(lambda) {
