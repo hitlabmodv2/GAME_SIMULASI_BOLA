@@ -176,6 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeTeamLogos();
     populateTeamSelectors();
     updateLigaEstimate();
+    updateEliminatedEstimate();
 });
 
 // Recompute and show the total matches / matches-per-team estimate for the
@@ -3534,10 +3535,11 @@ function saveLigaHistory(champion, teamCount) {
 
 let eliminatedData = {
     teamCount: 8,
+    format: 'single',    // 'single' (1 leg, kalah langsung gugur) or 'double' (2 leg / agregat)
     teams: [],
-    rounds: [],          // [{ name, matches: [{teamA, teamB, goalsA, goalsB, played, scorers, penalties, winner}] }]
+    rounds: [],          // [{ name, ties: [{teamA, teamB, legs:[{goalsA,goalsB,scorers}], aggA, aggB, played, penalties, winner}] }]
     currentRoundIndex: 0,
-    currentMatchIndex: 0,
+    currentMatchIndex: 0, // index into round.ties
     matchesPlayed: 0,
     totalMatches: 0,
     champion: null,
@@ -3546,6 +3548,31 @@ let eliminatedData = {
     isRunning: false,
     interval: null
 };
+
+// Recompute and show the total matches estimate for Eliminated mode so the
+// number shown before starting is always accurate for the chosen team count
+// + format (single leg vs double leg/aggregate).
+function updateEliminatedEstimate() {
+    const hint = document.getElementById('eliminatedEstimateHint');
+    const teamCountEl = document.getElementById('eliminatedTeamCount');
+    const formatEl = document.getElementById('eliminatedFormat');
+    if (!hint || !teamCountEl || !formatEl) return;
+    const teamCount = parseInt(teamCountEl.value);
+    const legsPerTie = formatEl.value === 'double' ? 2 : 1;
+    const total = (teamCount - 1) * legsPerTie;
+    hint.textContent = `${total} pertandingan total`;
+}
+
+function createEliminatedTie(teamA, teamB) {
+    return {
+        teamA, teamB,
+        legs: [],       // each leg: {goalsA, goalsB, scorers}
+        aggA: 0, aggB: 0,
+        penalties: null,
+        winner: null,
+        played: false
+    };
+}
 
 function toggleEliminatedTurbo() {
     eliminatedData.turboMode = !eliminatedData.turboMode;
@@ -3576,14 +3603,17 @@ function getEliminatedRoundName(teamsInRound) {
 
 function startEliminated() {
     const teamCount = parseInt(document.getElementById('eliminatedTeamCount').value);
+    const format = document.getElementById('eliminatedFormat').value === 'double' ? 'double' : 'single';
+    const legsPerTie = format === 'double' ? 2 : 1;
     eliminatedData.teamCount = teamCount;
+    eliminatedData.format = format;
 
     clearTimeout(eliminatedData.interval);
     eliminatedData.isRunning = false;
     eliminatedData.currentRoundIndex = 0;
     eliminatedData.currentMatchIndex = 0;
     eliminatedData.matchesPlayed = 0;
-    eliminatedData.totalMatches = teamCount - 1;
+    eliminatedData.totalMatches = (teamCount - 1) * legsPerTie;
     eliminatedData.champion = null;
     eliminatedData.scorers = {};
 
@@ -3591,16 +3621,11 @@ function startEliminated() {
     const shuffled = [...predefinedTeams].sort(() => Math.random() - 0.5);
     eliminatedData.teams = shuffled.slice(0, teamCount);
 
-    const firstMatches = [];
+    const firstTies = [];
     for (let i = 0; i < eliminatedData.teams.length; i += 2) {
-        firstMatches.push({
-            teamA: eliminatedData.teams[i],
-            teamB: eliminatedData.teams[i + 1],
-            goalsA: 0, goalsB: 0,
-            played: false, scorers: [], penalties: null, winner: null
-        });
+        firstTies.push(createEliminatedTie(eliminatedData.teams[i], eliminatedData.teams[i + 1]));
     }
-    eliminatedData.rounds = [{ name: getEliminatedRoundName(teamCount), matches: firstMatches }];
+    eliminatedData.rounds = [{ name: getEliminatedRoundName(teamCount), ties: firstTies }];
 
     showScreen('eliminated');
 
@@ -3649,7 +3674,9 @@ function simulatePenaltyShootout(teamA, teamB) {
     return { scoreA, scoreB, winner: scoreA > scoreB ? teamA : teamB };
 }
 
-function simulateEliminatedMatch(teamA, teamB) {
+function simulateEliminatedLegGoals(teamA, teamB) {
+    // Simulates ONE leg's goals (no winner/penalty decision here — that only
+    // happens once the tie is fully decided, after all legs are played).
     const diffA = teamA.difficulty;
     const diffB = teamB.difficulty;
     // Model gol sama seperti mode Liga (Poisson, disesuaikan selisih kekuatan)
@@ -3675,62 +3702,71 @@ function simulateEliminatedMatch(teamA, teamB) {
             : { goals: 1, team: teamB.name };
     }
 
-    let winner, penalties = null;
-    if (goalsA > goalsB) {
-        winner = teamA;
-    } else if (goalsB > goalsA) {
-        winner = teamB;
-    } else {
-        // Sistem gugur tidak boleh seri — lanjut adu penalti
-        penalties = simulatePenaltyShootout(teamA, teamB);
-        winner = penalties.winner;
-    }
-
-    return { goalsA, goalsB, scorers, winner, penalties };
+    return { goalsA, goalsB, scorers };
 }
 
-function showEliminatedLiveMatch(match) {
+function showEliminatedLiveMatch(tie) {
     const el = document.getElementById('eliminatedLiveMatch');
     const inner = document.getElementById('eliminatedLiveInner');
     el.style.display = 'block';
-    const logoA = getTeamLogo(match.teamA.name);
-    const logoB = getTeamLogo(match.teamB.name);
+    const legsPerTie = eliminatedData.format === 'double' ? 2 : 1;
+    const legNumber = tie.legs.length;
+    const currentLeg = tie.legs[legNumber - 1];
+    const logoA = getTeamLogo(tie.teamA.name);
+    const logoB = getTeamLogo(tie.teamB.name);
     const imgA = logoA ? `<img src="${logoA}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;" alt="">` : '⚽';
     const imgB = logoB ? `<img src="${logoB}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;" alt="">` : '⚽';
-    const penNote = match.penalties
-        ? `<div class="eliminated-pen-note">Adu Penalti ${match.penalties.scoreA} - ${match.penalties.scoreB}</div>` : '';
+    const legLabel = legsPerTie === 2
+        ? `<div class="eliminated-pen-note">Leg ${legNumber}/2${legNumber === 2 ? ` — Agregat ${tie.aggA} - ${tie.aggB}` : ''}</div>`
+        : '';
+    const penNote = tie.penalties
+        ? `<div class="eliminated-pen-note">Adu Penalti ${tie.penalties.scoreA} - ${tie.penalties.scoreB}</div>` : '';
     inner.innerHTML = `
-        <div class="liga-live-team">${imgA}<span class="liga-live-name">${match.teamA.name}</span></div>
+        <div class="liga-live-team">${imgA}<span class="liga-live-name">${tie.teamA.name}</span></div>
         <div>
-            <div class="liga-live-score">${match.goalsA} - ${match.goalsB}</div>
+            <div class="liga-live-score">${currentLeg.goalsA} - ${currentLeg.goalsB}</div>
+            ${legLabel}
             ${penNote}
         </div>
-        <div class="liga-live-team">${imgB}<span class="liga-live-name">${match.teamB.name}</span></div>
+        <div class="liga-live-team">${imgB}<span class="liga-live-name">${tie.teamB.name}</span></div>
     `;
 }
 
 function renderEliminatedBracket() {
     const container = document.getElementById('eliminatedBracket');
+    const legsPerTie = eliminatedData.format === 'double' ? 2 : 1;
     let html = '';
     eliminatedData.rounds.forEach((round, ri) => {
         const isCurrentRound = ri === eliminatedData.currentRoundIndex && eliminatedData.isRunning;
         html += `<div class="eliminated-round ${isCurrentRound ? 'current' : ''}">
             <div class="eliminated-round-title">${round.name}</div>`;
-        round.matches.forEach(m => {
-            const played = m.played;
-            const logoA = getTeamLogo(m.teamA.name);
-            const logoB = getTeamLogo(m.teamB.name);
+        round.ties.forEach(tie => {
+            const played = tie.played;
+            const logoA = getTeamLogo(tie.teamA.name);
+            const logoB = getTeamLogo(tie.teamB.name);
             const imgA = logoA ? `<img src="${logoA}" class="eliminated-team-logo" alt="">` : '';
             const imgB = logoB ? `<img src="${logoB}" class="eliminated-team-logo" alt="">` : '';
-            const aLoser = played && m.winner.name !== m.teamA.name;
-            const bLoser = played && m.winner.name !== m.teamB.name;
-            const scoreStr = played
-                ? `${m.goalsA} - ${m.goalsB}${m.penalties ? `<span class="eliminated-pen-note-inline">(pen ${m.penalties.scoreA}-${m.penalties.scoreB})</span>` : ''}`
-                : 'vs';
+            const aLoser = played && tie.winner.name !== tie.teamA.name;
+            const bLoser = played && tie.winner.name !== tie.teamB.name;
+
+            let scoreStr = 'vs';
+            let extraNote = '';
+            if (tie.legs.length > 0) {
+                if (legsPerTie === 1) {
+                    scoreStr = `${tie.legs[0].goalsA} - ${tie.legs[0].goalsB}`;
+                } else {
+                    scoreStr = `${tie.aggA} - ${tie.aggB}`;
+                    extraNote = `<span class="eliminated-pen-note-inline">agg (${tie.legs.map(l => l.goalsA + '-' + l.goalsB).join(', ')})</span>`;
+                }
+            }
+            if (played && tie.penalties) {
+                extraNote += `<span class="eliminated-pen-note-inline">(pen ${tie.penalties.scoreA}-${tie.penalties.scoreB})</span>`;
+            }
+
             html += `<div class="eliminated-match-card ${played ? 'done' : 'pending'}">
-                <div class="eliminated-team ${aLoser ? 'loser' : ''} ${played && !aLoser ? 'winner' : ''}">${imgA}<span class="eliminated-team-name">${m.teamA.name}</span></div>
-                <div class="eliminated-score">${scoreStr}</div>
-                <div class="eliminated-team ${bLoser ? 'loser' : ''} ${played && !bLoser ? 'winner' : ''}" style="flex-direction:row-reverse;text-align:right;">${imgB}<span class="eliminated-team-name">${m.teamB.name}</span></div>
+                <div class="eliminated-team ${aLoser ? 'loser' : ''} ${played && !aLoser ? 'winner' : ''}">${imgA}<span class="eliminated-team-name">${tie.teamA.name}</span></div>
+                <div class="eliminated-score">${scoreStr}${extraNote}</div>
+                <div class="eliminated-team ${bLoser ? 'loser' : ''} ${played && !bLoser ? 'winner' : ''}" style="flex-direction:row-reverse;text-align:right;">${imgB}<span class="eliminated-team-name">${tie.teamB.name}</span></div>
             </div>`;
         });
         html += `</div>`;
@@ -3741,22 +3777,20 @@ function renderEliminatedBracket() {
 function playNextEliminatedMatch() {
     if (!eliminatedData.isRunning) return;
     const round = eliminatedData.rounds[eliminatedData.currentRoundIndex];
+    const legsPerTie = eliminatedData.format === 'double' ? 2 : 1;
 
-    if (eliminatedData.currentMatchIndex >= round.matches.length) {
+    if (eliminatedData.currentMatchIndex >= round.ties.length) {
         // Ronde selesai — cek juara atau lanjut ke ronde berikutnya
-        const winners = round.matches.map(m => m.winner);
+        const winners = round.ties.map(t => t.winner);
         if (winners.length === 1) {
             finishEliminated(winners[0]);
             return;
         }
-        const nextMatches = [];
+        const nextTies = [];
         for (let i = 0; i < winners.length; i += 2) {
-            nextMatches.push({
-                teamA: winners[i], teamB: winners[i + 1],
-                goalsA: 0, goalsB: 0, played: false, scorers: [], penalties: null, winner: null
-            });
+            nextTies.push(createEliminatedTie(winners[i], winners[i + 1]));
         }
-        eliminatedData.rounds.push({ name: getEliminatedRoundName(winners.length), matches: nextMatches });
+        eliminatedData.rounds.push({ name: getEliminatedRoundName(winners.length), ties: nextTies });
         eliminatedData.currentRoundIndex++;
         eliminatedData.currentMatchIndex = 0;
         document.getElementById('eliminatedStatusText').textContent =
@@ -3768,18 +3802,27 @@ function playNextEliminatedMatch() {
         return;
     }
 
-    const match = round.matches[eliminatedData.currentMatchIndex];
-    const result = simulateEliminatedMatch(match.teamA, match.teamB);
-    match.goalsA = result.goalsA;
-    match.goalsB = result.goalsB;
-    match.scorers = result.scorers;
-    match.penalties = result.penalties;
-    match.winner = result.winner;
-    match.played = true;
+    const tie = round.ties[eliminatedData.currentMatchIndex];
+    const legResult = simulateEliminatedLegGoals(tie.teamA, tie.teamB);
+    tie.legs.push({ goalsA: legResult.goalsA, goalsB: legResult.goalsB, scorers: legResult.scorers });
+    tie.aggA += legResult.goalsA;
+    tie.aggB += legResult.goalsB;
 
     eliminatedData.matchesPlayed++;
 
-    showEliminatedLiveMatch(match);
+    const isLastLeg = tie.legs.length >= legsPerTie;
+    if (isLastLeg) {
+        if (tie.aggA === tie.aggB) {
+            // Sistem gugur tidak boleh seri — lanjut adu penalti
+            tie.penalties = simulatePenaltyShootout(tie.teamA, tie.teamB);
+            tie.winner = tie.penalties.winner;
+        } else {
+            tie.winner = tie.aggA > tie.aggB ? tie.teamA : tie.teamB;
+        }
+        tie.played = true;
+    }
+
+    showEliminatedLiveMatch(tie);
     renderEliminatedBracket();
 
     const pct = Math.round((eliminatedData.matchesPlayed / eliminatedData.totalMatches) * 100);
@@ -3787,10 +3830,13 @@ function playNextEliminatedMatch() {
     document.getElementById('eliminatedProgressLabel').textContent =
         `Pertandingan ${eliminatedData.matchesPlayed} / ${eliminatedData.totalMatches}`;
     document.getElementById('eliminatedStatusText').textContent =
-        `${round.name}: ${match.teamA.name} ${result.goalsA} - ${result.goalsB} ${match.teamB.name}` +
-        (result.penalties ? ` (pen ${result.penalties.scoreA}-${result.penalties.scoreB})` : '');
+        `${round.name}${legsPerTie === 2 ? ` (Leg ${tie.legs.length}/2)` : ''}: ${tie.teamA.name} ${legResult.goalsA} - ${legResult.goalsB} ${tie.teamB.name}` +
+        (isLastLeg && legsPerTie === 2 ? ` — Agregat ${tie.aggA}-${tie.aggB}` : '') +
+        (tie.penalties ? ` (pen ${tie.penalties.scoreA}-${tie.penalties.scoreB})` : '');
 
-    eliminatedData.currentMatchIndex++;
+    if (isLastLeg) {
+        eliminatedData.currentMatchIndex++;
+    }
 
     const delay = eliminatedData.turboMode ? 80 : 900;
     eliminatedData.interval = setTimeout(() => playNextEliminatedMatch(), delay);
@@ -3807,14 +3853,14 @@ function finishEliminated(champion) {
 
     let goalsFor = 0, goalsAgainst = 0, wins = 0, penWins = 0;
     eliminatedData.rounds.forEach(r => {
-        r.matches.forEach(m => {
-            const isA = m.teamA.name === champion.name;
-            const isB = m.teamB.name === champion.name;
+        r.ties.forEach(tie => {
+            const isA = tie.teamA.name === champion.name;
+            const isB = tie.teamB.name === champion.name;
             if (isA || isB) {
-                goalsFor += isA ? m.goalsA : m.goalsB;
-                goalsAgainst += isA ? m.goalsB : m.goalsA;
+                goalsFor += isA ? tie.aggA : tie.aggB;
+                goalsAgainst += isA ? tie.aggB : tie.aggA;
                 wins++;
-                if (m.penalties) penWins++;
+                if (tie.penalties) penWins++;
             }
         });
     });

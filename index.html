@@ -721,13 +721,21 @@
             <div class="match-setup">
                 <div class="setup-section">
                     <label>Jumlah Tim:</label>
-                    <select id="eliminatedTeamCount" class="team-select">
-                        <option value="4">4 Tim — 3 pertandingan</option>
-                        <option value="8" selected>8 Tim — 7 pertandingan</option>
-                        <option value="16">16 Tim — 15 pertandingan</option>
-                        <option value="32">32 Tim — 31 pertandingan</option>
+                    <select id="eliminatedTeamCount" class="team-select" onchange="updateEliminatedEstimate()">
+                        <option value="4">4 Tim</option>
+                        <option value="8" selected>8 Tim</option>
+                        <option value="16">16 Tim</option>
+                        <option value="32">32 Tim</option>
                     </select>
                 </div>
+                <div class="setup-section">
+                    <label>Format Pertandingan:</label>
+                    <select id="eliminatedFormat" class="team-select" onchange="updateEliminatedEstimate()">
+                        <option value="single" selected>Satu Leg (kalah langsung gugur)</option>
+                        <option value="double">Dua Leg / Agregat (kandang-tandang, seperti Liga Champions)</option>
+                    </select>
+                </div>
+                <p id="eliminatedEstimateHint" style="text-align:center;color:#9aa0b4;font-size:0.9rem;margin:4px 0 0;"></p>
                 <div class="setup-section" style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
                     <button id="eliminatedTurboBtn" onclick="toggleEliminatedTurbo()" style="background:linear-gradient(135deg,#4a4a4a,#2a2a2a);color:#aaa;border:2px solid #555;padding:10px 22px;border-radius:8px;cursor:pointer;font-size:0.95rem;font-weight:bold;transition:all 0.3s;">⚡ Turbo: OFF</button>
                 </div>
@@ -806,9 +814,9 @@
         </div>
     </footer>
 
-    <script src="players-data/teams-info.js?v=10"></script>
-    <script src="players-data/squads.js?v=10"></script>
-    <script src="players-data/substitutions.js?v=10"></script>
-    <script src="script.js?v=10"></script>
+    <script src="players-data/teams-info.js?v=11"></script>
+    <script src="players-data/squads.js?v=11"></script>
+    <script src="players-data/substitutions.js?v=11"></script>
+    <script src="script.js?v=11"></script>
 </body>
 </html>
